@@ -62,7 +62,7 @@ export const treesModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "Binary Search Tree (BST) là cây nhị phân thoả tính chất: mọi giá trị trong cây con bên trái nhỏ hơn nút, mọi giá trị bên phải lớn hơn nút. Nhờ đó mỗi bước so sánh loại bỏ được một nửa cây.",
+          text: "Binary Search Tree (BST) là cây nhị phân thỏa mãn tính chất: mọi giá trị trong cây con bên trái nhỏ hơn nút, mọi giá trị bên phải lớn hơn nút. Nhờ đó mỗi bước so sánh loại bỏ được một nửa cây.",
         },
         { type: "h2", text: "Tìm kiếm" },
         {
@@ -144,7 +144,7 @@ export const treesModule: CourseModule = {
         { type: "h2", text: "BFS: duyệt theo tầng" },
         {
           type: "p",
-          text: "Level-order dùng queue: đẩy root vào, lần lượt lấy ra, ghi nhận rồi đẩy các con vào cuối hàng.",
+          text: "Level-order dùng queue: đưa root vào queue, lần lượt lấy từng nút ra, ghi nhận giá trị rồi thêm các nút con vào cuối queue.",
         },
         {
           type: "code",

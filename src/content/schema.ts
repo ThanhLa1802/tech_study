@@ -68,6 +68,7 @@ const visualizerSchema = z.enum([
   "queue",
   "binary-heap",
   "sliding-window",
+  "fixed-sliding-window",
   "graph-bfs",
   "dp-1d",
 ]);

@@ -37,6 +37,108 @@ body {
   border-radius: 4px;
 }
 
+/* --- Motion primitives (see src/components/glow-card.tsx, node-hop-board.tsx) --- */
+
+/* Registered custom property so the conic-gradient angle can be animated. */
+@property --glow-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes glow-border-spin {
+  to {
+    --glow-angle: 360deg;
+  }
+}
+
+.glow-card {
+  position: relative;
+  border-radius: 1rem;
+  padding: 1.5px;
+  /* Solid base ring so the card always keeps a visible frame... */
+  background-color: var(--border);
+  /* ...with the rotating glow painted on top of it. */
+  background-image: conic-gradient(
+    from var(--glow-angle),
+    transparent 0deg,
+    var(--glow-a) 55deg,
+    transparent 150deg,
+    transparent 225deg,
+    var(--glow-b) 295deg,
+    transparent 360deg
+  );
+  animation: glow-border-spin var(--glow-speed, 8s) linear infinite;
+}
+
+.glow-inner {
+  height: 100%;
+  border-radius: calc(1rem - 1.5px);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.glow-card[data-color="green"] {
+  --glow-a: #34d399;
+  --glow-b: #059669;
+}
+
+.glow-card[data-color="blue"] {
+  --glow-a: #60a5fa;
+  --glow-b: #2563eb;
+}
+
+.glow-card[data-color="violet"] {
+  --glow-a: #a78bfa;
+  --glow-b: #7c3aed;
+}
+
+@keyframes node-hop {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.9;
+  }
+  25% {
+    transform: translate(24px, 0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(24px, 24px);
+    opacity: 0.9;
+  }
+  75% {
+    transform: translate(0, 24px);
+    opacity: 1;
+  }
+}
+
+.node-hop-grid {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  background-color: #0b0b0e;
+  background-image:
+    linear-gradient(to right, #191920 1px, transparent 1px),
+    linear-gradient(to bottom, #191920 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 6px 6px;
+}
+
+.node-hop-node {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: radial-gradient(circle at 30% 30%, #6ee7b7, #059669);
+  box-shadow: 0 0 14px rgba(52, 211, 153, 0.75);
+  animation: node-hop 4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

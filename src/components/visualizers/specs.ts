@@ -112,7 +112,12 @@ function buildBubble(
   return frames;
 }
 
-function buildSelection(input: number[]): StepFrame[] {
+function buildSelection(
+  input: number[],
+  _target: number,
+  locale: Locale = "vi",
+): StepFrame[] {
+  const en = locale === "en";
   const frames: StepFrame[] = [];
   const a = [...input];
   const n = a.length;
@@ -145,7 +150,7 @@ function buildSelection(input: number[]): StepFrame[] {
     array: [...a],
     marks: marks({}),
     line: 1,
-    note: "Bắt đầu với mảng ban đầu.",
+    note: en ? "Start with the original array." : "Bắt đầu với mảng ban đầu.",
     stats: stats(),
   });
 
@@ -155,7 +160,9 @@ function buildSelection(input: number[]): StepFrame[] {
       array: [...a],
       marks: marks({ sortedCount: i, minIdx: min }),
       line: 3,
-      note: `Lượt ${i + 1}: giả sử a[${i}] = ${a[i]} là nhỏ nhất.`,
+      note: en
+        ? `Pass ${i + 1}: assume a[${i}] = ${a[i]} is the smallest.`
+        : `Lượt ${i + 1}: giả sử a[${i}] = ${a[i]} là nhỏ nhất.`,
       stats: stats(),
     });
     for (let j = i + 1; j < n; j++) {
@@ -164,7 +171,9 @@ function buildSelection(input: number[]): StepFrame[] {
         array: [...a],
         marks: marks({ sortedCount: i, minIdx: min, compareIdx: j }),
         line: 5,
-        note: `So sánh a[${j}] = ${a[j]} với min = ${a[min]}.`,
+        note: en
+          ? `Compare a[${j}] = ${a[j]} with min = ${a[min]}.`
+          : `So sánh a[${j}] = ${a[j]} với min = ${a[min]}.`,
         stats: stats(),
       });
       if (a[j] < a[min]) {
@@ -173,7 +182,9 @@ function buildSelection(input: number[]): StepFrame[] {
           array: [...a],
           marks: marks({ sortedCount: i, minIdx: min }),
           line: 5,
-          note: `Tìm thấy giá trị nhỏ hơn: min giờ là a[${min}] = ${a[min]}.`,
+          note: en
+            ? `Found a smaller value: min is now a[${min}] = ${a[min]}.`
+            : `Tìm thấy giá trị nhỏ hơn: min giờ là a[${min}] = ${a[min]}.`,
           stats: stats(),
         });
       }
@@ -185,7 +196,9 @@ function buildSelection(input: number[]): StepFrame[] {
         array: [...a],
         marks: marks({ sortedCount: i, swapPair: [i, min] }),
         line: 6,
-        note: `Đổi chỗ a[${i}] và a[${min}] để đưa giá trị nhỏ nhất về đầu.`,
+        note: en
+          ? `Swap a[${i}] and a[${min}] to move the smallest value to the front.`
+          : `Đổi chỗ a[${i}] và a[${min}] để đưa giá trị nhỏ nhất về đầu.`,
         stats: stats(),
       });
     } else {
@@ -193,7 +206,9 @@ function buildSelection(input: number[]): StepFrame[] {
         array: [...a],
         marks: marks({ sortedCount: i, minIdx: i }),
         line: 6,
-        note: `a[${i}] đã đúng vị trí, không cần đổi chỗ.`,
+        note: en
+          ? `a[${i}] is already in the right position, so no swap is needed.`
+          : `a[${i}] đã đúng vị trí, không cần đổi chỗ.`,
         stats: stats(),
       });
     }
@@ -203,13 +218,18 @@ function buildSelection(input: number[]): StepFrame[] {
     array: [...a],
     marks: marks({ sortedCount: n }),
     line: 7,
-    note: "Hoàn tất! Mảng đã được sắp xếp.",
+    note: en ? "Done! The array is sorted." : "Hoàn tất! Mảng đã được sắp xếp.",
     stats: stats(),
   });
   return frames;
 }
 
-function buildInsertion(input: number[]): StepFrame[] {
+function buildInsertion(
+  input: number[],
+  _target: number,
+  locale: Locale = "vi",
+): StepFrame[] {
+  const en = locale === "en";
   const frames: StepFrame[] = [];
   const a = [...input];
   const n = a.length;
@@ -242,7 +262,9 @@ function buildInsertion(input: number[]): StepFrame[] {
     array: [...a],
     marks: marks({ sortedCount: 0 }),
     line: 1,
-    note: "Phần tử đầu tiên coi như đã sắp xếp.",
+    note: en
+      ? "The first element is considered sorted."
+      : "Phần tử đầu tiên coi như đã sắp xếp.",
     stats: stats(),
   });
 
@@ -252,7 +274,9 @@ function buildInsertion(input: number[]): StepFrame[] {
       array: [...a],
       marks: marks({ sortedCount: i, keyIdx: i }),
       line: 2,
-      note: `Lấy key = a[${i}] = ${key} để chèn vào phần đã sắp xếp.`,
+      note: en
+        ? `Take key = a[${i}] = ${key} and insert it into the sorted portion.`
+        : `Lấy key = a[${i}] = ${key} để chèn vào phần đã sắp xếp.`,
       stats: stats(),
     });
     let j = i - 1;
@@ -262,7 +286,9 @@ function buildInsertion(input: number[]): StepFrame[] {
         array: [...a],
         marks: marks({ sortedCount: i, keyIdx: j + 1, compareIdx: j }),
         line: 4,
-        note: `a[${j}] = ${a[j]} > key = ${key} nên dịch sang phải.`,
+        note: en
+          ? `a[${j}] = ${a[j]} > key = ${key}, so shift it to the right.`
+          : `a[${j}] = ${a[j]} > key = ${key} nên dịch sang phải.`,
         stats: stats(),
       });
       a[j + 1] = a[j];
@@ -271,7 +297,9 @@ function buildInsertion(input: number[]): StepFrame[] {
         array: [...a],
         marks: marks({ sortedCount: i, keyIdx: j, shiftPair: [j, j + 1] }),
         line: 5,
-        note: `Dịch a[${j}] sang vị trí ${j + 1}.`,
+        note: en
+          ? `Shift a[${j}] to position ${j + 1}.`
+          : `Dịch a[${j}] sang vị trí ${j + 1}.`,
         stats: stats(),
       });
       j--;
@@ -282,7 +310,9 @@ function buildInsertion(input: number[]): StepFrame[] {
       array: [...a],
       marks: marks({ sortedCount: i + 1, keyIdx: j + 1 }),
       line: 7,
-      note: `Chèn key = ${key} vào vị trí ${j + 1}.`,
+      note: en
+        ? `Insert key = ${key} at position ${j + 1}.`
+        : `Chèn key = ${key} vào vị trí ${j + 1}.`,
       stats: stats(),
     });
   }
@@ -291,13 +321,18 @@ function buildInsertion(input: number[]): StepFrame[] {
     array: [...a],
     marks: marks({ sortedCount: n }),
     line: 8,
-    note: "Hoàn tất! Mảng đã được sắp xếp.",
+    note: en ? "Done! The array is sorted." : "Hoàn tất! Mảng đã được sắp xếp.",
     stats: stats(),
   });
   return frames;
 }
 
-function buildBinarySearch(input: number[], target: number): StepFrame[] {
+function buildBinarySearch(
+  input: number[],
+  target: number,
+  locale: Locale = "vi",
+): StepFrame[] {
+  const en = locale === "en";
   const frames: StepFrame[] = [];
   const a = [...input];
   const n = a.length;
@@ -326,7 +361,9 @@ function buildBinarySearch(input: number[], target: number): StepFrame[] {
     marks: marks(lo, hi, null, null),
     pointers: { [lo]: "lo", [hi]: "hi" },
     line: 1,
-    note: `Không gian tìm kiếm ban đầu là toàn mảng [${lo}, ${hi}].`,
+    note: en
+      ? `The initial search range is the entire array [${lo}, ${hi}].`
+      : `Không gian tìm kiếm ban đầu là toàn mảng [${lo}, ${hi}].`,
     stats: stats(),
   });
 
@@ -338,7 +375,9 @@ function buildBinarySearch(input: number[], target: number): StepFrame[] {
       marks: marks(lo, hi, mid, null),
       pointers: { [lo]: "lo", [hi]: "hi", [mid]: "mid" },
       line: 3,
-      note: `mid = (${lo} + ${hi}) / 2 = ${mid}, giá trị a[${mid}] = ${a[mid]}.`,
+      note: en
+        ? `mid = (${lo} + ${hi}) / 2 = ${mid}; a[${mid}] = ${a[mid]}.`
+        : `mid = (${lo} + ${hi}) / 2 = ${mid}, giá trị a[${mid}] = ${a[mid]}.`,
       stats: stats(),
     });
     if (a[mid] === target) {
@@ -347,7 +386,9 @@ function buildBinarySearch(input: number[], target: number): StepFrame[] {
         marks: marks(lo, hi, mid, mid),
         pointers: { [mid]: "mid" },
         line: 4,
-        note: `Tìm thấy target = ${target} tại vị trí ${mid}.`,
+        note: en
+          ? `Target ${target} found at index ${mid}.`
+          : `Tìm thấy target = ${target} tại vị trí ${mid}.`,
         stats: stats(),
       });
       return frames;
@@ -360,7 +401,9 @@ function buildBinarySearch(input: number[], target: number): StepFrame[] {
         marks: marks(lo, hi, null, null),
         pointers: { [lo]: "lo", [hi]: "hi" },
         line: 5,
-        note: `a[${mid}] = ${a[mid]} < ${target} nên bỏ nửa trái, lo = ${oldLo} → ${lo}.`,
+        note: en
+          ? `a[${mid}] = ${a[mid]} < ${target}, so discard the left half and set lo = ${oldLo} → ${lo}.`
+          : `a[${mid}] = ${a[mid]} < ${target} nên bỏ nửa trái, lo = ${oldLo} → ${lo}.`,
         stats: stats(),
       });
     } else {
@@ -371,7 +414,9 @@ function buildBinarySearch(input: number[], target: number): StepFrame[] {
         marks: marks(lo, hi, null, null),
         pointers: lo <= hi ? { [lo]: "lo", [hi]: "hi" } : {},
         line: 6,
-        note: `a[${mid}] = ${a[mid]} > ${target} nên bỏ nửa phải, hi = ${oldHi} → ${hi}.`,
+        note: en
+          ? `a[${mid}] = ${a[mid]} > ${target}, so discard the right half and set hi = ${oldHi} → ${hi}.`
+          : `a[${mid}] = ${a[mid]} > ${target} nên bỏ nửa phải, hi = ${oldHi} → ${hi}.`,
         stats: stats(),
       });
     }
@@ -381,13 +426,20 @@ function buildBinarySearch(input: number[], target: number): StepFrame[] {
     array: [...a],
     marks: makeMarks(n, "eliminated"),
     line: 7,
-    note: `Không tìm thấy ${target} trong mảng — trả về -1.`,
+    note: en
+      ? `${target} was not found in the array — return -1.`
+      : `Không tìm thấy ${target} trong mảng — trả về -1.`,
     stats: stats(),
   });
   return frames;
 }
 
-function buildTwoSum(input: number[], target: number): StepFrame[] {
+function buildTwoSum(
+  input: number[],
+  target: number,
+  locale: Locale = "vi",
+): StepFrame[] {
+  const en = locale === "en";
   const frames: StepFrame[] = [];
   const a = [...input];
   const n = a.length;
@@ -417,7 +469,9 @@ function buildTwoSum(input: number[], target: number): StepFrame[] {
     marks: marks(l, r, false),
     pointers: { [l]: "L", [r]: "R" },
     line: 1,
-    note: `Hai con trỏ: L ở đầu, R ở cuối mảng đã sắp xếp.`,
+    note: en
+      ? "Two pointers: L starts at the beginning and R at the end of the sorted array."
+      : `Hai con trỏ: L ở đầu, R ở cuối mảng đã sắp xếp.`,
     stats: stats("-"),
   });
 
@@ -429,7 +483,9 @@ function buildTwoSum(input: number[], target: number): StepFrame[] {
       marks: marks(l, r, false),
       pointers: { [l]: "L", [r]: "R" },
       line: 3,
-      note: `Tổng a[${l}] + a[${r}] = ${a[l]} + ${a[r]} = ${sum}.`,
+      note: en
+        ? `Sum a[${l}] + a[${r}] = ${a[l]} + ${a[r]} = ${sum}.`
+        : `Tổng a[${l}] + a[${r}] = ${a[l]} + ${a[r]} = ${sum}.`,
       stats: stats(sum),
     });
     if (sum === target) {
@@ -438,7 +494,9 @@ function buildTwoSum(input: number[], target: number): StepFrame[] {
         marks: marks(l, r, true),
         pointers: { [l]: "L", [r]: "R" },
         line: 4,
-        note: `Tổng bằng target = ${target}. Trả về [${l}, ${r}].`,
+        note: en
+          ? `Sum matches target ${target}. Return [${l}, ${r}].`
+          : `Tổng bằng target = ${target}. Trả về [${l}, ${r}].`,
         stats: stats(sum),
       });
       return frames;
@@ -450,7 +508,9 @@ function buildTwoSum(input: number[], target: number): StepFrame[] {
         marks: marks(l, r, false),
         pointers: l <= r ? { [l]: "L", [r]: "R" } : r >= 0 ? { [r]: "R" } : {},
         line: 5,
-        note: `Tổng ${sum} < ${target} nên tăng L để tăng tổng.`,
+        note: en
+          ? `Since ${sum} < ${target}, move L forward to increase the sum.`
+          : `Tổng ${sum} < ${target} nên tăng L để tăng tổng.`,
         stats: stats(sum),
       });
     } else {
@@ -460,7 +520,9 @@ function buildTwoSum(input: number[], target: number): StepFrame[] {
         marks: marks(l, r, false),
         pointers: l <= r ? { [l]: "L", [r]: "R" } : l < n ? { [l]: "L" } : {},
         line: 6,
-        note: `Tổng ${sum} > ${target} nên giảm R để giảm tổng.`,
+        note: en
+          ? `Since ${sum} > ${target}, move R backward to decrease the sum.`
+          : `Tổng ${sum} > ${target} nên giảm R để giảm tổng.`,
         stats: stats(sum),
       });
     }
@@ -470,7 +532,9 @@ function buildTwoSum(input: number[], target: number): StepFrame[] {
     array: [...a],
     marks: makeMarks(n, "eliminated"),
     line: 7,
-    note: `Hết khoảng tìm kiếm, không có cặp nào có tổng bằng ${target}.`,
+    note: en
+      ? `Search range exhausted; no pair sums to ${target}.`
+      : `Hết khoảng tìm kiếm, không có cặp nào có tổng bằng ${target}.`,
     stats: stats("-"),
   });
   return frames;

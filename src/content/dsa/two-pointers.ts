@@ -9,13 +9,13 @@ export const twoPointersModule: CourseModule = {
       title: "Two Sum (Sorted Array)",
       module: "Two Pointers",
       summary:
-        "Dùng hai con trỏ từ hai đầu mảng đã sắp xếp để tìm cặp có tổng bằng target.",
+        "Dùng hai con trỏ ở hai đầu mảng đã sắp xếp để tìm cặp có tổng bằng target.",
       duration: "7 phút",
       visualizer: "two-sum",
       blocks: [
         {
           type: "p",
-          text: "Với mảng đã sắp xếp, ta đặt con trỏ left ở đầu và right ở cuối. Nếu tổng nhỏ hơn target thì tăng left; nếu lớn hơn thì giảm right; bằng thì tìm thấy.",
+          text: "Với mảng đã sắp xếp, đặt con trỏ left ở đầu và right ở cuối. Nếu tổng nhỏ hơn target, tăng left; nếu lớn hơn, giảm right; nếu bằng target, ta đã tìm thấy cặp cần tìm.",
         },
         { type: "h2", text: "Cài đặt" },
         {
@@ -35,7 +35,7 @@ export const twoPointersModule: CourseModule = {
         {
           type: "ul",
           items: [
-            "Thời gian: O(n) — mỗi bước loại bỏ một phần tử.",
+            "Thời gian: O(n) — mỗi bước loại một phần tử khỏi khoảng tìm kiếm.",
             "Bộ nhớ: O(1).",
           ],
         },
@@ -62,7 +62,7 @@ export const twoPointersModule: CourseModule = {
             id: "tp1",
             tag: "Điều kiện",
             prompt:
-              "Two Sum bằng hai con trỏ yêu cầu mảng phải có tính chất gì?",
+              "Để dùng hai con trỏ giải Two Sum, mảng cần có đặc điểm gì?",
             options: [
               "Không có phần tử trùng",
               "Đã được sắp xếp",

@@ -11,10 +11,11 @@ export const slidingWindowModule: CourseModule = {
       summary:
         "Trượt một cửa sổ kích thước k qua mảng: mỗi bước thêm một phần tử, bớt một phần tử — O(n).",
       duration: "7 phút",
+      visualizer: "fixed-sliding-window",
       blocks: [
         {
           type: "p",
-          text: "Sliding Window (cửa sổ trượt) là kỹ thuật xử lý đoạn con liên tiếp mà không quét lại từ đầu. Thay vì tính lại cả cửa sổ mỗi lần dịch, ta chỉ cập nhật phần thay đổi.",
+          text: "Sliding Window (cửa sổ trượt) là kỹ thuật xử lý đoạn con liên tiếp mà không cần quét lại từ đầu. Thay vì tính lại toàn bộ cửa sổ sau mỗi lần dịch, ta chỉ cập nhật phần thay đổi.",
         },
         { type: "h2", text: "Khi nào dùng" },
         {
@@ -22,7 +23,7 @@ export const slidingWindowModule: CourseModule = {
           items: [
             "Bài toán trên đoạn con / xâu con LIÊN TIẾP.",
             "Cần tối ưu (max/min), đếm, hoặc kiểm tra tính chất của đoạn.",
-            "Điều kiện có tính đơn điệu để biết khi nào mở rộng / thu hẹp hợp lệ.",
+            "Điều kiện có tính đơn điệu để xác định khi nào có thể mở rộng hoặc thu hẹp cửa sổ.",
           ],
         },
         { type: "h2", text: "Cửa sổ cố định kích thước k" },
@@ -51,6 +52,19 @@ export const slidingWindowModule: CourseModule = {
             "Bộ nhớ: O(1) ngoài mảng đầu vào.",
           ],
         },
+        {
+          type: "diagram",
+          nodes: [
+            { id: "w0", label: "2", sub: "a[0] · trong cửa sổ", x: 32, y: 28, w: 96, h: 58 },
+            { id: "w1", label: "1", sub: "a[1] · trong cửa sổ", x: 140, y: 28, w: 96, h: 58 },
+            { id: "w2", label: "3", sub: "a[2] · trong cửa sổ", x: 248, y: 28, w: 96, h: 58 },
+            { id: "w3", label: "4", sub: "a[3] · vào tiếp theo", x: 356, y: 28, w: 96, h: 58 },
+            { id: "w4", label: "5", sub: "a[4] · ngoài cửa sổ", x: 464, y: 28, w: 96, h: 58 },
+          ],
+          edges: [],
+          caption:
+            "k = 3: cửa sổ hiện tại gồm a[0]–a[2]. Khi trượt sang phải, a[3] đi vào cửa sổ.",
+        },
       ],
     },
     {
@@ -64,7 +78,7 @@ export const slidingWindowModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "Khi độ dài cửa sổ không cố định, ta dùng hai con trỏ: r mở rộng sang phải để thêm phần tử, và l thu hẹp từ bên trái khi cửa sổ đã thoả điều kiện nhưng còn dư.",
+          text: "Khi độ dài cửa sổ không cố định, ta dùng hai con trỏ: r mở rộng sang phải để thêm phần tử; l thu hẹp từ bên trái khi cửa sổ đã thỏa điều kiện nhưng vẫn có thể thu hẹp thêm.",
         },
         { type: "h2", text: "Khung chung" },
         {
@@ -79,7 +93,7 @@ export const slidingWindowModule: CourseModule = {
         { type: "h2", text: "Ví dụ: đoạn ngắn nhất có tổng ≥ target" },
         {
           type: "p",
-          text: "Mở rộng r và cộng dồn. Khi tổng đạt ≥ target, ghi nhận độ dài rồi thu hẹp l để thử tìm đoạn ngắn hơn. Mỗi phần tử chỉ vào/ra cửa sổ một lần nên vẫn O(n).",
+          text: "Mở rộng r và cộng dồn. Khi tổng đạt ≥ target, ghi nhận độ dài rồi thu hẹp l để tìm đoạn ngắn hơn. Mỗi phần tử chỉ được thêm vào và loại khỏi cửa sổ một lần, nên thuật toán vẫn chạy trong O(n).",
         },
         {
           type: "code",
@@ -179,7 +193,7 @@ export const slidingWindowModule: CourseModule = {
             ],
             answer: 1,
             explanation:
-              "Tổng số lần tăng l và r đều bị chặn bởi n, nên chi phí khấu trừ (amortized) là O(n).",
+            "Tổng số lần tăng l và r đều bị chặn bởi n, nên chi phí amortized là O(n).",
           },
           {
             id: "sw5",

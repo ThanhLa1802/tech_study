@@ -14,7 +14,7 @@ export const graphsModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "Đồ thị (graph) gồm tập đỉnh (vertex) và tập cạnh (edge) nối các đỉnh. Cạnh có thể có hướng hoặc vô hướng, có trọng số hoặc không.",
+          text: "Đồ thị (graph) gồm các đỉnh (vertex) và cạnh (edge) nối chúng. Cạnh có thể có hướng hoặc vô hướng, có hoặc không có trọng số.",
         },
         { type: "h2", text: "Thuật ngữ" },
         {
@@ -47,7 +47,28 @@ export const graphsModule: CourseModule = {
         { type: "h2", text: "Khi nào dùng" },
         {
           type: "p",
-          text: "Dùng adjacency list cho hầu hết bài toán duyệt và đường đi; dùng ma trận kề khi đồ thị dày và cần kiểm tra kề cạnh liên tục.",
+          text: "Dùng adjacency list cho hầu hết bài toán duyệt và tìm đường đi; dùng ma trận kề khi đồ thị dày và cần kiểm tra thường xuyên hai đỉnh có kề nhau hay không.",
+        },
+        {
+          type: "diagram",
+          nodes: [
+            { id: "A", label: "A", x: 20, y: 130, w: 52, h: 46 },
+            { id: "B", label: "B", x: 170, y: 30, w: 52, h: 46 },
+            { id: "C", label: "C", x: 170, y: 230, w: 52, h: 46 },
+            { id: "D", label: "D", x: 340, y: 30, w: 52, h: 46 },
+            { id: "E", label: "E", x: 340, y: 230, w: 52, h: 46 },
+            { id: "F", label: "F", x: 500, y: 130, w: 52, h: 46 },
+          ],
+          edges: [
+            { id: "A-B", from: "A", to: "B" },
+            { id: "A-C", from: "A", to: "C" },
+            { id: "B-D", from: "B", to: "D" },
+            { id: "C-E", from: "C", to: "E" },
+            { id: "D-F", from: "D", to: "F" },
+            { id: "E-F", from: "E", to: "F" },
+          ],
+          caption:
+            "Các đỉnh được nối với nhau bằng cạnh; danh sách kề ghi lại các đỉnh hàng xóm của mỗi đỉnh.",
         },
       ],
     },
@@ -62,12 +83,12 @@ export const graphsModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "Có hai chiến lược duyệt đồ thị cơ bản. BFS lan rộng theo từng tầng, còn DFS đi sâu hết một nhánh rồi mới quay lui. Cả hai đều O(V + E) với adjacency list.",
+          text: "Có hai chiến lược duyệt đồ thị cơ bản. BFS mở rộng theo từng tầng, còn DFS đi sâu đến hết một nhánh rồi mới quay lui. Cả hai đều O(V + E) với adjacency list.",
         },
         { type: "h2", text: "BFS — duyệt theo tầng" },
         {
           type: "p",
-          text: "BFS dùng queue: đưa đỉnh nguồn vào hàng đợi, lần lượt lấy ra và đưa các hàng xóm chưa thăm vào cuối. Vì duyệt theo tầng, BFS tìm đường đi ngắn nhất trên đồ thị không trọng số.",
+          text: "BFS dùng queue: đưa đỉnh nguồn vào hàng đợi, lần lượt lấy ra và thêm các hàng xóm chưa thăm vào cuối hàng đợi. Vì duyệt theo tầng, BFS tìm đường đi ngắn nhất trên đồ thị không trọng số.",
         },
         {
           type: "code",
@@ -81,7 +102,7 @@ export const graphsModule: CourseModule = {
         { type: "h2", text: "DFS — đi sâu" },
         {
           type: "p",
-          text: "DFS dùng stack (hoặc đệ quy). Mỗi lần gặp hàng xóm chưa thăm thì đi tiếp vào nó ngay. DFS dùng để phát hiện chu trình, tô màu thành phần liên thông, và sắp xếp topo.",
+          text: "DFS dùng stack (hoặc đệ quy). Mỗi khi gặp hàng xóm chưa thăm, DFS đi sâu vào đó ngay. DFS dùng để phát hiện chu trình, tô màu thành phần liên thông và sắp xếp topo.",
         },
         {
           type: "code",

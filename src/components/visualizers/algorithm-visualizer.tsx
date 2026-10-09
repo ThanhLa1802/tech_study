@@ -25,6 +25,16 @@ export type StepFrame = {
 
 export type LegendItem = { mark: BarMark; label: string };
 
+/**
+ * Locale-specific user-visible text for an array visualizer. Only the fields
+ * provided are replaced; structure, marks, and behaviour stay untouched.
+ * Vietnamese remains the default, so Vietnamese specs need no overrides.
+ */
+export type VisualizerSpecOverrides = {
+  title?: string;
+  legend?: Partial<Record<BarMark, string>>;
+};
+
 export type VisualizerSpec = {
   title: string;
   pseudo: string[];
@@ -33,7 +43,36 @@ export type VisualizerSpec = {
   autoSort?: boolean;
   target?: { label: string; default: number };
   build: (input: number[], targetValue: number, locale?: Locale) => StepFrame[];
+  /** Per-locale overrides keyed by locale; see {@link VisualizerSpecOverrides}. */
+  overrides?: Partial<Record<Locale, VisualizerSpecOverrides>>;
 };
+
+/**
+ * Applies a spec's locale overrides. An explicit English title override wins;
+ * otherwise English titles drop the Vietnamese " — mô phỏng" suffix and every
+ * other locale keeps the source title.
+ */
+export function localizeVisualizerSpec(
+  spec: VisualizerSpec,
+  locale: Locale,
+): VisualizerSpec {
+  const overrides = spec.overrides?.[locale];
+  const title =
+    overrides?.title ??
+    (locale === "en"
+      ? spec.title.replace(" — mô phỏng", " — visualization")
+      : spec.title);
+  return {
+    ...spec,
+    title,
+    legend: overrides?.legend
+      ? spec.legend.map((item) => ({
+          ...item,
+          label: overrides.legend?.[item.mark] ?? item.label,
+        }))
+      : spec.legend,
+  };
+}
 
 const MARK_CLASS: Record<BarMark, string> = {
   neutral: "bg-zinc-600",
@@ -51,6 +90,31 @@ const TONE_CLASS: Record<StatTone, string> = {
   indigo: "bg-sky-500/10 text-sky-300",
   emerald: "bg-green-500/10 text-green-300",
   slate: "bg-zinc-500/10 text-zinc-300",
+};
+
+/**
+ * Shared Vietnamese → English text for visualizer legend and stat labels.
+ * Vietnamese remains the default; keys that are already English pass through.
+ */
+export const visualizerLabels: Record<string, string> = {
+  "Chưa xét": "Not checked",
+  "Đang so sánh": "Comparing",
+  "Vừa đổi chỗ": "Just swapped",
+  "Đã đúng vị trí": "In the right place",
+  "Đã sắp xếp": "Sorted",
+  "Vị trí min hiện tại": "Current minimum",
+  "Đang xét": "Checking",
+  "key / vị trí chèn": "Key / insertion position",
+  "Vừa dịch chuyển": "Just shifted",
+  "Phần tử mid": "Middle element",
+  "Đã loại": "Eliminated",
+  "Tìm thấy": "Found",
+  "Cặp hợp lệ": "Matching pair",
+  "So sánh": "Comparisons",
+  "Đổi chỗ": "Swaps",
+  "Dịch chuyển": "Shifts",
+  "Mục tiêu": "Target",
+  "Tổng": "Sum",
 };
 
 function sortAsc(values: number[]): number[] {
@@ -80,6 +144,7 @@ export default function AlgorithmVisualizer({
   locale: Locale;
 }) {
   const en = locale === "en";
+  const display = localizeVisualizerSpec(spec, locale);
   const initial = useMemo(() => prepareInput(spec, spec.defaultInput), [spec]);
   const [input, setInput] = useState<number[]>(initial);
   const [inputText, setInputText] = useState(initial.join(", "));
@@ -99,27 +164,8 @@ export default function AlgorithmVisualizer({
   const max = Math.max(1, ...input.map((value) => Math.abs(value)));
   const atEnd = step >= frames.length - 1;
   const isPlaying = playing && !atEnd;
-  const labels: Record<string, string> = {
-    "Chưa xét": "Not checked",
-    "Đang so sánh": "Comparing",
-    "Vừa đổi chỗ": "Just swapped",
-    "Đã đúng vị trí": "In the right place",
-    "Đã sắp xếp": "Sorted",
-    "Vị trí min hiện tại": "Current minimum",
-    "Đang xét": "Checking",
-    "key / vị trí chèn": "Key / insertion position",
-    "Vừa dịch chuyển": "Just shifted",
-    "Phần tử mid": "Middle element",
-    "Đã loại": "Eliminated",
-    "Tìm thấy": "Found",
-    "Cặp hợp lệ": "Matching pair",
-    "So sánh": "Comparisons",
-    "Đổi chỗ": "Swaps",
-    "Dịch chuyển": "Shifts",
-    "Mục tiêu": "Target",
-    "Tổng": "Sum",
-  };
-  const translate = (text: string) => (en ? labels[text] ?? text : text);
+  const translate = (text: string) =>
+    en ? visualizerLabels[text] ?? text : text;
 
   useEffect(() => {
     if (!playing || atEnd) return;
@@ -180,7 +226,7 @@ export default function AlgorithmVisualizer({
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-lg font-semibold text-zinc-100">
-            {en ? spec.title.replace(" — mô phỏng", " — visualization") : spec.title}
+            {display.title}
           </h3>
           <p className="text-sm text-zinc-400">
             {en ? "Step" : "Bước"} {Math.min(step + 1, frames.length)} / {frames.length}
@@ -327,7 +373,7 @@ export default function AlgorithmVisualizer({
           </div>
 
           <div className="mt-3 flex flex-wrap gap-4 text-xs text-zinc-400">
-            {spec.legend.map((item) => (
+            {display.legend.map((item) => (
               <span key={item.mark} className="flex items-center gap-1">
                 <span
                   className={`h-3 w-3 rounded-sm ${MARK_CLASS[item.mark]}`}

@@ -72,7 +72,7 @@ src/
 - [x] 2 visualizer System Design (Round Robin, Token Bucket) + block sơ đồ tĩnh.
 - [x] Trang chủ dạng thẻ khóa học (bấm cả thẻ để vào).
 - [x] Nội dung DSA: Welcome, Big O, Sorting, Two Pointers, Binary Search.
-- [x] Nội dung System Design: Introduction, What is System Design?, 30 Must-Know Concepts, Scalability, Latency vs Throughput, Load Balancing, Caching, CDN, Sharding, Replication, CAP, Message Queues, Rate Limiting.
+- [x] Nội dung System Design: What is System Design?, 30 Must-Know Concepts, Scalability, Availability, Reliability, Single Point of Failure, Latency vs Throughput vs Bandwidth, Consistent Hashing, CAP, Load Balancing, Caching, CDN, Sharding, Replication, Message Queues, Rate Limiting.
 
 ### Việc tiếp theo
 

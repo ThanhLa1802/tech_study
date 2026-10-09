@@ -52,6 +52,7 @@ export type DataStructureVisualizer =
   | "queue"
   | "binary-heap"
   | "sliding-window"
+  | "fixed-sliding-window"
   | "graph-bfs"
   | "dp-1d";
 

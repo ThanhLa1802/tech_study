@@ -61,7 +61,7 @@ export const sdBuildingBlocksModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "Cache lưu dữ liệu hay được truy cập ở nơi nhanh (RAM) để tránh tính lại hoặc truy vấn database, giúp giảm cả latency lẫn tải cho tầng dưới.",
+          text: "Cache lưu dữ liệu được truy cập thường xuyên trong bộ nhớ nhanh (RAM), tránh phải tính lại hoặc truy vấn database, qua đó giảm cả latency lẫn tải cho các tầng bên dưới.",
         },
         { type: "h2", text: "Chiến lược" },
         {
@@ -97,6 +97,25 @@ export const sdBuildingBlocksModule: CourseModule = {
             },
           ],
         },
+        {
+          type: "diagram",
+          nodes: [
+            { id: "client", label: "Client", sub: "gửi yêu cầu", x: 20, y: 126, w: 110, h: 54 },
+            { id: "cache", label: "Cache", sub: "kiểm tra", x: 220, y: 126, w: 110, h: 54 },
+            { id: "database", label: "Database", sub: "khi cache miss", x: 420, y: 220, w: 120, h: 54 },
+            { id: "cache-fill", label: "Cache", sub: "ghi kết quả", x: 420, y: 32, w: 110, h: 54 },
+            { id: "client-response", label: "Client", sub: "nhận dữ liệu", x: 620, y: 126, w: 110, h: 54 },
+          ],
+          edges: [
+            { id: "client-cache", from: "client", to: "cache", label: "yêu cầu" },
+            { id: "cache-client-response", from: "cache", to: "client-response", label: "hit: trả dữ liệu" },
+            { id: "cache-database", from: "cache", to: "database", label: "miss: truy vấn" },
+            { id: "database-cache-fill", from: "database", to: "cache-fill", label: "kết quả" },
+            { id: "cache-fill-client-response", from: "cache-fill", to: "client-response", label: "trả dữ liệu" },
+          ],
+          caption:
+            "Cache hit thì trả dữ liệu ngay; khi miss, truy vấn database, ghi kết quả vào cache rồi trả dữ liệu về client.",
+        },
       ],
     },
     {
@@ -109,7 +128,7 @@ export const sdBuildingBlocksModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "CDN (Content Delivery Network) là mạng lưới server đặt gần người dùng, phục vụ nội dung tĩnh và có thể đệm cả nội dung động.",
+          text: "CDN (Content Delivery Network) là mạng lưới server đặt gần người dùng, phục vụ nội dung tĩnh và có thể cache cả nội dung động.",
         },
         { type: "h2", text: "Lợi ích" },
         {
@@ -136,6 +155,25 @@ export const sdBuildingBlocksModule: CourseModule = {
               code: "User → Edge (gần nhất) → [hit] trả về\n                          [miss] → Origin → cache lại",
             },
           ],
+        },
+        {
+          type: "diagram",
+          nodes: [
+            { id: "user", label: "User", sub: "gửi request", x: 20, y: 126, w: 110, h: 54 },
+            { id: "edge", label: "CDN Edge", sub: "gần nhất · kiểm tra", x: 220, y: 126, w: 120, h: 54 },
+            { id: "origin", label: "Origin", sub: "nguồn nội dung", x: 420, y: 220, w: 110, h: 54 },
+            { id: "edge-cache", label: "CDN Edge", sub: "cache nội dung", x: 420, y: 32, w: 120, h: 54 },
+            { id: "user-response", label: "User", sub: "nhận nội dung", x: 620, y: 126, w: 110, h: 54 },
+          ],
+          edges: [
+            { id: "user-edge", from: "user", to: "edge", label: "yêu cầu" },
+            { id: "edge-user-response", from: "edge", to: "user-response", label: "hit: trả nội dung" },
+            { id: "edge-origin", from: "edge", to: "origin", label: "miss: lấy từ origin" },
+            { id: "origin-edge-cache", from: "origin", to: "edge-cache", label: "nội dung" },
+            { id: "edge-cache-user-response", from: "edge-cache", to: "user-response", label: "cache rồi trả về" },
+          ],
+          caption:
+            "Cache hit thì CDN trả nội dung từ edge gần nhất; nếu miss, lấy nội dung từ origin, cache tại edge rồi trả về người dùng.",
         },
       ],
     },

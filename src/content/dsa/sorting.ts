@@ -61,13 +61,13 @@ export const sortingModule: CourseModule = {
       title: "Selection Sort",
       module: "Sorting Algorithms",
       summary:
-        "Mỗi lượt chọn phần tử nhỏ nhất trong phần chưa sắp xếp và đưa về đầu.",
+        "Mỗi lượt, tìm phần tử nhỏ nhất trong phần chưa sắp xếp rồi đưa về đầu phần đó.",
       duration: "6 phút",
       visualizer: "selection-sort",
       blocks: [
         {
           type: "p",
-          text: "Selection Sort chia mảng thành phần đã sắp xếp (bên trái) và phần chưa sắp xếp (bên phải). Mỗi lượt, nó tìm phần tử nhỏ nhất trong phần chưa sắp xếp rồi hoán đổi vào vị trí kế tiếp của phần đã sắp xếp.",
+          text: "Selection Sort chia mảng thành hai phần: phần đã sắp xếp ở bên trái và phần chưa sắp xếp ở bên phải. Ở mỗi lượt, thuật toán tìm phần tử nhỏ nhất trong phần chưa sắp xếp rồi hoán đổi nó với phần tử ở đầu phần này.",
         },
         { type: "h2", text: "Cài đặt" },
         {
@@ -89,7 +89,7 @@ export const sortingModule: CourseModule = {
           items: [
             "Thời gian: O(n²) trong mọi trường hợp.",
             "Bộ nhớ: O(1).",
-            "Số lần hoán đổi ít nhất trong các thuật toán O(n²): tối đa n-1 lần.",
+            "Số lần hoán đổi ít nhất trong nhóm thuật toán O(n²): tối đa n - 1 lần.",
           ],
         },
       ],
@@ -99,13 +99,13 @@ export const sortingModule: CourseModule = {
       title: "Insertion Sort",
       module: "Sorting Algorithms",
       summary:
-        "Chèn dần từng phần tử vào đúng vị trí trong phần đã sắp xếp bên trái.",
+        "Lần lượt chèn từng phần tử vào đúng vị trí trong phần đã sắp xếp ở bên trái.",
       duration: "6 phút",
       visualizer: "insertion-sort",
       blocks: [
         {
           type: "p",
-          text: "Insertion Sort giống như cách bạn sắp xếp bài trên tay: lấy từng lá bài và chèn vào đúng chỗ trong các lá đã sắp xếp.",
+          text: "Insertion Sort hoạt động giống như khi bạn sắp xếp các lá bài trên tay: lấy từng lá bài rồi chèn vào đúng vị trí trong phần bài đã được sắp xếp.",
         },
         { type: "h2", text: "Cài đặt" },
         {
@@ -125,9 +125,9 @@ export const sortingModule: CourseModule = {
         {
           type: "ul",
           items: [
-            "Thời gian: O(n²) xấu nhất, nhưng O(n) khi mảng gần như đã sắp xếp.",
+            "Thời gian: O(n²) trong trường hợp xấu nhất; O(n) khi mảng gần như đã sắp xếp.",
             "Bộ nhớ: O(1).",
-            "Ổn định và rất hiệu quả với mảng nhỏ.",
+            "Ổn định và hiệu quả với mảng nhỏ.",
           ],
         },
       ],

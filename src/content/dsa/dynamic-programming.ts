@@ -14,14 +14,14 @@ export const dynamicProgrammingModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "Dynamic Programming (DP) giải bài toán lớn bằng cách kết hợp lời giải của các bài toán con, và lưu lại kết quả đã tính. DP phù hợp khi bài toán có hai tính chất dưới đây.",
+          text: "Dynamic Programming (DP) giải bài toán lớn bằng cách kết hợp lời giải của các bài toán con và lưu lại kết quả đã tính. DP phù hợp khi bài toán có hai tính chất sau.",
         },
         { type: "h2", text: "Hai điều kiện" },
         {
           type: "ul",
           items: [
             "Bài toán con chồng lấp (overlapping subproblems): cùng một bài toán con được gọi lại nhiều lần.",
-            "Cấu trúc con tối ưu (optimal substructure): lời giải tối ưu dựng từ lời giải tối ưu của bài toán con.",
+            "Cấu trúc con tối ưu (optimal substructure): lời giải tối ưu được xây dựng từ lời giải tối ưu của các bài toán con.",
           ],
         },
         { type: "h2", text: "Memoization vs Tabulation" },
@@ -29,7 +29,7 @@ export const dynamicProgrammingModule: CourseModule = {
           type: "ul",
           items: [
             "Memoization (top-down): đệ quy + cache kết quả, viết gần với công thức truy hồi.",
-            "Tabulation (bottom-up): lấp bảng từ bài toán nhỏ nhất tới lớn, thường lặp và tiết kiệm stack.",
+            "Tabulation (bottom-up): lấp bảng từ bài toán nhỏ nhất đến bài toán lớn hơn, thường dùng vòng lặp và tiết kiệm stack.",
           ],
         },
         {
@@ -68,7 +68,7 @@ export const dynamicProgrammingModule: CourseModule = {
         { type: "h2", text: "Công thức truy hồi" },
         {
           type: "p",
-          text: "Tại nhà i có hai lựa chọn: bỏ (giữ nguyên dp[i-1]) hoặc lấy (dp[i-2] + nums[i]). Ta chọn giá trị lớn hơn. Chỉ cần giữ hai giá trị gần nhất nên bộ nhớ là O(1).",
+          text: "Khi xét nhà i, có hai lựa chọn: bỏ (giữ nguyên dp[i-1]) hoặc lấy (dp[i-2] + nums[i]). Ta chọn giá trị lớn hơn. Chỉ cần giữ hai giá trị gần nhất nên bộ nhớ là O(1).",
         },
         {
           type: "code",
@@ -104,6 +104,33 @@ export const dynamicProgrammingModule: CourseModule = {
             "DP 1D: O(n) thời gian; có thể O(1) bộ nhớ.",
             "DP 2D / ba lô: O(n × C) thời gian và bộ nhớ (tối ưu còn O(C)).",
           ],
+        },
+        {
+          type: "diagram",
+          nodes: [
+            { id: "col-0", label: "c=0", x: 174, y: 12, w: 100, h: 44 },
+            { id: "col-1", label: "c=1", x: 292, y: 12, w: 100, h: 44 },
+            { id: "col-2", label: "c=2", x: 410, y: 12, w: 100, h: 44 },
+            { id: "col-3", label: "c=3", x: 528, y: 12, w: 100, h: 44 },
+            { id: "row-0", label: "i=0", sub: "0 vật được xét", x: 24, y: 72, w: 132, h: 50 },
+            { id: "row-1", label: "i=1", sub: "1 vật được xét", x: 24, y: 134, w: 132, h: 50 },
+            { id: "row-2", label: "i=2", sub: "2 vật được xét", x: 24, y: 196, w: 132, h: 50 },
+            { id: "dp-0-0", label: "dp[0][0]", x: 174, y: 72, w: 100, h: 50 },
+            { id: "dp-0-1", label: "dp[0][1]", x: 292, y: 72, w: 100, h: 50 },
+            { id: "dp-0-2", label: "dp[0][2]", x: 410, y: 72, w: 100, h: 50 },
+            { id: "dp-0-3", label: "dp[0][3]", x: 528, y: 72, w: 100, h: 50 },
+            { id: "dp-1-0", label: "dp[1][0]", x: 174, y: 134, w: 100, h: 50 },
+            { id: "dp-1-1", label: "dp[1][1]", x: 292, y: 134, w: 100, h: 50 },
+            { id: "dp-1-2", label: "dp[1][2]", x: 410, y: 134, w: 100, h: 50 },
+            { id: "dp-1-3", label: "dp[1][3]", x: 528, y: 134, w: 100, h: 50 },
+            { id: "dp-2-0", label: "dp[2][0]", x: 174, y: 196, w: 100, h: 50 },
+            { id: "dp-2-1", label: "dp[2][1]", x: 292, y: 196, w: 100, h: 50 },
+            { id: "dp-2-2", label: "dp[2][2]", x: 410, y: 196, w: 100, h: 50 },
+            { id: "dp-2-3", label: "dp[2][3]", x: 528, y: 196, w: 100, h: 50 },
+          ],
+          edges: [],
+          caption:
+            "Mỗi ô dp[i][c] lưu giá trị lớn nhất có thể đạt được khi xét i vật đầu tiên với sức chứa c.",
         },
       ],
     },

@@ -2,101 +2,12 @@ import type { CourseModule } from "@/lib/course-types";
 
 export const sdFoundationsModule: CourseModule = {
   id: "sd-foundations",
-  title: "Foundations",
+  title: "Introduction to System Design",
   lessons: [
-    {
-      slug: "sd-introduction",
-      title: "Introduction to System Design",
-      module: "Foundations",
-      summary:
-        "System design là gì, quy trình 4 bước, và các chỉ số phi chức năng cần nhớ.",
-      duration: "8 phút",
-      blocks: [
-        {
-          type: "p",
-          text: "System design là quá trình định hình kiến trúc, các thành phần và cách chúng giao tiếp để đáp ứng một yêu cầu nghiệp vụ ở quy mô lớn — nơi dữ liệu, người dùng và lưu lượng tăng không ngừng.",
-        },
-        {
-          type: "p",
-          text: "Khác với coding, system design không có một đáp án đúng duy nhất. Mục tiêu là đưa ra một thiết kế hợp lý với các đánh đổi (trade-off) được biện luận rõ ràng.",
-        },
-        { type: "h2", text: "Quy trình 4 bước" },
-        {
-          type: "ul",
-          items: [
-            "Hiểu yêu cầu chức năng (functional) và phi chức năng (scale, latency, availability).",
-            "Ước lượng quy mô: số người dùng, QPS, dung lượng lưu trữ.",
-            "Vẽ kiến trúc tổng thể: client, API gateway, service, cache, database, queue.",
-            "Đi sâu vào điểm nghẽn và biện luận trade-off.",
-          ],
-        },
-        { type: "h2", text: "Chỉ số phi chức năng cần nhớ" },
-        {
-          type: "ul",
-          items: [
-            "Availability: 99.9% tương đương khoảng 8.7 giờ downtime mỗi năm.",
-            "Latency: p50/p95/p99 quan trọng hơn giá trị trung bình.",
-            "Scalability: scale ngang (thêm máy) và scale dọc (máy mạnh hơn).",
-          ],
-        },
-        { type: "h2", text: "Đường đi của một request" },
-        {
-          type: "code",
-          snippets: [
-            {
-              lang: "text",
-              code: "Client → DNS → CDN/Edge → Load Balancer → API Gateway → Service → Cache/Database",
-            },
-          ],
-        },
-        {
-          type: "diagram",
-          caption: "Luồng đi của một request từ client tới tầng dữ liệu.",
-          nodes: [
-            { id: "client", label: "Client", x: 20, y: 60, w: 110, h: 54 },
-            { id: "dns", label: "DNS", x: 160, y: 60, w: 110, h: 54 },
-            { id: "cdn", label: "CDN / Edge", x: 300, y: 60, w: 110, h: 54 },
-            {
-              id: "lb",
-              label: "Load Balancer",
-              x: 440,
-              y: 60,
-              w: 110,
-              h: 54,
-            },
-            {
-              id: "gw",
-              label: "API Gateway",
-              x: 580,
-              y: 60,
-              w: 110,
-              h: 54,
-            },
-            { id: "svc", label: "Service", x: 720, y: 60, w: 110, h: 54 },
-            {
-              id: "db",
-              label: "Cache / DB",
-              x: 860,
-              y: 60,
-              w: 110,
-              h: 54,
-            },
-          ],
-          edges: [
-            { id: "client-dns", from: "client", to: "dns" },
-            { id: "dns-cdn", from: "dns", to: "cdn" },
-            { id: "cdn-lb", from: "cdn", to: "lb" },
-            { id: "lb-gw", from: "lb", to: "gw" },
-            { id: "gw-svc", from: "gw", to: "svc" },
-            { id: "svc-db", from: "svc", to: "db" },
-          ],
-        },
-      ],
-    },
     {
       slug: "sd-what-is-system-design",
       title: "What is System Design?",
-      module: "Foundations",
+      module: "Introduction to System Design",
       summary:
         "System design thực sự là gì, vì sao nó quan trọng, và cách tư duy từ yêu cầu tới kiến trúc qua ví dụ ứng dụng chia sẻ ảnh.",
       duration: "12 phút",
@@ -337,7 +248,7 @@ export const sdFoundationsModule: CourseModule = {
     {
       slug: "sd-top-30-concepts",
       title: "30 Must-Know Concepts",
-      module: "Foundations",
+      module: "Introduction to System Design",
       summary:
         "Điểm qua 30 khái niệm system design quan trọng nhất, chia thành 6 nhóm từ mạng, API, lưu trữ, scaling tới hệ phân tán và kiến trúc.",
       duration: "23 phút",
@@ -369,6 +280,29 @@ export const sdFoundationsModule: CourseModule = {
         {
           type: "p",
           text: "DNS là 'danh bạ' của Internet: dịch tên miền (google.com) thành địa chỉ IP. Quá trình phân giải đi qua cache cục bộ → resolver → root server → TLD → authoritative server, và kết quả được cache ở mọi tầng. DNS còn dùng để cân bằng tải và failover.",
+        },
+        {
+          type: "diagram",
+          caption:
+            "DNS phân giải tên miền qua cache cục bộ, resolver, root, TLD và máy chủ authoritative; sau đó client dùng IP để gọi server.",
+          nodes: [
+            { id: "client", label: "Client", x: 30, y: 30, w: 110, h: 56 },
+            { id: "local-cache", label: "Cache cục bộ", sub: "miss", x: 190, y: 30, w: 140, h: 56 },
+            { id: "resolver", label: "Resolver", sub: "phân giải", x: 370, y: 30, w: 120, h: 56 },
+            { id: "root", label: "Root server", sub: "chỉ TLD", x: 370, y: 150, w: 120, h: 52 },
+            { id: "tld", label: "TLD server", sub: "chỉ authoritative", x: 530, y: 150, w: 110, h: 52 },
+            { id: "auth", label: "Authoritative", sub: "trả IP", x: 680, y: 150, w: 150, h: 52 },
+            { id: "server", label: "Server", sub: "nhận HTTP(S)", x: 30, y: 270, w: 110, h: 56 },
+          ],
+          edges: [
+            { id: "client-local-cache", from: "client", to: "local-cache", label: "tên miền" },
+            { id: "local-cache-resolver", from: "local-cache", to: "resolver", label: "miss" },
+            { id: "resolver-root", from: "resolver", to: "root", label: "hỏi" },
+            { id: "root-tld", from: "root", to: "tld" },
+            { id: "tld-auth", from: "tld", to: "auth" },
+            { id: "auth-resolver", from: "auth", to: "resolver", label: "IP", dashed: true },
+            { id: "client-server", from: "client", to: "server", label: "HTTP(S)" },
+          ],
         },
         { type: "h3", text: "4. Proxy vs Reverse Proxy" },
         {
@@ -445,6 +379,25 @@ export const sdFoundationsModule: CourseModule = {
           type: "p",
           text: "Cache lưu dữ liệu hay đọc ở tầng nhanh (RAM) để không phải chạm database mỗi request — kỹ thuật hiệu quả nhất để cải thiện hiệu năng đọc. Mẫu phổ biến là cache-aside: app kiểm tra cache trước; hit thì trả ngay; miss thì đọc DB, ghi lại cache rồi trả. Phần khó là invalidation: TTL, write-through, write-behind.",
         },
+        {
+          type: "diagram",
+          caption:
+            "Với cache-aside, ứng dụng đọc cache trước: cache hit thì trả kết quả ngay; cache miss thì đọc database rồi ghi lại vào cache. Khó nhất là invalidation cache.",
+          nodes: [
+            { id: "app", label: "Ứng dụng", sub: "đọc dữ liệu", x: 20, y: 150, w: 130, h: 56 },
+            { id: "cache", label: "Cache", sub: "kiểm tra", x: 200, y: 150, w: 120, h: 56 },
+            { id: "db", label: "Database", sub: "khi miss", x: 350, y: 270, w: 140, h: 56 },
+            { id: "cache-fill", label: "Cache", sub: "ghi lại", x: 350, y: 40, w: 130, h: 56 },
+            { id: "result", label: "Kết quả", sub: "trả về ứng dụng", x: 640, y: 150, w: 150, h: 56 },
+          ],
+          edges: [
+            { id: "app-cache", from: "app", to: "cache", label: "1. đọc" },
+            { id: "cache-result", from: "cache", to: "result", label: "2a. hit" },
+            { id: "cache-db", from: "cache", to: "db", label: "2b. miss" },
+            { id: "db-cachefill", from: "db", to: "cache-fill", label: "3. ghi lại" },
+            { id: "cachefill-result", from: "cache-fill", to: "result", label: "4. trả" },
+          ],
+        },
         { type: "h3", text: "17. Denormalization" },
         {
           type: "p",
@@ -494,6 +447,25 @@ export const sdFoundationsModule: CourseModule = {
             },
           ],
         },
+        {
+          type: "diagram",
+          caption:
+            "Replication sao chép toàn bộ dữ liệu để giảm tải đọc; sharding chia dữ liệu theo shard key để phân tải và dung lượng lưu trữ.",
+          nodes: [
+            { id: "primary", label: "Primary", sub: "toàn bộ dữ liệu", x: 60, y: 40, w: 180, h: 64 },
+            { id: "replica", label: "Replica", sub: "bản sao đầy đủ", x: 60, y: 200, w: 180, h: 64 },
+            { id: "router", label: "Router", sub: "hash(shard key)", x: 500, y: 40, w: 180, h: 64 },
+            { id: "shard1", label: "Shard 1", sub: "A, B, C", x: 360, y: 210, w: 120, h: 60 },
+            { id: "shard2", label: "Shard 2", sub: "D, E, F", x: 520, y: 210, w: 120, h: 60 },
+            { id: "shard3", label: "Shard 3", sub: "G, H, I", x: 680, y: 210, w: 120, h: 60 },
+          ],
+          edges: [
+            { id: "primary-replica", from: "primary", to: "replica", label: "sao chép toàn bộ" },
+            { id: "router-shard1", from: "router", to: "shard1" },
+            { id: "router-shard2", from: "router", to: "shard2" },
+            { id: "router-shard3", from: "router", to: "shard3" },
+          ],
+        },
         { type: "h2", text: "Nhóm 5: Hệ phân tán" },
         {
           type: "p",
@@ -508,6 +480,28 @@ export const sdFoundationsModule: CourseModule = {
         {
           type: "p",
           text: "CDN là mạng server rải khắp toàn cầu, cache và phục vụ nội dung từ vị trí gần người dùng. Chủ yếu phục vụ nội dung tĩnh (ảnh, CSS, JS, video); một số CDN còn cache nội dung động hoặc chạy serverless ở biên. Người dùng đầu tiên trong vùng bị miss (ra origin), các người dùng sau được phục vụ bản cache nhanh hơn nhiều. Nhà cung cấp: CloudFront, Cloudflare, Akamai.",
+        },
+        {
+          type: "diagram",
+          caption:
+            "Request đầu tiên trong vùng bị cache miss và đi đến origin; các request sau được phục vụ từ cache ở edge gần người dùng.",
+          nodes: [
+            { id: "user1", label: "Người dùng 1", sub: "request đầu", x: 20, y: 40, w: 120, h: 56 },
+            { id: "edge", label: "Edge cache", sub: "gần người dùng", x: 220, y: 150, w: 140, h: 64 },
+            { id: "origin", label: "Origin", sub: "nguồn nội dung", x: 450, y: 40, w: 120, h: 56 },
+            { id: "edge-cache", label: "Edge cache", sub: "cache nội dung", x: 450, y: 150, w: 140, h: 56 },
+            { id: "resp1", label: "Người dùng 1", sub: "nhận nội dung", x: 660, y: 150, w: 140, h: 56 },
+            { id: "user2", label: "Người dùng 2", sub: "request sau", x: 20, y: 280, w: 120, h: 56 },
+            { id: "resp2", label: "Người dùng 2", sub: "trả từ cache", x: 450, y: 280, w: 140, h: 56 },
+          ],
+          edges: [
+            { id: "user1-edge", from: "user1", to: "edge", label: "1. miss" },
+            { id: "edge-origin", from: "edge", to: "origin", label: "2. lấy từ origin" },
+            { id: "origin-edgecache", from: "origin", to: "edge-cache", label: "3. cache nội dung" },
+            { id: "edgecache-resp1", from: "edge-cache", to: "resp1", label: "4. trả về" },
+            { id: "user2-edge", from: "user2", to: "edge", label: "5. hit" },
+            { id: "edge-resp2", from: "edge", to: "resp2", label: "6. trả từ cache" },
+          ],
         },
         { type: "h3", text: "26. Idempotency" },
         {
@@ -548,91 +542,30 @@ export const sdFoundationsModule: CourseModule = {
           type: "p",
           text: "API gateway là một điểm vào duy nhất cho mọi request của client. Thay vì client gọi trực tiếp hàng chục microservice, client gọi gateway — nơi xử lý định tuyến, xác thực, rate limiting và các mối quan tâm xuyên suốt khác. Không có gateway, mỗi service phải tự làm auth, rate limit và logging; gateway tập trung hoá chúng. Ngoài ra còn có biến đổi request/response, gộp response từ nhiều service, cache và circuit breaking. Phổ biến: Kong, AWS API Gateway, Nginx.",
         },
+        {
+          type: "diagram",
+          caption:
+            "API gateway là điểm vào hệ thống, xử lý routing, xác thực và giới hạn tần suất; service có thể đẩy công việc bất đồng bộ vào message queue để worker xử lý.",
+          nodes: [
+            { id: "client", label: "Client", x: 20, y: 150, w: 110, h: 56 },
+            { id: "gateway", label: "API Gateway", sub: "xác thực · giới hạn", x: 180, y: 150, w: 180, h: 64 },
+            { id: "service", label: "Service", sub: "xử lý nghiệp vụ", x: 440, y: 60, w: 140, h: 60 },
+            { id: "db", label: "Database", x: 650, y: 60, w: 120, h: 56 },
+            { id: "queue", label: "Message Queue", sub: "việc bất đồng bộ", x: 440, y: 230, w: 150, h: 56 },
+            { id: "worker", label: "Worker", x: 650, y: 230, w: 120, h: 56 },
+          ],
+          edges: [
+            { id: "client-gateway", from: "client", to: "gateway", label: "request" },
+            { id: "gateway-service", from: "gateway", to: "service", label: "định tuyến" },
+            { id: "service-db", from: "service", to: "db", label: "đọc/ghi" },
+            { id: "service-queue", from: "service", to: "queue", label: "enqueue", dashed: true },
+            { id: "queue-worker", from: "queue", to: "worker", label: "job" },
+          ],
+        },
         { type: "h2", text: "Kết luận" },
         {
           type: "p",
           text: "Bạn không cần thuộc lòng 30 khái niệm này. Điều quan trọng là hiểu mỗi khối giải quyết vấn đề gì và đánh đổi nó mang lại — khi đó bạn có thể ghép chúng để thiết kế gần như mọi hệ thống, và suy luận về những hệ thống chưa từng gặp.",
-        },
-      ],
-    },
-    {
-      slug: "sd-scalability",
-      title: "Scalability",
-      module: "Foundations",
-      summary:
-        "Scale ngang và scale dọc, cùng điều kiện để mở rộng hệ thống theo chiều ngang.",
-      duration: "7 phút",
-      blocks: [
-        {
-          type: "p",
-          text: "Scalability là khả năng xử lý thêm tải bằng cách bổ sung tài nguyên, thay vì phải viết lại hệ thống.",
-        },
-        { type: "h2", text: "Hai hướng mở rộng" },
-        {
-          type: "ul",
-          items: [
-            "Scale dọc (vertical): nâng cấp CPU/RAM của một máy — đơn giản nhưng có giới hạn và tạo điểm chết đơn (SPOF).",
-            "Scale ngang (horizontal): thêm nhiều máy chủ — phức tạp hơn nhưng gần như vô hạn, cần cân bằng tải.",
-          ],
-        },
-        { type: "h2", text: "Điều kiện để scale ngang" },
-        {
-          type: "ul",
-          items: [
-            "Service phải stateless: đẩy trạng thái ra ngoài (Redis, database).",
-            "Cần load balancer phân phối request.",
-            "Dữ liệu cần sharding và/hoặc replication.",
-          ],
-        },
-        {
-          type: "code",
-          snippets: [
-            {
-              lang: "text",
-              code: "Client → Load Balancer → [App 1 | App 2 | App 3] → Shared Cache / Database",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      slug: "sd-latency-throughput",
-      title: "Latency vs Throughput",
-      module: "Foundations",
-      summary:
-        "Phân biệt độ trễ và thông lượng, vai trò của phân vị p99, và cách cải thiện từng chỉ số.",
-      duration: "6 phút",
-      blocks: [
-        {
-          type: "p",
-          text: "Latency là thời gian xử lý một request; throughput là số request xử lý được mỗi giây. Đây là hai chỉ số độc lập — có thể tăng throughput mà latency không đổi, hoặc ngược lại.",
-        },
-        { type: "h2", text: "Phân vị (percentile)" },
-        {
-          type: "ul",
-          items: [
-            "p50: trung vị — một nửa số request nhanh hơn mức này.",
-            "p99: 1% request chậm nhất — thường là nơi lộ vấn đề.",
-            "Tối ưu p99 thường mang lại trải nghiệm tốt hơn là tối ưu giá trị trung bình.",
-          ],
-        },
-        { type: "h2", text: "Cách cải thiện" },
-        {
-          type: "ul",
-          items: [
-            "Caching và CDN để giảm latency.",
-            "Batch và pipeline để tăng throughput.",
-            "Xử lý bất đồng bộ qua message queue để làm phẳng đỉnh tải.",
-          ],
-        },
-        {
-          type: "code",
-          snippets: [
-            {
-              lang: "text",
-              code: "Định luật Little: L (request trong hệ thống) = λ (throughput) × W (latency)",
-            },
-          ],
         },
       ],
     },

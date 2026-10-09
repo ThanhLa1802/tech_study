@@ -48,6 +48,25 @@ export const sdDataModule: CourseModule = {
             },
           ],
         },
+        {
+          type: "diagram",
+          nodes: [
+            { id: "node-a", label: "Nút A", sub: "vị trí trên vòng", x: 330, y: 15, w: 90, h: 50 },
+            { id: "node-b", label: "Nút B", sub: "vị trí trên vòng", x: 555, y: 120, w: 90, h: 50 },
+            { id: "node-c", label: "Nút C", sub: "vị trí trên vòng", x: 330, y: 245, w: 90, h: 50 },
+            { id: "node-d", label: "Nút D", sub: "vị trí trên vòng", x: 105, y: 120, w: 90, h: 50 },
+            { id: "key", label: "Key K", sub: "vị trí hash trên vòng", x: 445, y: 55, w: 96, h: 50 },
+          ],
+          edges: [
+            { id: "ring-a-b", from: "node-a", to: "node-b", label: "chiều kim đồng hồ" },
+            { id: "ring-b-c", from: "node-b", to: "node-c" },
+            { id: "ring-c-d", from: "node-c", to: "node-d" },
+            { id: "ring-d-a", from: "node-d", to: "node-a" },
+            { id: "key-node-b", from: "key", to: "node-b", label: "ánh xạ tới node kế tiếp" },
+          ],
+          caption:
+            "Hash của key nằm trên vòng giữa hai node; key được ánh xạ tới node kế tiếp theo chiều kim đồng hồ.",
+        },
       ],
     },
     {
@@ -84,39 +103,19 @@ export const sdDataModule: CourseModule = {
           type: "p",
           text: "Khi leader chết cần bầu leader mới; phải tránh split-brain bằng cách dùng lease hoặc hầu hết phiếu (majority quorum).",
         },
-      ],
-    },
-    {
-      slug: "sd-cap",
-      title: "CAP Theorem",
-      module: "Data at Scale",
-      summary:
-        "Định lý CAP và PACELC: đánh đổi giữa nhất quán, sẵn sàng và độ trễ.",
-      duration: "8 phút",
-      blocks: [
         {
-          type: "p",
-          text: "Định lý CAP: khi xảy ra phân vùng mạng, một hệ phân tán chỉ có thể đảm bảo 2 trong 3 tính chất — Consistency (nhất quán), Availability (sẵn sàng), Partition tolerance (chịu phân vùng).",
-        },
-        { type: "h2", text: "Thực tế" },
-        {
-          type: "ul",
-          items: [
-            "P (chịu phân vùng) gần như bắt buộc với hệ phân tán thực tế.",
-            "Vì vậy lựa chọn thực sự là giữa C và A: hệ CP ưu tiên nhất quán, hệ AP ưu tiên sẵn sàng.",
+          type: "diagram",
+          nodes: [
+            { id: "leader", label: "Leader", sub: "nhận thao tác ghi", x: 30, y: 130, w: 120, h: 56 },
+            { id: "follower-1", label: "Follower 1", sub: "bản sao", x: 390, y: 40, w: 140, h: 56 },
+            { id: "follower-2", label: "Follower 2", sub: "bản sao", x: 390, y: 220, w: 140, h: 56 },
           ],
-        },
-        { type: "h2", text: "PACELC" },
-        {
-          type: "p",
-          text: "PACELC mở rộng CAP: ngay cả khi không có phân vùng (Else), hệ thống vẫn phải chọn giữa Latency (L) và Consistency (C).",
-        },
-        {
-          type: "ul",
-          items: [
-            "CP: từ chối request để giữ nhất quán (ví dụ HBase).",
-            "AP: luôn phản hồi nhưng dữ liệu có thể cũ (ví dụ Cassandra, DynamoDB).",
+          edges: [
+            { id: "leader-follower-1", from: "leader", to: "follower-1", label: "sao chép dữ liệu" },
+            { id: "leader-follower-2", from: "leader", to: "follower-2", label: "sao chép dữ liệu" },
           ],
+          caption:
+            "Leader nhận thao tác ghi rồi sao chép dữ liệu sang các follower.",
         },
       ],
     },

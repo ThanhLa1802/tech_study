@@ -53,6 +53,8 @@ export type DiagramLegendItem = { state: NodeState | "packet"; label: string };
  */
 export type DiagramSpecOverrides = {
   title?: string;
+  /** Full pseudocode replacement; use when a line contains natural language. */
+  pseudo?: string[];
   legend?: Partial<Record<NodeState | "packet", string>>;
 };
 
@@ -67,7 +69,7 @@ export type DiagramSpec = {
   overrides?: Partial<Record<Locale, DiagramSpecOverrides>>;
 };
 
-/** Applies a spec's locale overrides to its title and legend labels. */
+/** Applies a spec's locale overrides to its title, pseudocode, and legend. */
 export function localizeDiagramSpec(
   spec: DiagramSpec,
   locale: Locale,
@@ -77,6 +79,7 @@ export function localizeDiagramSpec(
   return {
     ...spec,
     title: overrides.title ?? spec.title,
+    pseudo: overrides.pseudo ?? spec.pseudo,
     legend: spec.legend.map((item) => ({
       ...item,
       label: overrides.legend?.[item.state] ?? item.label,

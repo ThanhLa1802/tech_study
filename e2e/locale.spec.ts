@@ -30,15 +30,20 @@ test("redirects legacy lesson URLs to Vietnamese", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("lang", "vi");
 });
 
-test("does not show Vietnamese copy at an untranslated English lesson URL", async ({
+test("renders the final translated System Design lesson without a fallback", async ({
   page,
 }) => {
-  await page.goto("/en/learn/dsa/stack");
+  await page.goto("/en/learn/system-design/sd-rate-limiting");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(
-    page.getByRole("heading", { name: "English translation in progress" }),
+    page.getByRole("heading", { name: "Rate Limiting", exact: true }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "Read this lesson in Vietnamese" }))
-    .toHaveAttribute("href", "/vi/learn/dsa/stack");
-  await expect(page.getByText("ngăn xếp", { exact: false })).toHaveCount(0);
+  await expect(
+    page.getByText(
+      "Limit requests to protect a system with fixed and sliding windows or a token bucket.",
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "English translation in progress" }),
+  ).toHaveCount(0);
 });

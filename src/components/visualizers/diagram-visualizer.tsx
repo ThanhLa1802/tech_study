@@ -166,7 +166,7 @@ export default function DiagramVisualizer({
             {en ? "Pseudocode" : "Mã giả"}
           </p>
           <pre className="overflow-x-auto font-mono text-xs leading-6">
-            {spec.pseudo.map((line, index) => (
+            {display.pseudo.map((line, index) => (
               <span
                 key={index}
                 className={`block rounded px-2 ${

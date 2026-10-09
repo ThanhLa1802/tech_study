@@ -9,13 +9,13 @@ export const heapsModule: CourseModule = {
       title: "Binary Heap",
       module: "Heaps",
       summary:
-        "Cây nhị phân đầy đủ lưu bằng mảng: nút cha luôn ≤ (hoặc ≥) hai con, cho phép lấy cực trị O(1).",
+        "Cây nhị phân đầy đủ được lưu bằng mảng: nút cha luôn ≤ (hoặc ≥) hai con, cho phép xem phần tử cực trị trong O(1).",
       duration: "9 phút",
       visualizer: "binary-heap",
       blocks: [
         {
           type: "p",
-          text: "Binary Heap là cây nhị phân đầy đủ (lấp đầy từ trái sang phải) thoả tính chất heap. Min-heap: mỗi nút cha đều nhỏ hơn hoặc bằng hai con, nên phần tử nhỏ nhất luôn nằm ở gốc. Max-heap thì ngược lại.",
+          text: "Binary heap là cây nhị phân đầy đủ (các nút được điền từ trái sang phải) và thỏa mãn tính chất heap. Trong min-heap, mỗi nút cha đều nhỏ hơn hoặc bằng hai nút con, nên phần tử nhỏ nhất luôn nằm ở gốc. Max-heap thì ngược lại.",
         },
         {
           type: "diagram",
@@ -37,7 +37,7 @@ export const heapsModule: CourseModule = {
             { id: "m26", from: "h2", to: "h6", label: "R" },
           ],
           caption:
-            "Min-heap: nút cha luôn ≤ hai con nên 1 (nhỏ nhất) nằm ở gốc. Số dưới mỗi nút là chỉ số i trong mảng.",
+            "Min-heap: nút cha luôn ≤ hai nút con nên 1 (nhỏ nhất) nằm ở gốc. Số dưới mỗi nút là chỉ số i trong mảng.",
         },
         {
           type: "diagram",
@@ -59,17 +59,17 @@ export const heapsModule: CourseModule = {
             { id: "M26", from: "x2", to: "x6", label: "R" },
           ],
           caption:
-            "Max-heap: nút cha luôn ≥ hai con nên 9 (lớn nhất) nằm ở gốc. Cùng một cây, chỉ khác quy tắc so sánh.",
+            "Max-heap: nút cha luôn ≥ hai nút con nên 9 (lớn nhất) nằm ở gốc. Cùng một cây, chỉ khác quy tắc so sánh.",
         },
         { type: "h2", text: "Biểu diễn bằng mảng" },
         {
           type: "p",
-          text: "Vì cây đầy đủ nên có thể lưu phẳng trong mảng mà không cần con trỏ. Với nút ở chỉ số i: cha là (i-1)/2, con trái là 2i+1, con phải là 2i+2.",
+          text: "Vì cây đầy đủ nên có thể lưu trực tiếp trong mảng mà không cần con trỏ. Với nút ở chỉ số i: cha là (i-1)/2, con trái là 2i+1, con phải là 2i+2.",
         },
         { type: "h2", text: "Vun đống: sift-up & sift-down" },
         {
           type: "p",
-          text: "Khi chèn, ta đặt phần tử vào cuối rồi đưa nó nổi lên (sift-up). Khi lấy gốc, ta đưa phần tử cuối lên gốc rồi đẩy nó chìm xuống (sift-down).",
+          text: "Khi chèn, ta đặt phần tử vào cuối rồi đưa nó lên (sift-up). Khi lấy gốc, ta đưa phần tử cuối lên gốc rồi đẩy nó xuống (sift-down).",
         },
         {
           type: "code",
@@ -100,12 +100,12 @@ export const heapsModule: CourseModule = {
       title: "Priority Queue & Top-K",
       module: "Heaps",
       summary:
-        "Heap là nền tảng của hàng đợi ưu tiên; mẫu top-K dùng heap kích thước k để giữ O(n log k).",
+        "Heap là nền tảng của hàng đợi ưu tiên; mẫu top-K dùng heap kích thước k để đạt độ phức tạp O(n log k).",
       duration: "7 phút",
       blocks: [
         {
           type: "p",
-          text: "Priority Queue (hàng đợi ưu tiên) luôn lấy ra phần tử có độ ưu tiên cao nhất thay vì theo thứ tự vào. Heap chính là cài đặt chuẩn mực cho nó.",
+          text: "Priority Queue (hàng đợi ưu tiên) luôn lấy ra phần tử có độ ưu tiên cao nhất thay vì theo thứ tự vào. Heap là cấu trúc dữ liệu thường dùng để cài đặt hàng đợi này.",
         },
         { type: "h2", text: "Ứng dụng" },
         {
@@ -119,7 +119,7 @@ export const heapsModule: CourseModule = {
         { type: "h2", text: "Mẫu top-K" },
         {
           type: "p",
-          text: "Để giữ k phần tử nhỏ nhất, dùng một max-heap kích thước k: khi heap vượt k, bỏ phần tử lớn nhất. Mỗi phần tử tốn O(log k) thay vì sắp xếp toàn bộ O(n log n).",
+          text: "Để giữ k phần tử nhỏ nhất, dùng một max-heap kích thước k: khi heap vượt quá k phần tử, bỏ phần tử lớn nhất. Xử lý mỗi phần tử mất O(log k), thay vì sắp xếp toàn bộ với độ phức tạp O(n log n).",
         },
         {
           type: "code",
@@ -154,7 +154,7 @@ export const heapsModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "6 câu hỏi về binary heap và cách dùng trong hàng đợi ưu tiên.",
+          text: "6 câu hỏi về binary heap và cách dùng heap trong hàng đợi ưu tiên.",
         },
       ],
       quiz: {
@@ -174,7 +174,7 @@ export const heapsModule: CourseModule = {
             id: "hp2",
             tag: "Chỉ số",
             prompt:
-              "Với nút ở chỉ số i, con TRÁI nằm ở chỉ số nào (mảng bắt đầu từ 0)?",
+              "Với nút ở chỉ số i, con trái nằm ở chỉ số nào (mảng bắt đầu từ 0)?",
             options: ["2i", "2i + 1", "2i + 2", "i / 2"],
             answer: 1,
             explanation:

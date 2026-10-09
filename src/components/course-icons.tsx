@@ -26,7 +26,8 @@ export type IconName =
   | "layers"
   | "server"
   | "database"
-  | "shield";
+  | "shield"
+  | "concepts";
 
 const PATHS: Record<IconName, string> = {
   welcome:
@@ -67,6 +68,8 @@ const PATHS: Record<IconName, string> = {
     "M12 3.75c4.14 0 7.5 1.06 7.5 2.36S16.14 8.47 12 8.47 4.5 7.41 4.5 6.11 7.86 3.75 12 3.75ZM4.5 6.11v11.78c0 1.3 3.36 2.36 7.5 2.36s7.5-1.06 7.5-2.36V6.11M4.5 12c0 1.3 3.36 2.36 7.5 2.36s7.5-1.06 7.5-2.36",
   shield:
     "M12 3.75 5.25 6.15v5.6c0 4 2.7 6.9 6.75 8.25 4.05-1.35 6.75-4.25 6.75-8.25v-5.6L12 3.75Z",
+  concepts:
+    "M12 3.25a6 6 0 0 0-3.5 10.85V17h7v-2.9A6 6 0 0 0 12 3.25ZM9.5 19.5h5M10.5 21.75h3",
 };
 
 export function Icon({
@@ -110,7 +113,8 @@ export const MODULE_ICONS: Record<string, IconName> = {
   "recursion-backtracking": "recursion",
   graphs: "graph",
   "dynamic-programming": "dp",
-  "sd-foundations": "layers",
+  "sd-foundations": "welcome",
+  "sd-core-concepts": "concepts",
   "sd-building-blocks": "server",
   "sd-data": "database",
   "sd-reliability": "shield",

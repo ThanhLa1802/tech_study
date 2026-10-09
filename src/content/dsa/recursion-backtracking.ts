@@ -14,12 +14,12 @@ export const recursionBacktrackingModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "Đệ quy (recursion) là kỹ thuật một hàm gọi lại chính nó để giải bài toán nhỏ hơn. Mọi hàm đệ quy cần hai phần: base case (điều kiện dừng) và recursive case (gọi lại với bài toán nhỏ hơn).",
+          text: "Đệ quy (recursion) là kỹ thuật một hàm tự gọi lại để giải bài toán nhỏ hơn. Mọi hàm đệ quy cần hai phần: base case (điều kiện dừng) và recursive case (gọi lại với bài toán nhỏ hơn).",
         },
         { type: "h2", text: "Call stack" },
         {
           type: "p",
-          text: "Mỗi lời gọi được xếp một khung (frame) chứa tham số và biến cục bộ. Đệ quy sâu n lần tốn O(n) bộ nhớ stack — đệ quy quá sâu có thể tràn stack.",
+          text: "Mỗi lời gọi tạo một khung (frame) chứa tham số và biến cục bộ. Đệ quy sâu n lần tốn O(n) bộ nhớ stack — đệ quy quá sâu có thể tràn stack.",
         },
         { type: "h2", text: "Ví dụ" },
         {
@@ -35,10 +35,10 @@ export const recursionBacktrackingModule: CourseModule = {
             },
           ],
         },
-        { type: "h2", text: "Đệ quy Fibonacci: bẫy lặp lại" },
+        { type: "h2", text: "Đệ quy Fibonacci: tính lặp lại" },
         {
           type: "p",
-          text: "Fibonacci đệ quy ngây thơ gọi lại cùng bài toán con rất nhiều lần nên tốn O(2ⁿ). Ghi nhớ (memoization) kết quả đã tính đưa về O(n).",
+          text: "Fibonacci đệ quy ngây thơ tính lại cùng bài toán con nhiều lần nên tốn O(2ⁿ). Ghi nhớ (memoization) các kết quả đã tính giúp giảm độ phức tạp xuống O(n).",
         },
         {
           type: "code",
@@ -53,11 +53,11 @@ export const recursionBacktrackingModule: CourseModule = {
             },
           ],
         },
-        { type: "h2", text: "Đệ quy vs lặp" },
+        { type: "h2", text: "Đệ quy và vòng lặp" },
         {
           type: "ul",
           items: [
-            "Đệ quy diễn đạt tự nhiên các bài toán chia nhỏ (cây, chia để trị, quay lui).",
+            "Đệ quy diễn đạt tự nhiên các bài toán được chia nhỏ (cây, chia để trị, quay lui).",
             "Vòng lặp tiết kiệm bộ nhớ stack; đôi khi thay đệ quy đuôi bằng vòng lặp.",
             "Đệ quy sâu O(n) stack; bản lặp thường chỉ O(1) bộ nhớ phụ.",
           ],
@@ -103,7 +103,7 @@ export const recursionBacktrackingModule: CourseModule = {
         { type: "h2", text: "Hoán vị & N-Queens" },
         {
           type: "p",
-          text: "Cùng khung đó áp dụng cho hoán vị (chọn từng vị trí chưa dùng) và N-Queens (đặt hậu từng hàng, loại các cột/đường chéo bị tấn công). Mấu chốt là cắt nhánh (pruning) càng sớm càng tốt.",
+          text: "Khung này cũng áp dụng cho hoán vị (chọn từng vị trí chưa dùng) và N-Queens (đặt hậu từng hàng, loại các cột/đường chéo bị tấn công). Mấu chốt là cắt nhánh (pruning) càng sớm càng tốt.",
         },
         { type: "h2", text: "Độ phức tạp" },
         {
@@ -113,6 +113,28 @@ export const recursionBacktrackingModule: CourseModule = {
             "Bộ nhớ đệ quy: O(n) cho độ sâu, chưa kể bộ nhớ lưu kết quả.",
             "Cắt nhánh giúp giảm mạnh số nhánh thực tế so với cận trên.",
           ],
+        },
+        {
+          type: "diagram",
+          nodes: [
+            { id: "start", label: "Bắt đầu", sub: "nums = [1, 2]", x: 320, y: 20, w: 104, h: 58 },
+            { id: "skip-1", label: "[]", sub: "sau khi xét 1", x: 150, y: 112, w: 104, h: 58 },
+            { id: "choose-1", label: "[1]", sub: "sau khi xét 1", x: 460, y: 112, w: 104, h: 58 },
+            { id: "leaf-empty", label: "[]", sub: "kết quả", x: 20, y: 212, w: 104, h: 58 },
+            { id: "leaf-two", label: "[2]", sub: "kết quả", x: 210, y: 212, w: 104, h: 58 },
+            { id: "leaf-one", label: "[1]", sub: "kết quả", x: 420, y: 212, w: 104, h: 58 },
+            { id: "leaf-one-two", label: "[1,2]", sub: "kết quả", x: 610, y: 212, w: 104, h: 58 },
+          ],
+          edges: [
+            { id: "start-skip-1", from: "start", to: "skip-1", label: "Bỏ qua 1" },
+            { id: "start-choose-1", from: "start", to: "choose-1", label: "Chọn 1" },
+            { id: "skip-1-leaf-empty", from: "skip-1", to: "leaf-empty", label: "Bỏ qua 2" },
+            { id: "skip-1-leaf-two", from: "skip-1", to: "leaf-two", label: "Chọn 2" },
+            { id: "choose-1-leaf-one", from: "choose-1", to: "leaf-one", label: "Bỏ qua 2" },
+            { id: "choose-1-leaf-one-two", from: "choose-1", to: "leaf-one-two", label: "Chọn 2" },
+          ],
+          caption:
+            "Với nums = [1, 2], mỗi tầng chọn hoặc bỏ qua một phần tử. Bốn lá là toàn bộ tập con có thể có.",
         },
       ],
     },

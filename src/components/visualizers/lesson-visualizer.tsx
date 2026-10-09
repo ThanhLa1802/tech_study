@@ -5,6 +5,8 @@ import type { Locale } from "@/lib/locale";
 import AlgorithmVisualizer from "./algorithm-visualizer";
 import ComplexityVisualizer from "./complexity-visualizer";
 import DiagramVisualizer from "./diagram-visualizer";
+import FixedSlidingWindowMotion from "./fixed-sliding-window-motion";
+import SlidingWindowMotion from "./sliding-window-motion";
 import { diagramVisualizers } from "./diagram-specs";
 import { visualizers } from "./specs";
 import {
@@ -21,6 +23,12 @@ export default function LessonVisualizer({
 }) {
   if (type === "big-o-growth") {
     return <ComplexityVisualizer locale={locale} />;
+  }
+  if (type === "sliding-window") {
+    return <SlidingWindowMotion locale={locale} />;
+  }
+  if (type === "fixed-sliding-window") {
+    return <FixedSlidingWindowMotion locale={locale} />;
   }
   if (type in structureDiagramVisualizers) {
     return (

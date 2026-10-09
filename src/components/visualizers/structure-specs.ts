@@ -144,7 +144,8 @@ function idleBstStates(): Record<string, NodeState> {
   return states;
 }
 
-function buildBinarySearchTree(): DiagramFrame[] {
+function buildBinarySearchTree(locale?: Locale): DiagramFrame[] {
+  const en = locale === "en";
   const frames: DiagramFrame[] = [];
   const target = 40;
   const stats = (node: string) => [
@@ -155,14 +156,18 @@ function buildBinarySearchTree(): DiagramFrame[] {
   frames.push({
     states: { ...idleBstStates(), n50: "active" },
     line: 1,
-    note: "cur = root = 50. Bắt đầu tìm từ gốc.",
+    note: en
+      ? "cur = root = 50. Start the search at the root."
+      : "cur = root = 50. Bắt đầu tìm từ gốc.",
     stats: stats("50"),
   });
 
   frames.push({
     states: { ...idleBstStates(), n50: "active" },
     line: 3,
-    note: `So sánh target = ${target} với 50. Chưa bằng.`,
+    note: en
+      ? `Compare target = ${target} with 50. They are not equal.`
+      : `So sánh target = ${target} với 50. Chưa bằng.`,
     stats: stats("50"),
   });
 
@@ -170,7 +175,9 @@ function buildBinarySearchTree(): DiagramFrame[] {
     states: { ...idleBstStates(), n50: "active", n30: "active" },
     edgeStates: { "e-50-30": "active" },
     line: 4,
-    note: `${target} < 50 → đi sang cây con bên trái (30).`,
+    note: en
+      ? `${target} < 50 → move to the left subtree (30).`
+      : `${target} < 50 → đi sang cây con bên trái (30).`,
     stats: stats("30"),
   });
 
@@ -178,7 +185,9 @@ function buildBinarySearchTree(): DiagramFrame[] {
     states: { ...idleBstStates(), n30: "active" },
     edgeStates: { "e-50-30": "active" },
     line: 3,
-    note: `So sánh target = ${target} với 30. Chưa bằng.`,
+    note: en
+      ? `Compare target = ${target} with 30. They are not equal.`
+      : `So sánh target = ${target} với 30. Chưa bằng.`,
     stats: stats("30"),
   });
 
@@ -186,7 +195,9 @@ function buildBinarySearchTree(): DiagramFrame[] {
     states: { ...idleBstStates(), n30: "active", n40: "active" },
     edgeStates: { "e-50-30": "active", "e-30-40": "active" },
     line: 5,
-    note: `${target} > 30 → đi sang cây con bên phải (40).`,
+    note: en
+      ? `${target} > 30 → move to the right subtree (40).`
+      : `${target} > 30 → đi sang cây con bên phải (40).`,
     stats: stats("40"),
   });
 
@@ -194,14 +205,21 @@ function buildBinarySearchTree(): DiagramFrame[] {
     states: { ...idleBstStates(), n40: "success" },
     edgeStates: { "e-50-30": "active", "e-30-40": "active" },
     line: 3,
-    note: `target = ${target} bằng giá trị node → tìm thấy tại node 40.`,
+    note: en
+      ? `target = ${target} matches the node value → found at node 40.`
+      : `target = ${target} bằng giá trị node → tìm thấy tại node 40.`,
     stats: stats("40"),
   });
 
   return frames;
 }
 
-function buildStack(input: number[]): StepFrame[] {
+function buildStack(
+  input: number[],
+  _target: number,
+  locale: Locale = "vi",
+): StepFrame[] {
+  const en = locale === "en";
   const frames: StepFrame[] = [];
   const stack: number[] = [];
 
@@ -219,7 +237,9 @@ function buildStack(input: number[]): StepFrame[] {
     array: [...stack],
     marks: [],
     line: 1,
-    note: "Stack rỗng. LIFO: phần tử vào sau cùng ra đầu tiên.",
+    note: en
+      ? "Stack is empty. LIFO: the last item added is the first one removed."
+      : "Stack rỗng. LIFO: phần tử vào sau cùng ra đầu tiên.",
     stats: stats(),
   });
 
@@ -232,7 +252,9 @@ function buildStack(input: number[]): StepFrame[] {
       marks,
       pointers: { [stack.length - 1]: "top" },
       line: 2,
-      note: `push(${value}) → ${value} nằm trên đỉnh stack.`,
+      note: en
+        ? `push(${value}) → ${value} is now at the top of the stack.`
+        : `push(${value}) → ${value} nằm trên đỉnh stack.`,
       stats: stats(),
     });
   }
@@ -246,7 +268,9 @@ function buildStack(input: number[]): StepFrame[] {
       marks,
       pointers: { [top]: "top" },
       line: 4,
-      note: `pop() lấy ${stack[top]} ở đỉnh ra.`,
+      note: en
+        ? `pop() removes ${stack[top]} from the top.`
+        : `pop() lấy ${stack[top]} ở đỉnh ra.`,
       stats: stats(),
     });
     stack.pop();
@@ -255,7 +279,9 @@ function buildStack(input: number[]): StepFrame[] {
       marks: contentMarks(),
       pointers: stack.length ? { [stack.length - 1]: "top" } : {},
       line: 4,
-      note: `Còn lại ${stack.length} phần tử trong stack.`,
+      note: en
+        ? `The stack now contains ${stack.length} item(s).`
+        : `Còn lại ${stack.length} phần tử trong stack.`,
       stats: stats(),
     });
   }
@@ -264,13 +290,20 @@ function buildStack(input: number[]): StepFrame[] {
     array: [],
     marks: [],
     line: 4,
-    note: "Stack rỗng trở lại — bốn lần pop đối xứng với bốn lần push.",
+    note: en
+      ? "Stack is empty again—the items that were pushed have all been popped."
+      : "Stack rỗng trở lại — bốn lần pop đối xứng với bốn lần push.",
     stats: stats(),
   });
   return frames;
 }
 
-function buildQueue(input: number[]): StepFrame[] {
+function buildQueue(
+  input: number[],
+  _target: number,
+  locale: Locale = "vi",
+): StepFrame[] {
+  const en = locale === "en";
   const frames: StepFrame[] = [];
   let queue: number[] = [];
 
@@ -278,7 +311,11 @@ function buildQueue(input: number[]): StepFrame[] {
     { label: "size", value: queue.length, tone: "indigo" as const },
     { label: "front", value: queue.length ? queue[0] : "—", tone: "amber" as const },
     { label: "rear", value: queue.length ? queue[queue.length - 1] : "—", tone: "slate" as const },
-    { label: "vừa", value: note, tone: "emerald" as const },
+    {
+      label: en ? "Most recent operation" : "vừa",
+      value: note,
+      tone: "emerald" as const,
+    },
   ];
   const contentMarks = (): BarMark[] => queue.map(() => "sorted" as BarMark);
 
@@ -286,7 +323,9 @@ function buildQueue(input: number[]): StepFrame[] {
     array: [],
     marks: [],
     line: 1,
-    note: "Queue rỗng. FIFO: phần tử vào trước ra trước.",
+    note: en
+      ? "Queue is empty. FIFO: the first item added is the first one removed."
+      : "Queue rỗng. FIFO: phần tử vào trước ra trước.",
     stats: stats("—"),
   });
 
@@ -299,7 +338,9 @@ function buildQueue(input: number[]): StepFrame[] {
       marks,
       pointers: { [queue.length - 1]: "rear" },
       line: 2,
-      note: `enqueue(${value}) → vào cuối hàng đợi.`,
+      note: en
+        ? `enqueue(${value}) → added to the back of the queue.`
+        : `enqueue(${value}) → vào cuối hàng đợi.`,
       stats: stats(`enqueue ${value}`),
     });
   }
@@ -312,7 +353,9 @@ function buildQueue(input: number[]): StepFrame[] {
       marks,
       pointers: { 0: "front" },
       line: 4,
-      note: `dequeue() lấy ${queue[0]} ở đầu hàng đợi.`,
+      note: en
+        ? `dequeue() removes ${queue[0]} from the front of the queue.`
+        : `dequeue() lấy ${queue[0]} ở đầu hàng đợi.`,
       stats: stats(`dequeue ${queue[0]}`),
     });
     queue = queue.slice(1);
@@ -321,7 +364,9 @@ function buildQueue(input: number[]): StepFrame[] {
       marks: contentMarks(),
       pointers: queue.length ? { 0: "front" } : {},
       line: 4,
-      note: `Còn lại ${queue.length} phần tử trong hàng đợi.`,
+      note: en
+        ? `The queue now contains ${queue.length} item(s).`
+        : `Còn lại ${queue.length} phần tử trong hàng đợi.`,
       stats: stats("—"),
     });
   }
@@ -330,13 +375,18 @@ function buildQueue(input: number[]): StepFrame[] {
     array: [],
     marks: [],
     line: 4,
-    note: "Queue rỗng trở lại.",
+    note: en ? "Queue is empty again." : "Queue rỗng trở lại.",
     stats: stats("—"),
   });
   return frames;
 }
 
-function buildBinaryHeap(input: number[]): StepFrame[] {
+function buildBinaryHeap(
+  input: number[],
+  _target: number,
+  locale: Locale = "vi",
+): StepFrame[] {
+  const en = locale === "en";
   const frames: StepFrame[] = [];
   const heap: number[] = [];
 
@@ -358,16 +408,27 @@ function buildBinaryHeap(input: number[]): StepFrame[] {
     frames.push({ array: [...heap], marks, pointers, line, note, stats: stats() });
   };
 
-  emit([], "Heap rỗng. Min-heap: mỗi nút cha đều ≤ hai nút con.", 1);
+  emit(
+    [],
+    en
+      ? "Heap is empty. In a min-heap, every parent is ≤ its children."
+      : "Heap rỗng. Min-heap: mỗi nút cha đều ≤ hai nút con.",
+    1,
+  );
 
   for (const value of input) {
     heap.push(value);
     let i = heap.length - 1;
     const inserted = contentMarks();
     inserted[i] = "active";
-    emit(inserted, `Thêm ${value} vào cuối mảng tại vị trí ${i}.`, 3, {
-      [i]: "i",
-    });
+    emit(
+      inserted,
+      en
+        ? `Add ${value} to the end of the array at index ${i}.`
+        : `Thêm ${value} vào cuối mảng tại vị trí ${i}.`,
+      3,
+      { [i]: "i" },
+    );
 
     let parent = Math.floor((i - 1) / 2);
     while (i > 0 && heap[i] < heap[parent]) {
@@ -376,7 +437,9 @@ function buildBinaryHeap(input: number[]): StepFrame[] {
       compare[parent] = "compare";
       emit(
         compare,
-        `So sánh ${heap[i]} với cha ${heap[parent]}: con nhỏ hơn → cần đổi chỗ.`,
+        en
+          ? `Compare ${heap[i]} with parent ${heap[parent]}: the child is smaller, so they need to be swapped.`
+          : `So sánh ${heap[i]} với cha ${heap[parent]}: con nhỏ hơn → cần đổi chỗ.`,
         3,
         { [i]: "i", [parent]: "parent" },
       );
@@ -385,9 +448,14 @@ function buildBinaryHeap(input: number[]): StepFrame[] {
       const swapped = contentMarks();
       swapped[i] = "swap";
       swapped[parent] = "swap";
-      emit(swapped, `Đổi chỗ để ${heap[parent]} nổi lên trên.`, 3, {
-        [parent]: "i",
-      });
+      emit(
+        swapped,
+        en
+          ? `Swap them to move ${heap[parent]} up.`
+          : `Đổi chỗ để ${heap[parent]} nổi lên trên.`,
+        3,
+        { [parent]: "i" },
+      );
 
       i = parent;
       parent = Math.floor((i - 1) / 2);
@@ -395,25 +463,37 @@ function buildBinaryHeap(input: number[]): StepFrame[] {
 
     const placed = contentMarks();
     placed[i] = "found";
-    emit(placed, `${value} đã về đúng vị trí — heap vẫn hợp lệ.`, 2, {
-      [i]: "i",
-    });
+    emit(
+      placed,
+      en
+        ? `${value} is in the correct position—the heap property still holds.`
+        : `${value} đã về đúng vị trí — heap vẫn hợp lệ.`,
+      2,
+      { [i]: "i" },
+    );
   }
 
   if (heap.length > 0) {
     const minimum = heap[0];
     const highlightRoot = contentMarks();
     highlightRoot[0] = "found";
-    emit(highlightRoot, `extractMin(): lấy ${minimum} ở gốc.`, 4, {
-      0: "root",
-    });
+    emit(
+      highlightRoot,
+      en
+        ? `extractMin(): remove ${minimum} from the root.`
+        : `extractMin(): lấy ${minimum} ở gốc.`,
+      4,
+      { 0: "root" },
+    );
 
     const last = heap.length - 1;
     [heap[0], heap[last]] = [heap[last], heap[0]];
     const removed = heap.pop() as number;
     emit(
       contentMarks(),
-      `Đưa ${removed} xuống cuối rồi loại khỏi heap.`,
+      en
+        ? `Move ${removed} to the end, then remove it from the heap.`
+        : `Đưa ${removed} xuống cuối rồi loại khỏi heap.`,
       4,
       heap.length ? { 0: "root" } : {},
     );
@@ -432,7 +512,9 @@ function buildBinaryHeap(input: number[]): StepFrame[] {
       compare[smallest] = "compare";
       emit(
         compare,
-        `Nút ${i} lớn hơn con ${smallest} → cần đổi chỗ (sift-down).`,
+        en
+          ? `Node ${i} is larger than child ${smallest}, so they need to be swapped (sift-down).`
+          : `Nút ${i} lớn hơn con ${smallest} → cần đổi chỗ (sift-down).`,
         4,
         { [i]: "i", [smallest]: "child" },
       );
@@ -441,13 +523,26 @@ function buildBinaryHeap(input: number[]): StepFrame[] {
       const swapped = contentMarks();
       swapped[i] = "swap";
       swapped[smallest] = "swap";
-      emit(swapped, `Đổi chỗ để nút nhỏ nổi lên.`, 4, { [i]: "i" });
+      emit(
+        swapped,
+        en
+          ? "Swap them to move the smaller node up."
+          : "Đổi chỗ để nút nhỏ nổi lên.",
+        4,
+        { [i]: "i" },
+      );
 
       i = smallest;
     }
   }
 
-  emit(contentMarks(), "Hoàn tất: mảng vẫn thoả tính chất min-heap.", 5);
+  emit(
+    contentMarks(),
+    en
+      ? "Done: the array still satisfies the min-heap property."
+      : "Hoàn tất: mảng vẫn thoả tính chất min-heap.",
+    5,
+  );
   return frames;
 }
 
@@ -475,7 +570,8 @@ function emptyGraphStates(): Record<string, NodeState> {
   return states;
 }
 
-function buildGraphBfs(): DiagramFrame[] {
+function buildGraphBfs(locale: Locale = "vi"): DiagramFrame[] {
+  const en = locale === "en";
   const adjacency: Record<string, string[]> = {
     A: ["B", "C"],
     B: ["A", "D"],
@@ -491,11 +587,11 @@ function buildGraphBfs(): DiagramFrame[] {
 
   const stats = () => [
     {
-      label: "hàng đợi",
-      value: queue.length ? queue.join(" → ") : "rỗng",
+      label: en ? "Queue" : "hàng đợi",
+      value: queue.length ? queue.join(" → ") : en ? "Empty" : "rỗng",
       tone: "indigo" as const,
     },
-    { label: "đã thăm", value: order.length, tone: "emerald" as const },
+    { label: en ? "Visited" : "đã thăm", value: order.length, tone: "emerald" as const },
   ];
   const decorate = (
     overrides: Record<string, NodeState>,
@@ -512,7 +608,9 @@ function buildGraphBfs(): DiagramFrame[] {
   frames.push({
     states: decorate({ A: "warn" }),
     line: 1,
-    note: "Khởi tạo: đưa đỉnh nguồn A vào hàng đợi.",
+    note: en
+      ? "Initialize: add source vertex A to the queue."
+      : "Khởi tạo: đưa đỉnh nguồn A vào hàng đợi.",
     stats: stats(),
   });
 
@@ -522,7 +620,9 @@ function buildGraphBfs(): DiagramFrame[] {
     frames.push({
       states: decorate({ [node]: "active" }),
       line: 3,
-      note: `Lấy ${node} ra khỏi hàng đợi và đánh dấu đã thăm.`,
+      note: en
+        ? `Dequeue ${node} and mark it as visited.`
+        : `Lấy ${node} ra khỏi hàng đợi và đánh dấu đã thăm.`,
       stats: stats(),
     });
 
@@ -540,8 +640,12 @@ function buildGraphBfs(): DiagramFrame[] {
         edgeStates: { [edgeId(node, neighbor)]: isNew ? "active" : "idle" },
         line: 5,
         note: isNew
-          ? `Xét hàng xóm ${neighbor}: chưa thăm → đưa vào hàng đợi.`
-          : `Xét hàng xóm ${neighbor}: đã thăm → bỏ qua.`,
+          ? en
+            ? `Check neighbor ${neighbor}: unvisited → enqueue.`
+            : `Xét hàng xóm ${neighbor}: chưa thăm → đưa vào hàng đợi.`
+          : en
+            ? `Check neighbor ${neighbor}: already visited → skip.`
+            : `Xét hàng xóm ${neighbor}: đã thăm → bỏ qua.`,
         stats: stats(),
       });
     }
@@ -549,7 +653,9 @@ function buildGraphBfs(): DiagramFrame[] {
     frames.push({
       states: decorate({}),
       line: 2,
-      note: `${node} đã duyệt xong mọi hàng xóm.`,
+      note: en
+        ? `${node} has finished exploring all its neighbors.`
+        : `${node} đã duyệt xong mọi hàng xóm.`,
       stats: stats(),
     });
   }
@@ -557,7 +663,9 @@ function buildGraphBfs(): DiagramFrame[] {
   frames.push({
     states: decorate({}),
     line: 2,
-    note: "Hàng đợi rỗng → BFS hoàn tất.",
+    note: en
+      ? "Queue is empty → BFS complete."
+      : "Hàng đợi rỗng → BFS hoàn tất.",
     stats: stats(),
   });
   return frames;
@@ -566,7 +674,9 @@ function buildGraphBfs(): DiagramFrame[] {
 function buildSlidingWindow(
   input: number[],
   targetValue: number,
+  locale: Locale = "vi",
 ): StepFrame[] {
+  const en = locale === "en";
   const frames: StepFrame[] = [];
   const target = targetValue > 0 ? targetValue : 7;
   const n = input.length;
@@ -607,7 +717,9 @@ function buildSlidingWindow(
     marks: input.map(() => "eliminated" as BarMark),
     pointers: { 0: "l" },
     line: 1,
-    note: "Khởi tạo cửa sổ rỗng. Mục tiêu: đoạn ngắn nhất có tổng ≥ target.",
+    note: en
+      ? "Start with an empty window. Goal: find the shortest subarray whose sum is ≥ target."
+      : "Khởi tạo cửa sổ rỗng. Mục tiêu: đoạn ngắn nhất có tổng ≥ target.",
     stats: resultStats(-1),
   });
 
@@ -618,7 +730,9 @@ function buildSlidingWindow(
       marks: marks(right, right, null),
       pointers: { [left]: "l", [right]: "r" },
       line: 3,
-      note: `Mở rộng: cộng a[${right}] = ${input[right]} → sum = ${sum}.`,
+      note: en
+        ? `Expand: add a[${right}] = ${input[right]} → sum = ${sum}.`
+        : `Mở rộng: cộng a[${right}] = ${input[right]} → sum = ${sum}.`,
       stats: resultStats(right),
     });
 
@@ -633,7 +747,9 @@ function buildSlidingWindow(
         marks: marks(right, null, null),
         pointers: { [left]: "l", [right]: "r" },
         line: 5,
-        note: `sum ≥ target → best = ${best} (đoạn [${left}, ${right}]).`,
+        note: en
+          ? `sum ≥ target → best = ${best} (subarray [${left}, ${right}]).`
+          : `sum ≥ target → best = ${best} (đoạn [${left}, ${right}]).`,
         stats: resultStats(right),
       });
 
@@ -645,7 +761,9 @@ function buildSlidingWindow(
         marks: marks(right, null, leaving),
         pointers: left < n ? { [left]: "l", [right]: "r" } : { [right]: "r" },
         line: 6,
-        note: `Thu hẹp: bỏ a[${leaving}] = ${input[leaving]} → sum = ${sum}.`,
+        note: en
+          ? `Shrink: remove a[${leaving}] = ${input[leaving]} → sum = ${sum}.`
+          : `Thu hẹp: bỏ a[${leaving}] = ${input[leaving]} → sum = ${sum}.`,
         stats: resultStats(right),
       });
     }
@@ -658,15 +776,24 @@ function buildSlidingWindow(
         ? marks(n - 1, null, null)
         : input.map(() => "eliminated" as BarMark),
     line: 7,
-    note: `Kết thúc: độ dài nhỏ nhất = ${
-      Number.isFinite(best) ? best : "không tồn tại"
-    }.`,
+    note: en
+      ? `Done: shortest length = ${
+          Number.isFinite(best) ? best : "not found"
+        }.`
+      : `Kết thúc: độ dài nhỏ nhất = ${
+          Number.isFinite(best) ? best : "không tồn tại"
+        }.`,
     stats: resultStats(n - 1),
   });
   return frames;
 }
 
-function buildDpOneD(input: number[]): StepFrame[] {
+function buildDpOneD(
+  input: number[],
+  _target: number,
+  locale: Locale = "vi",
+): StepFrame[] {
+  const en = locale === "en";
   const nums = input.length ? input : [2, 7, 9, 3, 1];
   const n = nums.length;
   const dp: number[] = new Array<number>(n).fill(0);
@@ -674,8 +801,8 @@ function buildDpOneD(input: number[]): StepFrame[] {
 
   const resultStats = (i: number, take: number | null, skip: number | null) => [
     { label: "i", value: i, tone: "indigo" as const },
-    { label: "lấy", value: take ?? "—", tone: "emerald" as const },
-    { label: "bỏ", value: skip ?? "—", tone: "amber" as const },
+    { label: en ? "Take" : "lấy", value: take ?? "—", tone: "emerald" as const },
+    { label: en ? "Skip" : "bỏ", value: skip ?? "—", tone: "amber" as const },
   ];
   const marksFor = (upto: number, hot: number[]): BarMark[] => {
     const m = dp.map(() => "eliminated" as BarMark);
@@ -688,7 +815,9 @@ function buildDpOneD(input: number[]): StepFrame[] {
     array: [...dp],
     marks: dp.map(() => "eliminated" as BarMark),
     line: 1,
-    note: `nums = [${nums.join(", ")}]. dp[i] = số tiền lớn nhất cướp được xét tới nhà i.`,
+    note: en
+      ? `nums = [${nums.join(", ")}]. dp[i] = the maximum amount you can rob from houses 0 through i.`
+      : `nums = [${nums.join(", ")}]. dp[i] = số tiền lớn nhất cướp được xét tới nhà i.`,
     stats: resultStats(-1, null, null),
   });
 
@@ -698,7 +827,9 @@ function buildDpOneD(input: number[]): StepFrame[] {
       array: [...dp],
       marks: marksFor(0, [0]),
       line: 2,
-      note: `Cơ sở: dp[0] = nums[0] = ${nums[0]}.`,
+      note: en
+        ? `Base case: dp[0] = nums[0] = ${nums[0]}.`
+        : `Cơ sở: dp[0] = nums[0] = ${nums[0]}.`,
       stats: resultStats(0, nums[0], 0),
     });
   }
@@ -708,7 +839,9 @@ function buildDpOneD(input: number[]): StepFrame[] {
       array: [...dp],
       marks: marksFor(1, [0, 1]),
       line: 3,
-      note: `Cơ sở: dp[1] = max(nums[0], nums[1]) = ${dp[1]}.`,
+      note: en
+        ? `Base case: dp[1] = max(nums[0], nums[1]) = ${dp[1]}.`
+        : `Cơ sở: dp[1] = max(nums[0], nums[1]) = ${dp[1]}.`,
       stats: resultStats(1, nums[1], dp[0]),
     });
   }
@@ -719,7 +852,9 @@ function buildDpOneD(input: number[]): StepFrame[] {
       array: [...dp],
       marks: marksFor(i - 1, [i - 1, i - 2]),
       line: 5,
-      note: `Tại i = ${i}: lấy = dp[${i - 2}] + nums[${i}] = ${take}; bỏ = dp[${i - 1}] = ${skip}.`,
+      note: en
+        ? `At i = ${i}: take = dp[${i - 2}] + nums[${i}] = ${take}; skip = dp[${i - 1}] = ${skip}.`
+        : `Tại i = ${i}: lấy = dp[${i - 2}] + nums[${i}] = ${take}; bỏ = dp[${i - 1}] = ${skip}.`,
       stats: resultStats(i, take, skip),
     });
     dp[i] = Math.max(take, skip);
@@ -735,7 +870,9 @@ function buildDpOneD(input: number[]): StepFrame[] {
     array: [...dp],
     marks: marksFor(n - 1, []),
     line: 6,
-    note: `Kết quả: dp[${n - 1}] = ${dp[n - 1]}.`,
+    note: en
+      ? `Result: dp[${n - 1}] = ${dp[n - 1]}.`
+      : `Kết quả: dp[${n - 1}] = ${dp[n - 1]}.`,
     stats: resultStats(n - 1, null, null),
   });
   return frames;
@@ -795,6 +932,16 @@ export const structureDiagramVisualizers: Record<
       { state: "success", label: "Tìm thấy" },
     ],
     build: buildBinarySearchTree,
+    overrides: {
+      en: {
+        title: "BST — search",
+        legend: {
+          idle: "Not checked",
+          active: "Comparing",
+          success: "Found",
+        },
+      },
+    },
   },
   "graph-bfs": {
     title: "BFS — duyệt đồ thị theo tầng",
@@ -814,6 +961,17 @@ export const structureDiagramVisualizers: Record<
       { state: "active", label: "Đang xét" },
       { state: "success", label: "Đã thăm" },
     ],
+    overrides: {
+      en: {
+        title: "BFS — Level-Order Graph Traversal",
+        legend: {
+          idle: "Unvisited",
+          warn: "In queue",
+          active: "Being explored",
+          success: "Visited",
+        },
+      },
+    },
     build: buildGraphBfs,
   },
 };
@@ -836,6 +994,15 @@ export const structureArrayVisualizers: Record<
       { mark: "active", label: "Đỉnh (top)" },
       { mark: "swap", label: "Vừa lấy ra" },
     ],
+    overrides: {
+      en: {
+        legend: {
+          sorted: "In stack",
+          active: "Top",
+          swap: "Just popped",
+        },
+      },
+    },
     defaultInput: [3, 7, 5, 1],
     build: buildStack,
   },
@@ -853,6 +1020,15 @@ export const structureArrayVisualizers: Record<
       { mark: "active", label: "Vừa enqueue (rear)" },
       { mark: "swap", label: "Vừa dequeue (front)" },
     ],
+    overrides: {
+      en: {
+        legend: {
+          sorted: "In queue",
+          active: "Just enqueued (rear)",
+          swap: "Just dequeued (front)",
+        },
+      },
+    },
     defaultInput: [3, 7, 5, 1],
     build: buildQueue,
   },
@@ -873,6 +1049,17 @@ export const structureArrayVisualizers: Record<
       { mark: "swap", label: "Vừa đổi chỗ" },
       { mark: "found", label: "Vừa chèn xong / root" },
     ],
+    overrides: {
+      en: {
+        legend: {
+          sorted: "In heap",
+          active: "Current node",
+          compare: "Parent / child being compared",
+          swap: "Just swapped",
+          found: "Just inserted / root",
+        },
+      },
+    },
     defaultInput: [5, 3, 8, 1, 9, 2],
     build: buildBinaryHeap,
   },
@@ -895,6 +1082,18 @@ export const structureArrayVisualizers: Record<
       { mark: "found", label: "Cửa sổ tốt nhất" },
       { mark: "eliminated", label: "Ngoài cửa sổ" },
     ],
+    overrides: {
+      en: {
+        title: "Sliding Window — shortest subarray with sum ≥ target",
+        legend: {
+          active: "In window",
+          compare: "Just expanded (r)",
+          swap: "Just shrunk (l)",
+          found: "Best window",
+          eliminated: "Outside window",
+        },
+      },
+    },
     defaultInput: [2, 3, 1, 2, 4, 3],
     target: { label: "target", default: 7 },
     build: buildSlidingWindow,
@@ -915,6 +1114,15 @@ export const structureArrayVisualizers: Record<
       { mark: "compare", label: "Ô dùng để quyết định" },
       { mark: "eliminated", label: "Chưa tính" },
     ],
+    overrides: {
+      en: {
+        legend: {
+          sorted: "Computed dp entries",
+          compare: "Decision cells",
+          eliminated: "Not yet computed",
+        },
+      },
+    },
     defaultInput: [2, 7, 9, 3, 1],
     build: buildDpOneD,
   },

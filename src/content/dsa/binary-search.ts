@@ -15,7 +15,7 @@ export const binarySearchModule: CourseModule = {
       blocks: [
         {
           type: "p",
-          text: "Binary Search liên tục thu hẹp khoảng tìm kiếm: so sánh phần tử giữa với target, rồi bỏ đi nửa không thể chứa target.",
+          text: "Binary Search liên tục thu hẹp khoảng tìm kiếm: so sánh phần tử ở giữa với target, rồi loại bỏ nửa không thể chứa target.",
         },
         { type: "h2", text: "Cài đặt" },
         {

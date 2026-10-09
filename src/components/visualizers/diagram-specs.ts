@@ -6,6 +6,7 @@ import type {
   NodeState,
 } from "@/lib/diagram";
 import type { SystemDesignVisualizer } from "@/lib/course";
+import type { Locale } from "@/lib/locale";
 
 const RR_LABELS: Record<string, string> = {
   s1: "Server 1",
@@ -28,7 +29,8 @@ const rrEdges: DiagramEdge[] = [
   { id: "lb-s3", from: "lb", to: "s3" },
 ];
 
-function buildRoundRobin(): DiagramFrame[] {
+function buildRoundRobin(locale: Locale = "vi"): DiagramFrame[] {
+  const en = locale === "en";
   const frames: DiagramFrame[] = [];
   const down = new Set<string>();
   const healthy = () => ["s1", "s2", "s3"].filter((id) => !down.has(id));
@@ -48,13 +50,19 @@ function buildRoundRobin(): DiagramFrame[] {
   const stats = (request: number): DiagramFrame["stats"] => [
     { label: "Request", value: request, tone: "indigo" },
     { label: "index i", value: i, tone: "slate" },
-    { label: "Server khả dụng", value: `${healthy().length}/3`, tone: "emerald" },
+    {
+      label: en ? "Available servers" : "Server khả dụng",
+      value: `${healthy().length}/3`,
+      tone: "emerald",
+    },
   ];
 
   frames.push({
     states: base(),
     line: 1,
-    note: "Khởi tạo i = 0. Cả 3 server đang khỏe mạnh.",
+    note: en
+      ? "Initialize i = 0. All 3 servers are healthy."
+      : "Khởi tạo i = 0. Cả 3 server đang khỏe mạnh.",
     stats: stats(0),
   });
 
@@ -66,7 +74,9 @@ function buildRoundRobin(): DiagramFrame[] {
         states: base(),
         edgeStates: { "lb-s2": "down" },
         line: 3,
-        note: "Health check: Server 2 không phản hồi → loại khỏi vòng xoay.",
+        note: en
+          ? "Health check: Server 2 is not responding → remove it from rotation."
+          : "Health check: Server 2 không phản hồi → loại khỏi vòng xoay.",
         stats: stats(request - 1),
       });
     }
@@ -79,7 +89,9 @@ function buildRoundRobin(): DiagramFrame[] {
         { id: "req", from: "lb", to: target, t: 0, label: `req ${request}` },
       ],
       line: 3,
-      note: `Request ${request}: i = ${i} → chọn ${RR_LABELS[target]} (i % ${pool.length}).`,
+      note: en
+        ? `Request ${request}: i = ${i} → select ${RR_LABELS[target]} (i % ${pool.length}).`
+        : `Request ${request}: i = ${i} → chọn ${RR_LABELS[target]} (i % ${pool.length}).`,
       stats: stats(request),
     });
     frames.push({
@@ -89,7 +101,9 @@ function buildRoundRobin(): DiagramFrame[] {
         { id: "req", from: "lb", to: target, t: 1, label: `req ${request}` },
       ],
       line: 4,
-      note: `Chuyển request ${request} tới ${RR_LABELS[target]}.`,
+      note: en
+        ? `Forward request ${request} to ${RR_LABELS[target]}.`
+        : `Chuyển request ${request} tới ${RR_LABELS[target]}.`,
       stats: stats(request),
     });
     i++;
@@ -98,7 +112,9 @@ function buildRoundRobin(): DiagramFrame[] {
   frames.push({
     states: base(),
     line: 5,
-    note: `Hoàn tất ${total} request theo vòng xoay round robin.`,
+    note: en
+      ? `Completed ${total} requests using round robin.`
+      : `Hoàn tất ${total} request theo vòng xoay round robin.`,
     stats: stats(total),
   });
   return frames;
@@ -126,7 +142,8 @@ const tbEdges: DiagramEdge[] = [
   { id: "refill-bucket", from: "refill", to: "bucket", dashed: true },
 ];
 
-function buildTokenBucket(): DiagramFrame[] {
+function buildTokenBucket(locale: Locale = "vi"): DiagramFrame[] {
+  const en = locale === "en";
   const frames: DiagramFrame[] = [];
   const capacity = 5;
   const total = 8;
@@ -145,7 +162,7 @@ function buildTokenBucket(): DiagramFrame[] {
     { label: "Request", value: request, tone: "indigo" },
     { label: "Token", value: `${tokens}/${capacity}`, tone: "amber" },
     {
-      label: "Kết quả",
+      label: en ? "Result" : "Kết quả",
       value: decision,
       tone: decision === "ALLOW" ? "emerald" : "rose",
     },
@@ -155,7 +172,9 @@ function buildTokenBucket(): DiagramFrame[] {
     states: base(),
     buckets: { bucket: tokens },
     line: 1,
-    note: `Khởi tạo bộ đếm đầy: ${tokens} token.`,
+    note: en
+      ? `Initialize with a full bucket: ${tokens} tokens.`
+      : `Khởi tạo bộ đếm đầy: ${tokens} token.`,
     stats: stats(0, "—"),
   });
 
@@ -167,7 +186,9 @@ function buildTokenBucket(): DiagramFrame[] {
         edgeStates: { "refill-bucket": "active" },
         buckets: { bucket: tokens },
         line: 1,
-        note: `Đã qua thời gian → nạp thêm 1 token (còn ${tokens}/${capacity}).`,
+        note: en
+          ? `Time elapsed → refill 1 token (${tokens}/${capacity} now).`
+          : `Đã qua thời gian → nạp thêm 1 token (còn ${tokens}/${capacity}).`,
         stats: stats(request, "—"),
       });
     }
@@ -176,7 +197,9 @@ function buildTokenBucket(): DiagramFrame[] {
       states: { ...base(), client: "active" },
       buckets: { bucket: tokens },
       line: 2,
-      note: `Request ${request} tới. Kiểm tra tokens = ${tokens}.`,
+      note: en
+        ? `Request ${request} arrives. Check tokens = ${tokens}.`
+        : `Request ${request} tới. Kiểm tra tokens = ${tokens}.`,
       stats: stats(request, "—"),
     });
 
@@ -186,7 +209,9 @@ function buildTokenBucket(): DiagramFrame[] {
         states: { ...base(), bucket: "success" },
         buckets: { bucket: tokens },
         line: 3,
-        note: `tokens ≥ 1 → trừ 1, còn ${tokens}/${capacity}.`,
+        note: en
+          ? `tokens ≥ 1 → subtract 1; ${tokens}/${capacity} remaining.`
+          : `tokens ≥ 1 → trừ 1, còn ${tokens}/${capacity}.`,
         stats: stats(request, "ALLOW"),
       });
       frames.push({
@@ -198,7 +223,9 @@ function buildTokenBucket(): DiagramFrame[] {
           { id: "out", from: "bucket", to: "server", t: 0 },
         ],
         line: 4,
-        note: `Request ${request} vào bucket và được chuyển tiếp.`,
+        note: en
+          ? `Request ${request} enters the bucket and is forwarded.`
+          : `Request ${request} vào bucket và được chuyển tiếp.`,
         stats: stats(request, "ALLOW"),
       });
       frames.push({
@@ -210,7 +237,9 @@ function buildTokenBucket(): DiagramFrame[] {
           { id: "out", from: "bucket", to: "server", t: 1 },
         ],
         line: 4,
-        note: `API Server xử lý request ${request}.`,
+        note: en
+          ? `API Server processes request ${request}.`
+          : `API Server xử lý request ${request}.`,
         stats: stats(request, "ALLOW"),
       });
     } else {
@@ -218,7 +247,9 @@ function buildTokenBucket(): DiagramFrame[] {
         states: { ...base(), client: "warn" },
         buckets: { bucket: tokens },
         line: 5,
-        note: `tokens = 0 → từ chối request ${request}: 429 Too Many Requests.`,
+        note: en
+          ? `tokens = 0 → reject request ${request}: 429 Too Many Requests.`
+          : `tokens = 0 → từ chối request ${request}: 429 Too Many Requests.`,
         stats: stats(request, "REJECT"),
       });
     }
@@ -228,7 +259,9 @@ function buildTokenBucket(): DiagramFrame[] {
     states: base(),
     buckets: { bucket: tokens },
     line: 5,
-    note: `Kết thúc: còn ${tokens}/${capacity} token.`,
+    note: en
+      ? `Finished: ${tokens}/${capacity} tokens remaining.`
+      : `Kết thúc: còn ${tokens}/${capacity} token.`,
     stats: stats(total, "—"),
   });
   return frames;
@@ -254,6 +287,26 @@ export const diagramVisualizers: Record<SystemDesignVisualizer, DiagramSpec> = {
       { state: "down", label: "Không khả dụng" },
       { state: "packet", label: "Request" },
     ],
+    overrides: {
+      en: {
+        title: "Round Robin — simulation",
+        pseudo: [
+          "function roundRobin(servers):",
+          "  i = 0",
+          "  for request in requests:",
+          "    s = servers[i % n]   // skip servers that are down",
+          "    forward(request, s)",
+          "    i = i + 1",
+        ],
+        legend: {
+          idle: "Waiting",
+          active: "Routing",
+          success: "Processed",
+          down: "Unavailable",
+          packet: "Request",
+        },
+      },
+    },
     build: buildRoundRobin,
   },
   "token-bucket": {
@@ -275,6 +328,26 @@ export const diagramVisualizers: Record<SystemDesignVisualizer, DiagramSpec> = {
       { state: "warn", label: "Bị chặn (429)" },
       { state: "packet", label: "Request" },
     ],
+    overrides: {
+      en: {
+        title: "Token Bucket — simulation",
+        pseudo: [
+          "function allow(request):",
+          "  refill()               // refill tokens over time",
+          "  if tokens >= 1:",
+          "    tokens = tokens - 1",
+          "    return ALLOW",
+          "  return REJECT  // 429",
+        ],
+        legend: {
+          idle: "Waiting",
+          active: "Refill / transfer",
+          success: "Allowed",
+          warn: "Rejected (429)",
+          packet: "Request",
+        },
+      },
+    },
     build: buildTokenBucket,
   },
 };

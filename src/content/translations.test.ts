@@ -9,7 +9,16 @@ import {
   applyLessonTranslation,
   type LessonTranslation,
 } from "@/content/translations/en";
-import { structureDiagramVisualizers } from "@/components/visualizers/structure-specs";
+import {
+  localizeVisualizerSpec,
+  visualizerLabels,
+} from "@/components/visualizers/algorithm-visualizer";
+import { visualizers } from "@/components/visualizers/specs";
+import { diagramVisualizers } from "@/components/visualizers/diagram-specs";
+import {
+  structureArrayVisualizers,
+  structureDiagramVisualizers,
+} from "@/components/visualizers/structure-specs";
 import { localizeDiagramSpec } from "@/lib/diagram";
 import type { Lesson } from "@/lib/course-types";
 
@@ -66,8 +75,36 @@ describe("English lesson translations", () => {
       "linked-list-basics",
       "linked-list-operations",
       "linked-list-quiz",
+      "stack",
+      "queue",
+      "stacks-queues-quiz",
+      "tree-basics",
+      "binary-search-tree",
+      "tree-traversal",
+      "trees-quiz",
+      "heap-basics",
+      "priority-queue",
+      "heaps-quiz",
       "bubble-sort",
+      "selection-sort",
+      "insertion-sort",
       "sorting-quiz",
+      "two-sum",
+      "two-pointers-quiz",
+      "binary-search",
+      "binary-search-quiz",
+      "fixed-sliding-window",
+      "variable-sliding-window",
+      "sliding-window-quiz",
+      "recursion-basics",
+      "backtracking",
+      "recursion-backtracking-quiz",
+      "graph-basics",
+      "graph-traversal",
+      "graphs-quiz",
+      "dp-basics",
+      "dp-patterns",
+      "dp-quiz",
     ]);
   });
 
@@ -143,8 +180,746 @@ describe("English lesson translations", () => {
     expect(
       getAdjacentLessonsForLocale("dsa", "complexity-quiz-hard", "en").next?.slug,
     ).toBe("array-basics");
-    expect(findLessonForLocale("system-design", "sd-introduction", "en")?.title)
-      .toBe("Introduction to System Design");
+    expect(
+      findLessonForLocale("system-design", "sd-what-is-system-design", "en")
+        ?.title,
+    ).toBe("What is System Design?");
+  });
+
+  it("publishes the translated Introduction and Core Concepts lessons in order", () => {
+    const course = getCourseForLocale("system-design", "en");
+    const slugs = course?.modules.flatMap((courseModule) =>
+      courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    expect(slugs).toEqual([
+      "sd-what-is-system-design",
+      "sd-top-30-concepts",
+      "sd-scalability",
+      "sd-availability",
+      "sd-reliability",
+      "sd-single-point-of-failure",
+      "sd-latency-throughput",
+      "sd-consistent-hashing",
+      "sd-cap",
+      "sd-dns-networking",
+      "sd-http-proxy-latency",
+      "sd-rest-graphql",
+      "sd-realtime-communication",
+      "sd-load-balancing",
+      "sd-caching",
+      "sd-cdn",
+      "sd-sharding",
+      "sd-replication",
+      "sd-message-queues",
+      "sd-rate-limiting",
+    ]);
+
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-what-is-system-design",
+        "en",
+      ),
+    ).toMatchObject({ prev: undefined });
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-what-is-system-design",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-top-30-concepts");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-top-30-concepts", "en").prev
+        ?.slug,
+    ).toBe("sd-what-is-system-design");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-top-30-concepts", "en").next
+        ?.slug,
+    ).toBe("sd-scalability");
+
+    // The Core Concepts chain stays contiguous and hands off to Networking & APIs.
+    const chain = [
+      "sd-scalability",
+      "sd-availability",
+      "sd-reliability",
+      "sd-single-point-of-failure",
+      "sd-latency-throughput",
+      "sd-consistent-hashing",
+      "sd-cap",
+      "sd-dns-networking",
+    ];
+    const start = slugs!.indexOf(chain[0]);
+    expect(slugs!.slice(start, start + chain.length)).toEqual(chain);
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-cap", "en").next?.slug,
+    ).toBe("sd-dns-networking");
+  });
+
+  it("navigates through the translated Networking & APIs lessons in order", () => {
+    // Core Concepts hands off to the first Networking lesson.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-cap", "en").next?.slug,
+    ).toBe("sd-dns-networking");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-dns-networking", "en").prev
+        ?.slug,
+    ).toBe("sd-cap");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-dns-networking", "en").next
+        ?.slug,
+    ).toBe("sd-http-proxy-latency");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-http-proxy-latency", "en")
+        .prev?.slug,
+    ).toBe("sd-dns-networking");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-http-proxy-latency", "en")
+        .next?.slug,
+    ).toBe("sd-rest-graphql");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-rest-graphql", "en").prev
+        ?.slug,
+    ).toBe("sd-http-proxy-latency");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-rest-graphql", "en").next
+        ?.slug,
+    ).toBe("sd-realtime-communication");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-realtime-communication",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-rest-graphql");
+    // Building Blocks is translated next, so the last Networking & APIs lesson hands off.
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-realtime-communication",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-load-balancing");
+
+    // The Networking & APIs chain sits between Foundations and Building Blocks.
+    const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sd-cap",
+      "sd-dns-networking",
+      "sd-http-proxy-latency",
+      "sd-rest-graphql",
+      "sd-realtime-communication",
+      "sd-load-balancing",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("publishes all four Networking & APIs lessons with reviewed English text", () => {
+    const slugs = [
+      "sd-dns-networking",
+      "sd-http-proxy-latency",
+      "sd-rest-graphql",
+      "sd-realtime-communication",
+    ];
+    for (const slug of slugs) {
+      const lesson = findLessonForLocale("system-design", slug, "en");
+      expect(lesson, slug).toBeDefined();
+      expect(lesson?.module, slug).toBe("Networking & APIs");
+    }
+  });
+
+  it("translates the four Networking & APIs diagrams while preserving topology", () => {
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+    const cases = [
+      {
+        slug: "sd-dns-networking",
+        blockIndex: 23,
+        caption:
+          "DNS resolution flow: the client asks its stub resolver. On a cache miss, the stub forwards the query to a recursive resolver. The recursive resolver follows referrals from root to TLD to authoritative servers, then returns the IP address for the client to contact the web server.",
+      },
+      {
+        slug: "sd-http-proxy-latency",
+        blockIndex: 29,
+        caption:
+          "A cold connection pays for DNS, TCP, and then the TLS handshake (about one RTT each) before sending the request. A warm connection reuses the keep-alive connection, so its critical path is just request → TTFB → body.",
+      },
+      {
+        slug: "sd-rest-graphql",
+        blockIndex: 17,
+        caption:
+          "A REST client may call several resource endpoints when the data is spread across resources. A GraphQL client sends one query to an endpoint, and the schema and resolvers fetch each field from a suitable source. This is a common pattern; a GraphQL server may still make several calls to its data sources.",
+      },
+      {
+        slug: "sd-realtime-communication",
+        blockIndex: 20,
+        caption:
+          "The three real-time patterns differ in who initiates communication: polling has the client repeat requests; WebSocket keeps a two-way channel open between client and server; a webhook has a provider send a one-way HTTP POST to a callback URL.",
+      },
+    ];
+
+    for (const { slug, blockIndex, caption } of cases) {
+      const source = findLesson("system-design", slug)?.blocks[blockIndex];
+      const translated = findLessonForLocale(
+        "system-design",
+        slug,
+        "en",
+      )?.blocks[blockIndex];
+      expect(source?.type, slug).toBe("diagram");
+      expect(translated?.type, slug).toBe("diagram");
+      if (source?.type !== "diagram" || translated?.type !== "diagram") {
+        continue;
+      }
+
+      expect(translated.caption, slug).toBe(caption);
+      // The overlay preserves stable ids and edge topology.
+      expect(translated.nodes.map((node) => node.id), slug).toEqual(
+        source.nodes.map((node) => node.id),
+      );
+      expect(translated.edges.map((edge) => edge.id), slug).toEqual(
+        source.edges.map((edge) => edge.id),
+      );
+
+      const prose = [
+        translated.caption ?? "",
+        ...translated.nodes.flatMap((node) => [
+          node.label,
+          ...(node.sub ? [node.sub] : []),
+        ]),
+        ...translated.edges.flatMap((edge) => (edge.label ? [edge.label] : [])),
+      ];
+      expect(prose.filter((text) => vietnamese.test(text)), slug).toEqual([]);
+    }
+  });
+
+  it("navigates through the translated Building Blocks lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-realtime-communication",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-load-balancing");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-load-balancing", "en").prev
+        ?.slug,
+    ).toBe("sd-realtime-communication");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-load-balancing", "en").next
+        ?.slug,
+    ).toBe("sd-caching");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-caching", "en").prev?.slug,
+    ).toBe("sd-load-balancing");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-caching", "en").next?.slug,
+    ).toBe("sd-cdn");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-cdn", "en").prev?.slug,
+    ).toBe("sd-caching");
+    // Data is translated next, so the last Building Blocks lesson hands off.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-cdn", "en").next?.slug,
+    ).toBe("sd-sharding");
+
+    const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sd-realtime-communication",
+      "sd-load-balancing",
+      "sd-caching",
+      "sd-cdn",
+      "sd-sharding",
+      "sd-replication",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Data lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-cdn", "en").next?.slug,
+    ).toBe("sd-sharding");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-sharding", "en").prev?.slug,
+    ).toBe("sd-cdn");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-sharding", "en").next?.slug,
+    ).toBe("sd-replication");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-replication", "en").prev
+        ?.slug,
+    ).toBe("sd-sharding");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-replication", "en").next
+        ?.slug,
+    ).toBe("sd-message-queues");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-message-queues", "en").prev
+        ?.slug,
+    ).toBe("sd-replication");
+    // Reliability is translated next, so the last Data lesson hands off.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-replication", "en").next
+        ?.slug,
+    ).toBe("sd-message-queues");
+
+    const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sd-cdn",
+      "sd-sharding",
+      "sd-replication",
+      "sd-message-queues",
+      "sd-rate-limiting",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Reliability lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-replication", "en").next
+        ?.slug,
+    ).toBe("sd-message-queues");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-message-queues", "en").prev
+        ?.slug,
+    ).toBe("sd-replication");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-message-queues", "en").next
+        ?.slug,
+    ).toBe("sd-rate-limiting");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-rate-limiting", "en").prev
+        ?.slug,
+    ).toBe("sd-message-queues");
+    // Reliability is the final System Design module, so the last lesson has no next.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-rate-limiting", "en").next,
+    ).toBeUndefined();
+
+    const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sd-replication",
+      "sd-message-queues",
+      "sd-rate-limiting",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+    expect(published.at(-1)).toBe("sd-rate-limiting");
+  });
+
+  it("translates the sd-what-is-system-design diagram and natural-language code", () => {
+    const lesson = findLessonForLocale(
+      "system-design",
+      "sd-what-is-system-design",
+      "en",
+    );
+    const diagram = lesson?.blocks[26];
+    expect(diagram?.type).toBe("diagram");
+    if (diagram?.type !== "diagram") return;
+    expect(diagram.caption).toBe(
+      "Architecture of a large-scale photo-sharing app.",
+    );
+    expect(
+      diagram.edges.find((edge) => edge.id === "cdn-client")?.label,
+    ).toBe("photo");
+
+    const code = lesson?.blocks[15];
+    expect(code?.type).toBe("code");
+    if (code?.type !== "code") return;
+    expect(code.snippets[0].code).toContain("Upload photo   POST /photos");
+    expect(code.snippets[0].code).not.toContain("Đăng ảnh");
+
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+    const prose = [
+      diagram.caption ?? "",
+      ...diagram.edges.flatMap((edge) => (edge.label ? [edge.label] : [])),
+      ...code.snippets.map((snippet) => snippet.code),
+    ];
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // Other natural-language code comments in the module are translated too.
+    const concepts = findLessonForLocale(
+      "system-design",
+      "sd-top-30-concepts",
+      "en",
+    );
+    const idempotency = concepts?.blocks[69];
+    expect(idempotency?.type).toBe("code");
+    if (idempotency?.type !== "code") return;
+    expect(idempotency.snippets[0].code).toContain("no second charge");
+    expect(idempotency.snippets[0].code).not.toContain("không trừ tiền");
+  });
+
+  it("translates the sd-caching and sd-cdn diagrams while preserving topology", () => {
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+    const cases = [
+      {
+        slug: "sd-caching",
+        blockIndex: 8,
+        caption:
+          "On a cache hit, return the data immediately. On a miss, query the database, write the result to the cache, then return it to the client.",
+      },
+      {
+        slug: "sd-cdn",
+        blockIndex: 6,
+        caption:
+          "The CDN serves a cache hit from the nearest edge. On a miss, it fetches the content from the origin, caches it at the edge, and returns it to the user.",
+      },
+    ];
+
+    for (const { slug, blockIndex, caption } of cases) {
+      const source = findLesson("system-design", slug)?.blocks[blockIndex];
+      const translated = findLessonForLocale(
+        "system-design",
+        slug,
+        "en",
+      )?.blocks[blockIndex];
+      expect(source?.type, slug).toBe("diagram");
+      expect(translated?.type, slug).toBe("diagram");
+      if (source?.type !== "diagram" || translated?.type !== "diagram") {
+        continue;
+      }
+
+      expect(translated.caption).toBe(caption);
+      // The overlay preserves stable ids and edge topology.
+      expect(translated.nodes.map((node) => node.id)).toEqual(
+        source.nodes.map((node) => node.id),
+      );
+      expect(
+        translated.edges.map((edge) => ({
+          id: edge.id,
+          from: edge.from,
+          to: edge.to,
+        })),
+      ).toEqual(
+        source.edges.map((edge) => ({
+          id: edge.id,
+          from: edge.from,
+          to: edge.to,
+        })),
+      );
+
+      const prose = [
+        translated.caption ?? "",
+        ...translated.nodes.flatMap((node) => [
+          node.label,
+          ...(node.sub ? [node.sub] : []),
+        ]),
+        ...translated.edges.flatMap((edge) => (edge.label ? [edge.label] : [])),
+      ];
+      expect(prose.filter((text) => vietnamese.test(text)), slug).toEqual([]);
+    }
+  });
+
+  it("translates the three Data diagrams while preserving topology", () => {
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+    const cases: {
+      slug: string;
+      blockIndex: number;
+      caption: string;
+      nodeLabels?: Record<string, string>;
+      nodeSubs?: Record<string, string>;
+      edgeLabels?: Record<string, string>;
+    }[] = [
+      {
+        slug: "sd-sharding",
+        blockIndex: 8,
+        caption:
+          "A key's hash falls on the ring between nodes; map the key to the next node clockwise.",
+        nodeLabels: { "node-a": "Node A", key: "Key K" },
+        nodeSubs: {
+          "node-a": "position on the ring",
+          key: "hash position on the ring",
+        },
+        edgeLabels: {
+          "ring-a-b": "clockwise",
+          "key-node-b": "map to the next node",
+        },
+      },
+      {
+        slug: "sd-replication",
+        blockIndex: 7,
+        caption:
+          "The leader accepts writes and replicates the data to its followers.",
+        nodeLabels: { leader: "Leader", "follower-1": "Follower 1" },
+        nodeSubs: { leader: "accepts writes", "follower-1": "replica" },
+        edgeLabels: { "leader-follower-1": "replicate data" },
+      },
+      {
+        slug: "sd-cap",
+        blockIndex: 6,
+        caption:
+          "During a network partition (P), a system cannot guarantee both Consistency (C) and Availability (A).",
+        nodeSubs: {
+          consistency: "Consistency",
+          partition: "Partition tolerance",
+        },
+        edgeLabels: {
+          "consistency-availability": "during P: cannot guarantee both",
+          "consistency-partition": "CP: favor Consistency",
+        },
+      },
+    ];
+
+    for (const {
+      slug,
+      blockIndex,
+      caption,
+      nodeLabels,
+      nodeSubs,
+      edgeLabels,
+    } of cases) {
+      const source = findLesson("system-design", slug)?.blocks[blockIndex];
+      const translated = findLessonForLocale(
+        "system-design",
+        slug,
+        "en",
+      )?.blocks[blockIndex];
+      expect(source?.type, slug).toBe("diagram");
+      expect(translated?.type, slug).toBe("diagram");
+      if (source?.type !== "diagram" || translated?.type !== "diagram") {
+        continue;
+      }
+
+      expect(translated.caption).toBe(caption);
+      // The overlay preserves stable ids and edge topology.
+      expect(translated.nodes.map((node) => node.id), slug).toEqual(
+        source.nodes.map((node) => node.id),
+      );
+      expect(translated.edges.map((edge) => edge.id), slug).toEqual(
+        source.edges.map((edge) => edge.id),
+      );
+
+      const byNodeId = new Map(translated.nodes.map((node) => [node.id, node]));
+      for (const [id, label] of Object.entries(nodeLabels ?? {})) {
+        expect(byNodeId.get(id)?.label, `${slug}:${id}`).toBe(label);
+      }
+      for (const [id, sub] of Object.entries(nodeSubs ?? {})) {
+        expect(byNodeId.get(id)?.sub, `${slug}:${id}`).toBe(sub);
+      }
+      const byEdgeId = new Map(translated.edges.map((edge) => [edge.id, edge]));
+      for (const [id, label] of Object.entries(edgeLabels ?? {})) {
+        expect(byEdgeId.get(id)?.label, `${slug}:${id}`).toBe(label);
+      }
+
+      const prose = [
+        translated.caption ?? "",
+        ...translated.nodes.flatMap((node) => [
+          node.label,
+          ...(node.sub ? [node.sub] : []),
+        ]),
+        ...translated.edges.flatMap((edge) =>
+          edge.label ? [edge.label] : [],
+        ),
+      ];
+      expect(prose.filter((text) => vietnamese.test(text)), slug).toEqual([]);
+    }
+  });
+
+  it("translates the five sd-top-30-concepts diagrams at their indices", () => {
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+    const cases = [
+      {
+        blockIndex: 10,
+        caption:
+          "DNS resolves a domain through the local cache, resolver, root, TLD, and authoritative servers; the client then uses the IP address to reach the server.",
+      },
+      {
+        blockIndex: 41,
+        caption:
+          "With cache-aside, the application checks the cache first: on a hit, it returns the result immediately; on a miss, it reads from the database and updates the cache. Cache invalidation is the hard part.",
+      },
+      {
+        blockIndex: 59,
+        caption:
+          "Replication copies the full dataset to reduce read load; sharding partitions the dataset by shard key to distribute traffic and storage.",
+      },
+      {
+        blockIndex: 66,
+        caption:
+          "The first request in a region misses the cache and goes to the origin; later requests are served from an edge cache near the user.",
+      },
+      {
+        blockIndex: 80,
+        caption:
+          "The API gateway is the system’s entry point, handling routing, authentication, and rate limiting. Services can enqueue asynchronous work for workers to process.",
+      },
+    ];
+
+    const source = findLesson("system-design", "sd-top-30-concepts");
+    const translated = findLessonForLocale(
+      "system-design",
+      "sd-top-30-concepts",
+      "en",
+    );
+
+    for (const { blockIndex, caption } of cases) {
+      const src = source?.blocks[blockIndex];
+      const out = translated?.blocks[blockIndex];
+      expect(src?.type, `${blockIndex}:source`).toBe("diagram");
+      expect(out?.type, `${blockIndex}:translated`).toBe("diagram");
+      if (src?.type !== "diagram" || out?.type !== "diagram") continue;
+
+      expect(out.caption, `${blockIndex}:caption`).toBe(caption);
+      // The overlay preserves stable ids and edge topology.
+      expect(out.nodes.map((node) => node.id), `${blockIndex}:ids`).toEqual(
+        src.nodes.map((node) => node.id),
+      );
+      expect(out.edges.map((edge) => edge.id), `${blockIndex}:edges`).toEqual(
+        src.edges.map((edge) => edge.id),
+      );
+
+      const prose = [
+        out.caption ?? "",
+        ...out.nodes.flatMap((node) => [
+          node.label,
+          ...(node.sub ? [node.sub] : []),
+        ]),
+        ...out.edges.flatMap((edge) => (edge.label ? [edge.label] : [])),
+      ];
+      expect(
+        prose.filter((text) => vietnamese.test(text)),
+        `${blockIndex}:leak`,
+      ).toEqual([]);
+    }
+  });
+
+  it("localizes the Round Robin visualizer without leaking Vietnamese", () => {
+    const spec = diagramVisualizers["load-balancer-round-robin"];
+    const localized = localizeDiagramSpec(spec, "en");
+    const frames = spec.build("en");
+
+    expect(localized.title).toBe("Round Robin — simulation");
+    expect(localized.legend.map((item) => item.label)).toEqual([
+      "Waiting",
+      "Routing",
+      "Processed",
+      "Unavailable",
+      "Request",
+    ]);
+    expect(localized.pseudo.join("\n")).toContain(
+      "// skip servers that are down",
+    );
+    expect(localized.pseudo.join("\n")).not.toContain("bỏ qua server down");
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => item.label),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [stat.label, String(stat.value)]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math/arrow symbols such as "→", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // The reviewed English copy is used verbatim.
+    expect(frames[0].note).toBe("Initialize i = 0. All 3 servers are healthy.");
+    expect(frames[0].stats.map((stat) => stat.label)).toEqual([
+      "Request",
+      "index i",
+      "Available servers",
+    ]);
+    expect(frames[0].stats.at(-1)?.value).toBe("3/3");
+    expect(frames[1].note).toBe(
+      "Request 1: i = 0 → select Server 1 (i % 3).",
+    );
+    expect(
+      frames.find((frame) => frame.note.startsWith("Health check"))?.note,
+    ).toBe(
+      "Health check: Server 2 is not responding → remove it from rotation.",
+    );
+    expect(frames.at(-1)?.note).toBe(
+      "Completed 6 requests using round robin.",
+    );
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("mô phỏng");
+    expect(spec.pseudo.join("\n")).toContain("bỏ qua server down");
+    expect(spec.build()[0].note).toContain("khỏe mạnh");
+    expect(spec.build()[0].stats.at(-1)?.label).toBe("Server khả dụng");
+  });
+
+  it("localizes the Token Bucket visualizer without leaking Vietnamese", () => {
+    const spec = diagramVisualizers["token-bucket"];
+    const localized = localizeDiagramSpec(spec, "en");
+    const frames = spec.build("en");
+
+    expect(localized.title).toBe("Token Bucket — simulation");
+    expect(localized.legend.map((item) => item.label)).toEqual([
+      "Waiting",
+      "Refill / transfer",
+      "Allowed",
+      "Rejected (429)",
+      "Request",
+    ]);
+    expect(localized.pseudo.join("\n")).toContain(
+      "// refill tokens over time",
+    );
+    expect(localized.pseudo.join("\n")).not.toContain("nạp token theo thời gian");
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => item.label),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [stat.label, String(stat.value)]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math/arrow symbols such as "≥" or "→", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // The reviewed English copy is used verbatim.
+    expect(frames[0].note).toBe(
+      "Initialize with a full bucket: 5 tokens.",
+    );
+    expect(frames[0].stats.map((stat) => stat.label)).toEqual([
+      "Request",
+      "Token",
+      "Result",
+    ]);
+    expect(frames[1].note).toBe("Request 1 arrives. Check tokens = 5.");
+    expect(frames[2].note).toBe(
+      "tokens ≥ 1 → subtract 1; 4/5 remaining.",
+    );
+    expect(
+      frames.find((frame) => frame.note.startsWith("Time elapsed"))?.note,
+    ).toBe("Time elapsed → refill 1 token (4/5 now).");
+    expect(
+      frames.find((frame) => frame.note.startsWith("tokens = 0 → reject"))
+        ?.note,
+    ).toBe(
+      "tokens = 0 → reject request 8: 429 Too Many Requests.",
+    );
+    expect(frames.at(-1)?.note).toBe(
+      "Finished: 0/5 tokens remaining.",
+    );
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("mô phỏng");
+    expect(spec.pseudo.join("\n")).toContain("nạp token theo thời gian");
+    expect(spec.build()[0].note).toContain("bộ đếm đầy");
+    expect(spec.build()[0].stats.at(-1)?.label).toBe("Kết quả");
   });
 
   it("navigates through the translated Arrays & Strings lessons in order", () => {
@@ -207,10 +982,388 @@ describe("English lesson translations", () => {
     expect(
       getAdjacentLessonsForLocale("dsa", "linked-list-quiz", "en").prev?.slug,
     ).toBe("linked-list-operations");
-    // The next Vietnamese lesson is `stack`, still untranslated.
     expect(
-      getAdjacentLessonsForLocale("dsa", "linked-list-quiz", "en").next,
-    ).toBeUndefined();
+      getAdjacentLessonsForLocale("dsa", "linked-list-quiz", "en").next?.slug,
+    ).toBe("stack");
+  });
+
+  it("navigates through the translated Stacks & Queues lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("dsa", "linked-list-quiz", "en").next?.slug,
+    ).toBe("stack");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "stack", "en").prev?.slug,
+    ).toBe("linked-list-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "stack", "en").next?.slug,
+    ).toBe("queue");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "queue", "en").prev?.slug,
+    ).toBe("stack");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "queue", "en").next?.slug,
+    ).toBe("stacks-queues-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "stacks-queues-quiz", "en").prev?.slug,
+    ).toBe("queue");
+    // The Stacks & Queues chain stays contiguous and ends at its quiz; the Trees
+    // lessons now follow it, but are asserted in their own coverage below.
+    const published = getCourseForLocale("dsa", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "linked-list-quiz",
+      "stack",
+      "queue",
+      "stacks-queues-quiz",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Trees lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("dsa", "stacks-queues-quiz", "en").next?.slug,
+    ).toBe("tree-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "tree-basics", "en").prev?.slug,
+    ).toBe("stacks-queues-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "tree-basics", "en").next?.slug,
+    ).toBe("binary-search-tree");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "binary-search-tree", "en").prev?.slug,
+    ).toBe("tree-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "binary-search-tree", "en").next?.slug,
+    ).toBe("tree-traversal");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "tree-traversal", "en").prev?.slug,
+    ).toBe("binary-search-tree");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "tree-traversal", "en").next?.slug,
+    ).toBe("trees-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "trees-quiz", "en").prev?.slug,
+    ).toBe("tree-traversal");
+    // Heaps are translated next, so the Trees quiz hands off to the Heaps batch.
+    expect(
+      getAdjacentLessonsForLocale("dsa", "trees-quiz", "en").next?.slug,
+    ).toBe("heap-basics");
+  });
+
+  it("navigates through the translated Heaps lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("dsa", "trees-quiz", "en").next?.slug,
+    ).toBe("heap-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "heap-basics", "en").prev?.slug,
+    ).toBe("trees-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "heap-basics", "en").next?.slug,
+    ).toBe("priority-queue");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "priority-queue", "en").prev?.slug,
+    ).toBe("heap-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "priority-queue", "en").next?.slug,
+    ).toBe("heaps-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "heaps-quiz", "en").prev?.slug,
+    ).toBe("priority-queue");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "heaps-quiz", "en").next?.slug,
+    ).toBe("bubble-sort");
+    // The Heaps chain stays contiguous between Trees and Sorting.
+    const published = getCourseForLocale("dsa", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "trees-quiz",
+      "heap-basics",
+      "priority-queue",
+      "heaps-quiz",
+      "bubble-sort",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Sorting lessons in order", () => {
+    // Heaps still hand off to Bubble Sort now that the rest of Sorting is live.
+    expect(
+      getAdjacentLessonsForLocale("dsa", "heaps-quiz", "en").next?.slug,
+    ).toBe("bubble-sort");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "bubble-sort", "en").prev?.slug,
+    ).toBe("heaps-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "bubble-sort", "en").next?.slug,
+    ).toBe("selection-sort");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "selection-sort", "en").prev?.slug,
+    ).toBe("bubble-sort");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "selection-sort", "en").next?.slug,
+    ).toBe("insertion-sort");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "insertion-sort", "en").prev?.slug,
+    ).toBe("selection-sort");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "insertion-sort", "en").next?.slug,
+    ).toBe("sorting-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "sorting-quiz", "en").prev?.slug,
+    ).toBe("insertion-sort");
+    // The Sorting quiz hands off to the Two Pointers batch.
+    expect(
+      getAdjacentLessonsForLocale("dsa", "sorting-quiz", "en").next?.slug,
+    ).toBe("two-sum");
+
+    // The Sorting chain stays contiguous through the new lessons.
+    const published = getCourseForLocale("dsa", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "bubble-sort",
+      "selection-sort",
+      "insertion-sort",
+      "sorting-quiz",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Two Pointers lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("dsa", "sorting-quiz", "en").next?.slug,
+    ).toBe("two-sum");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "two-sum", "en").prev?.slug,
+    ).toBe("sorting-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "two-sum", "en").next?.slug,
+    ).toBe("two-pointers-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "two-pointers-quiz", "en").prev?.slug,
+    ).toBe("two-sum");
+    // Binary Search is translated next, so the Two Pointers quiz hands off to it.
+    expect(
+      getAdjacentLessonsForLocale("dsa", "two-pointers-quiz", "en").next?.slug,
+    ).toBe("binary-search");
+
+    // The Two Pointers chain stays contiguous after Sorting.
+    const published = getCourseForLocale("dsa", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sorting-quiz",
+      "two-sum",
+      "two-pointers-quiz",
+      "binary-search",
+      "binary-search-quiz",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Binary Search lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("dsa", "two-pointers-quiz", "en").next?.slug,
+    ).toBe("binary-search");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "binary-search", "en").prev?.slug,
+    ).toBe("two-pointers-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "binary-search", "en").next?.slug,
+    ).toBe("binary-search-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "binary-search-quiz", "en").prev?.slug,
+    ).toBe("binary-search");
+    // Sliding Window is translated next, so the Binary Search quiz hands off.
+    expect(
+      getAdjacentLessonsForLocale("dsa", "binary-search-quiz", "en").next?.slug,
+    ).toBe("fixed-sliding-window");
+
+    // The Binary Search chain stays contiguous after Two Pointers.
+    const published = getCourseForLocale("dsa", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "two-pointers-quiz",
+      "binary-search",
+      "binary-search-quiz",
+      "fixed-sliding-window",
+      "variable-sliding-window",
+      "sliding-window-quiz",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Sliding Window lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("dsa", "binary-search-quiz", "en").next?.slug,
+    ).toBe("fixed-sliding-window");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "fixed-sliding-window", "en").prev?.slug,
+    ).toBe("binary-search-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "fixed-sliding-window", "en").next?.slug,
+    ).toBe("variable-sliding-window");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "variable-sliding-window", "en").prev
+        ?.slug,
+    ).toBe("fixed-sliding-window");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "variable-sliding-window", "en").next
+        ?.slug,
+    ).toBe("sliding-window-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "sliding-window-quiz", "en").prev?.slug,
+    ).toBe("variable-sliding-window");
+    // Recursion & Backtracking is translated next, so the quiz hands off to it.
+    expect(
+      getAdjacentLessonsForLocale("dsa", "sliding-window-quiz", "en").next?.slug,
+    ).toBe("recursion-basics");
+
+    // The Sliding Window chain stays contiguous after Binary Search.
+    const published = getCourseForLocale("dsa", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "binary-search-quiz",
+      "fixed-sliding-window",
+      "variable-sliding-window",
+      "sliding-window-quiz",
+      "recursion-basics",
+      "backtracking",
+      "recursion-backtracking-quiz",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Recursion & Backtracking lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("dsa", "sliding-window-quiz", "en").next?.slug,
+    ).toBe("recursion-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "recursion-basics", "en").prev?.slug,
+    ).toBe("sliding-window-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "recursion-basics", "en").next?.slug,
+    ).toBe("backtracking");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "backtracking", "en").prev?.slug,
+    ).toBe("recursion-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "backtracking", "en").next?.slug,
+    ).toBe("recursion-backtracking-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "recursion-backtracking-quiz", "en").prev
+        ?.slug,
+    ).toBe("backtracking");
+    // Graphs is translated next, so the quiz hands off to graph-basics.
+    expect(
+      getAdjacentLessonsForLocale("dsa", "recursion-backtracking-quiz", "en").next
+        ?.slug,
+    ).toBe("graph-basics");
+
+    // The Recursion & Backtracking chain stays contiguous after Sliding Window.
+    const published = getCourseForLocale("dsa", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sliding-window-quiz",
+      "recursion-basics",
+      "backtracking",
+      "recursion-backtracking-quiz",
+      "graph-basics",
+      "graph-traversal",
+      "graphs-quiz",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Graphs lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("dsa", "recursion-backtracking-quiz", "en").next
+        ?.slug,
+    ).toBe("graph-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "graph-basics", "en").prev?.slug,
+    ).toBe("recursion-backtracking-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "graph-basics", "en").next?.slug,
+    ).toBe("graph-traversal");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "graph-traversal", "en").prev?.slug,
+    ).toBe("graph-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "graph-traversal", "en").next?.slug,
+    ).toBe("graphs-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "graphs-quiz", "en").prev?.slug,
+    ).toBe("graph-traversal");
+    // Dynamic Programming is translated next, so the quiz hands off to it.
+    expect(
+      getAdjacentLessonsForLocale("dsa", "graphs-quiz", "en").next?.slug,
+    ).toBe("dp-basics");
+
+    // The Graphs chain stays contiguous after Recursion & Backtracking.
+    const published = getCourseForLocale("dsa", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "recursion-backtracking-quiz",
+      "graph-basics",
+      "graph-traversal",
+      "graphs-quiz",
+      "dp-basics",
+      "dp-patterns",
+      "dp-quiz",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Dynamic Programming lessons in order", () => {
+    expect(
+      getAdjacentLessonsForLocale("dsa", "graphs-quiz", "en").next?.slug,
+    ).toBe("dp-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "dp-basics", "en").prev?.slug,
+    ).toBe("graphs-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "dp-basics", "en").next?.slug,
+    ).toBe("dp-patterns");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "dp-patterns", "en").prev?.slug,
+    ).toBe("dp-basics");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "dp-patterns", "en").next?.slug,
+    ).toBe("dp-quiz");
+    expect(
+      getAdjacentLessonsForLocale("dsa", "dp-quiz", "en").prev?.slug,
+    ).toBe("dp-patterns");
+    // Dynamic Programming is the final DSA module, so the quiz has no next.
+    expect(getAdjacentLessonsForLocale("dsa", "dp-quiz", "en").next).toBeUndefined();
+
+    // The Dynamic Programming chain stays contiguous and closes out the course.
+    const published = getCourseForLocale("dsa", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "graphs-quiz",
+      "dp-basics",
+      "dp-patterns",
+      "dp-quiz",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+    expect(published.at(-1)).toBe("dp-quiz");
   });
 
   it("keeps the quiz answer indices when translating quiz copy", () => {
@@ -286,6 +1439,168 @@ describe("English lesson translations", () => {
     }
   });
 
+  it("keeps the Stacks & Queues quiz answer indices from the Vietnamese source", () => {
+    const expectedAnswers: Record<string, number[]> = {
+      "stacks-queues-quiz": [1, 1, 0, 1, 1, 1],
+    };
+
+    for (const [slug, answers] of Object.entries(expectedAnswers)) {
+      const sourceQuiz = findLesson("dsa", slug)?.quiz;
+      const translatedQuiz = findLessonForLocale("dsa", slug, "en")?.quiz;
+
+      expect(sourceQuiz?.questions.map((question) => question.answer)).toEqual(
+        answers,
+      );
+      expect(
+        translatedQuiz?.questions.map((question) => question.answer),
+      ).toEqual(answers);
+    }
+  });
+
+  it("keeps the Trees quiz answer indices from the Vietnamese source", () => {
+    const expectedAnswers: Record<string, number[]> = {
+      "trees-quiz": [1, 2, 1, 1, 2, 1],
+    };
+
+    for (const [slug, answers] of Object.entries(expectedAnswers)) {
+      const sourceQuiz = findLesson("dsa", slug)?.quiz;
+      const translatedQuiz = findLessonForLocale("dsa", slug, "en")?.quiz;
+
+      expect(sourceQuiz?.questions.map((question) => question.answer)).toEqual(
+        answers,
+      );
+      expect(
+        translatedQuiz?.questions.map((question) => question.answer),
+      ).toEqual(answers);
+    }
+  });
+
+  it("keeps the Heaps quiz answer indices from the Vietnamese source", () => {
+    const expectedAnswers: Record<string, number[]> = {
+      "heaps-quiz": [1, 1, 1, 0, 1, 2],
+    };
+
+    for (const [slug, answers] of Object.entries(expectedAnswers)) {
+      const sourceQuiz = findLesson("dsa", slug)?.quiz;
+      const translatedQuiz = findLessonForLocale("dsa", slug, "en")?.quiz;
+
+      expect(sourceQuiz?.questions.map((question) => question.answer)).toEqual(
+        answers,
+      );
+      expect(
+        translatedQuiz?.questions.map((question) => question.answer),
+      ).toEqual(answers);
+    }
+  });
+
+  it("keeps the Two Pointers quiz answer indices from the Vietnamese source", () => {
+    const expectedAnswers: Record<string, number[]> = {
+      "two-pointers-quiz": [1, 1, 1, 3, 2],
+    };
+
+    for (const [slug, answers] of Object.entries(expectedAnswers)) {
+      const sourceQuiz = findLesson("dsa", slug)?.quiz;
+      const translatedQuiz = findLessonForLocale("dsa", slug, "en")?.quiz;
+
+      expect(sourceQuiz?.questions.map((question) => question.answer)).toEqual(
+        answers,
+      );
+      expect(
+        translatedQuiz?.questions.map((question) => question.answer),
+      ).toEqual(answers);
+    }
+  });
+
+  it("keeps the Binary Search quiz answer indices from the Vietnamese source", () => {
+    const expectedAnswers: Record<string, number[]> = {
+      "binary-search-quiz": [1, 1, 1, 1, 1],
+    };
+
+    for (const [slug, answers] of Object.entries(expectedAnswers)) {
+      const sourceQuiz = findLesson("dsa", slug)?.quiz;
+      const translatedQuiz = findLessonForLocale("dsa", slug, "en")?.quiz;
+
+      expect(sourceQuiz?.questions.map((question) => question.answer)).toEqual(
+        answers,
+      );
+      expect(
+        translatedQuiz?.questions.map((question) => question.answer),
+      ).toEqual(answers);
+    }
+  });
+
+  it("keeps the Sliding Window quiz answer indices from the Vietnamese source", () => {
+    const expectedAnswers: Record<string, number[]> = {
+      "sliding-window-quiz": [0, 1, 1, 1, 2, 0],
+    };
+
+    for (const [slug, answers] of Object.entries(expectedAnswers)) {
+      const sourceQuiz = findLesson("dsa", slug)?.quiz;
+      const translatedQuiz = findLessonForLocale("dsa", slug, "en")?.quiz;
+
+      expect(sourceQuiz?.questions.map((question) => question.answer)).toEqual(
+        answers,
+      );
+      expect(
+        translatedQuiz?.questions.map((question) => question.answer),
+      ).toEqual(answers);
+    }
+  });
+
+  it("keeps the Recursion & Backtracking quiz answer indices from the Vietnamese source", () => {
+    const expectedAnswers: Record<string, number[]> = {
+      "recursion-backtracking-quiz": [1, 2, 1, 1, 2, 0],
+    };
+
+    for (const [slug, answers] of Object.entries(expectedAnswers)) {
+      const sourceQuiz = findLesson("dsa", slug)?.quiz;
+      const translatedQuiz = findLessonForLocale("dsa", slug, "en")?.quiz;
+
+      expect(sourceQuiz?.questions.map((question) => question.answer)).toEqual(
+        answers,
+      );
+      expect(
+        translatedQuiz?.questions.map((question) => question.answer),
+      ).toEqual(answers);
+    }
+  });
+
+  it("keeps the Graphs quiz answer indices from the Vietnamese source", () => {
+    const expectedAnswers: Record<string, number[]> = {
+      "graphs-quiz": [0, 1, 1, 1, 2, 1],
+    };
+
+    for (const [slug, answers] of Object.entries(expectedAnswers)) {
+      const sourceQuiz = findLesson("dsa", slug)?.quiz;
+      const translatedQuiz = findLessonForLocale("dsa", slug, "en")?.quiz;
+
+      expect(sourceQuiz?.questions.map((question) => question.answer)).toEqual(
+        answers,
+      );
+      expect(
+        translatedQuiz?.questions.map((question) => question.answer),
+      ).toEqual(answers);
+    }
+  });
+
+  it("keeps the Dynamic Programming quiz answer indices from the Vietnamese source", () => {
+    const expectedAnswers: Record<string, number[]> = {
+      "dp-quiz": [1, 0, 1, 0, 2, 1],
+    };
+
+    for (const [slug, answers] of Object.entries(expectedAnswers)) {
+      const sourceQuiz = findLesson("dsa", slug)?.quiz;
+      const translatedQuiz = findLessonForLocale("dsa", slug, "en")?.quiz;
+
+      expect(sourceQuiz?.questions.map((question) => question.answer)).toEqual(
+        answers,
+      );
+      expect(
+        translatedQuiz?.questions.map((question) => question.answer),
+      ).toEqual(answers);
+    }
+  });
+
   it("localizes the Linked List visualizer without leaking Vietnamese", () => {
     const spec = structureDiagramVisualizers["linked-list"];
     const localized = localizeDiagramSpec(spec, "en");
@@ -314,6 +1629,594 @@ describe("English lesson translations", () => {
     const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
 
     expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+  });
+
+  it("localizes the BST visualizer without leaking Vietnamese", () => {
+    const spec = structureDiagramVisualizers["binary-search-tree"];
+    const localized = localizeDiagramSpec(spec, "en");
+    const frames = spec.build("en");
+
+    expect(localized.title).toBe("BST — search");
+    expect(localized.legend.map((item) => item.label)).toEqual([
+      "Not checked",
+      "Comparing",
+      "Found",
+    ]);
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => item.label),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [stat.label, String(stat.value)]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as "→", which decomposes to a combining overlay.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("tìm kiếm");
+    expect(spec.build()[0].note).toContain("Bắt đầu tìm từ gốc");
+  });
+
+  it("localizes the Stack and Queue visualizers without leaking Vietnamese", () => {
+    const stack = localizeVisualizerSpec(
+      structureArrayVisualizers.stack,
+      "en",
+    );
+    const queue = localizeVisualizerSpec(
+      structureArrayVisualizers.queue,
+      "en",
+    );
+
+    expect(stack.title).toBe("Stack (LIFO) — visualization");
+    expect(stack.legend.map((item) => item.label)).toEqual([
+      "In stack",
+      "Top",
+      "Just popped",
+    ]);
+    expect(queue.title).toBe("Queue (FIFO) — visualization");
+    expect(queue.legend.map((item) => item.label)).toEqual([
+      "In queue",
+      "Just enqueued (rear)",
+      "Just dequeued (front)",
+    ]);
+
+    const stackFrames = structureArrayVisualizers.stack.build(
+      structureArrayVisualizers.stack.defaultInput,
+      0,
+      "en",
+    );
+    const queueFrames = structureArrayVisualizers.queue.build(
+      structureArrayVisualizers.queue.defaultInput,
+      0,
+      "en",
+    );
+    expect(queueFrames[1].stats.map((stat) => stat.label)).toContain(
+      "Most recent operation",
+    );
+
+    const prose = [
+      stack.title,
+      ...stack.pseudo,
+      ...stack.legend.map((item) => item.label),
+      ...queue.title,
+      ...queue.pseudo,
+      ...queue.legend.map((item) => item.label),
+      ...[...stackFrames, ...queueFrames].flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [stat.label, String(stat.value)]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as "≠", which decomposes to a combining overlay.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(structureArrayVisualizers.stack.title).toContain("mô phỏng");
+    expect(
+      structureArrayVisualizers.queue.build(
+        structureArrayVisualizers.queue.defaultInput,
+        0,
+      )[0].note,
+    ).toContain("phần tử vào trước ra trước");
+  });
+
+  it("localizes the Binary Heap visualizer without leaking Vietnamese", () => {
+    const spec = structureArrayVisualizers["binary-heap"];
+    const localized = localizeVisualizerSpec(spec, "en");
+    const frames = spec.build(spec.defaultInput, 0, "en");
+
+    expect(localized.title).toBe("Binary Heap (min-heap) — visualization");
+    expect(localized.legend.map((item) => item.label)).toEqual([
+      "In heap",
+      "Current node",
+      "Parent / child being compared",
+      "Just swapped",
+      "Just inserted / root",
+    ]);
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => item.label),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [stat.label, String(stat.value)]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as "≤" or "→", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("mô phỏng");
+    expect(spec.build(spec.defaultInput, 0)[0].note).toContain(
+      "mỗi nút cha đều ≤ hai nút con",
+    );
+  });
+
+  it("localizes the Selection Sort visualizer without leaking Vietnamese", () => {
+    const spec = visualizers["selection-sort"];
+    const localized = localizeVisualizerSpec(spec, "en");
+    const frames = spec.build(spec.defaultInput, 0, "en");
+    const translate = (text: string) => visualizerLabels[text] ?? text;
+
+    expect(localized.title).toBe("Selection Sort — visualization");
+    expect(localized.legend.map((item) => translate(item.label))).toEqual([
+      "Sorted",
+      "Current minimum",
+      "Checking",
+      "Just swapped",
+    ]);
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => translate(item.label)),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [
+          translate(stat.label),
+          String(stat.value),
+        ]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as ">", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("mô phỏng");
+    expect(spec.build(spec.defaultInput, 0)[0].note).toBe(
+      "Bắt đầu với mảng ban đầu.",
+    );
+  });
+
+  it("localizes the Insertion Sort visualizer without leaking Vietnamese", () => {
+    const spec = visualizers["insertion-sort"];
+    const localized = localizeVisualizerSpec(spec, "en");
+    const frames = spec.build(spec.defaultInput, 0, "en");
+    const translate = (text: string) => visualizerLabels[text] ?? text;
+
+    expect(localized.title).toBe("Insertion Sort — visualization");
+    expect(localized.legend.map((item) => translate(item.label))).toEqual([
+      "Sorted",
+      "Key / insertion position",
+      "Comparing",
+      "Just shifted",
+    ]);
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => translate(item.label)),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [
+          translate(stat.label),
+          String(stat.value),
+        ]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as ">", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("mô phỏng");
+    expect(spec.build(spec.defaultInput, 0)[0].note).toBe(
+      "Phần tử đầu tiên coi như đã sắp xếp.",
+    );
+  });
+
+  it("localizes the Two Sum visualizer without leaking Vietnamese", () => {
+    const spec = visualizers["two-sum"];
+    const target = spec.target?.default ?? 0;
+    const localized = localizeVisualizerSpec(spec, "en");
+    const frames = spec.build(spec.defaultInput, target, "en");
+    const translate = (text: string) => visualizerLabels[text] ?? text;
+
+    expect(localized.title).toBe("Two Sum (Sorted) — visualization");
+    expect(localized.legend.map((item) => translate(item.label))).toEqual([
+      "L / R",
+      "Eliminated",
+      "Matching pair",
+    ]);
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => translate(item.label)),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [
+          translate(stat.label),
+          String(stat.value),
+        ]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as ">", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // The reviewed English frame-note templates are used verbatim.
+    expect(frames[0].note).toBe(
+      "Two pointers: L starts at the beginning and R at the end of the sorted array.",
+    );
+    expect(frames[1].note).toBe("Sum a[0] + a[5] = 1 + 15 = 16.");
+    expect(frames[2].note).toBe(
+      "Since 16 > 9, move R backward to decrease the sum.",
+    );
+    expect(frames.at(-1)?.note).toBe("Sum matches target 9. Return [1, 3].");
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("mô phỏng");
+    expect(spec.build(spec.defaultInput, target)[0].note).toContain(
+      "Hai con trỏ",
+    );
+  });
+
+  it("localizes the Binary Search visualizer without leaking Vietnamese", () => {
+    const spec = visualizers["binary-search"];
+    const target = spec.target?.default ?? 0;
+    const localized = localizeVisualizerSpec(spec, "en");
+    const frames = spec.build(spec.defaultInput, target, "en");
+    const translate = (text: string) => visualizerLabels[text] ?? text;
+
+    expect(localized.title).toBe("Binary Search — visualization");
+    expect(localized.legend.map((item) => translate(item.label))).toEqual([
+      "Middle element",
+      "Eliminated",
+      "Found",
+    ]);
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => translate(item.label)),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [
+          translate(stat.label),
+          String(stat.value),
+        ]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as ">" or "→", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // The reviewed English frame-note templates are used verbatim.
+    expect(frames[0].note).toBe(
+      "The initial search range is the entire array [0, 7].",
+    );
+    expect(frames[1].note).toBe("mid = (0 + 7) / 2 = 3; a[3] = 6.");
+    expect(frames[2].note).toBe(
+      "a[3] = 6 < 9, so discard the left half and set lo = 0 → 4.",
+    );
+    expect(frames.at(-1)?.note).toBe("Target 9 found at index 4.");
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("mô phỏng");
+    expect(spec.build(spec.defaultInput, target)[0].note).toContain(
+      "toàn mảng",
+    );
+  });
+
+  it("localizes the Sliding Window visualizer without leaking Vietnamese", () => {
+    const spec = structureArrayVisualizers["sliding-window"];
+    const target = spec.target?.default ?? 0;
+    const localized = localizeVisualizerSpec(spec, "en");
+    const frames = spec.build(spec.defaultInput, target, "en");
+    const translate = (text: string) => visualizerLabels[text] ?? text;
+
+    expect(localized.title).toBe(
+      "Sliding Window — shortest subarray with sum ≥ target",
+    );
+    expect(localized.legend.map((item) => translate(item.label))).toEqual([
+      "In window",
+      "Just expanded (r)",
+      "Just shrunk (l)",
+      "Best window",
+      "Outside window",
+    ]);
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => translate(item.label)),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [
+          translate(stat.label),
+          String(stat.value),
+        ]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as "≥" or "→", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // The reviewed English frame-note templates are used verbatim.
+    expect(frames[0].note).toBe(
+      "Start with an empty window. Goal: find the shortest subarray whose sum is ≥ target.",
+    );
+    expect(frames[1].note).toBe("Expand: add a[0] = 2 → sum = 2.");
+    expect(frames[5].note).toBe("sum ≥ target → best = 4 (subarray [0, 3]).");
+    expect(frames[6].note).toBe("Shrink: remove a[0] = 2 → sum = 6.");
+    expect(frames.at(-1)?.note).toBe("Done: shortest length = 2.");
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("tổng nhỏ nhất");
+    expect(spec.build(spec.defaultInput, target)[0].note).toContain(
+      "Khởi tạo cửa sổ rỗng",
+    );
+  });
+
+  it("translates the fixed sliding-window diagram and does not leak Vietnamese", () => {
+    const lesson = findLessonForLocale("dsa", "fixed-sliding-window", "en");
+    const block = lesson?.blocks[8];
+    expect(block?.type).toBe("diagram");
+    if (block?.type !== "diagram") return;
+
+    expect(block.caption).toBe(
+      "For k = 3, the current window contains a[0]–a[2]. When it slides right, a[3] enters the window.",
+    );
+    expect(block.nodes.map((node) => node.sub)).toEqual([
+      "a[0] · in window",
+      "a[1] · in window",
+      "a[2] · in window",
+      "a[3] · enters next",
+      "a[4] · outside window",
+    ]);
+
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+    const prose = [
+      block.caption ?? "",
+      ...block.nodes.flatMap((node) => [
+        node.label,
+        ...(node.sub ? [node.sub] : []),
+      ]),
+    ];
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+  });
+
+  it("translates the backtracking subset-tree diagram and does not leak Vietnamese", () => {
+    const lesson = findLessonForLocale("dsa", "backtracking", "en");
+    const block = lesson?.blocks[9];
+    expect(block?.type).toBe("diagram");
+    if (block?.type !== "diagram") return;
+
+    expect(block.caption).toBe(
+      "For nums = [1, 2], each level chooses or skips an element. The four leaves are all possible subsets.",
+    );
+    expect(block.nodes.map((node) => node.label)).toEqual([
+      "Start",
+      "[]",
+      "[1]",
+      "[]",
+      "[2]",
+      "[1]",
+      "[1,2]",
+    ]);
+    expect(block.nodes.map((node) => node.sub)).toEqual([
+      "nums = [1, 2]",
+      "after considering 1",
+      "after considering 1",
+      "result",
+      "result",
+      "result",
+      "result",
+    ]);
+    expect(block.edges.map((edge) => edge.label)).toEqual([
+      "Skip 1",
+      "Choose 1",
+      "Skip 2",
+      "Choose 2",
+      "Skip 2",
+      "Choose 2",
+    ]);
+
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+    const prose = [
+      block.caption ?? "",
+      ...block.nodes.flatMap((node) => [
+        node.label,
+        ...(node.sub ? [node.sub] : []),
+      ]),
+      ...block.edges.flatMap((edge) => (edge.label ? [edge.label] : [])),
+    ];
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+  });
+
+  it("localizes the Graph BFS visualizer without leaking Vietnamese", () => {
+    const spec = structureDiagramVisualizers["graph-bfs"];
+    const localized = localizeDiagramSpec(spec, "en");
+    const frames = spec.build("en");
+
+    expect(localized.title).toBe("BFS — Level-Order Graph Traversal");
+    expect(localized.legend.map((item) => item.label)).toEqual([
+      "Unvisited",
+      "In queue",
+      "Being explored",
+      "Visited",
+    ]);
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => item.label),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [stat.label, String(stat.value)]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as "→", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // The reviewed English copy is used verbatim.
+    expect(frames[0].note).toBe("Initialize: add source vertex A to the queue.");
+    expect(frames[1].note).toBe("Dequeue A and mark it as visited.");
+    expect(frames[2].note).toBe("Check neighbor B: unvisited → enqueue.");
+    expect(frames[0].stats.map((stat) => stat.label)).toEqual([
+      "Queue",
+      "Visited",
+    ]);
+    expect(frames[0].stats[0].value).toBe("A");
+    expect(frames.at(-1)?.note).toBe("Queue is empty → BFS complete.");
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("duyệt đồ thị theo tầng");
+    expect(spec.build()[0].note).toContain("đỉnh nguồn A");
+    expect(spec.build()[0].stats.map((stat) => stat.label)).toEqual([
+      "hàng đợi",
+      "đã thăm",
+    ]);
+  });
+
+  it("localizes the DP 1D visualizer without leaking Vietnamese", () => {
+    const spec = structureArrayVisualizers["dp-1d"];
+    const localized = localizeVisualizerSpec(spec, "en");
+    const frames = spec.build(spec.defaultInput, 0, "en");
+
+    expect(localized.title).toBe("DP 1D — House Robber");
+    expect(localized.legend.map((item) => item.label)).toEqual([
+      "Computed dp entries",
+      "Decision cells",
+      "Not yet computed",
+    ]);
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => item.label),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [stat.label, String(stat.value)]),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math symbols such as "—" or "→", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // The reviewed English frame notes and stat labels are used verbatim.
+    expect(frames[0].note).toBe(
+      "nums = [2, 7, 9, 3, 1]. dp[i] = the maximum amount you can rob from houses 0 through i.",
+    );
+    expect(frames[1].note).toBe("Base case: dp[0] = nums[0] = 2.");
+    expect(frames[2].note).toBe("Base case: dp[1] = max(nums[0], nums[1]) = 7.");
+    expect(frames[3].note).toBe(
+      "At i = 2: take = dp[0] + nums[2] = 11; skip = dp[1] = 7.",
+    );
+    expect(frames[4].note).toBe("dp[2] = max(11, 7) = 11.");
+    expect(frames.at(-1)?.note).toBe("Result: dp[4] = 12.");
+    expect(frames[0].stats.map((stat) => stat.label)).toEqual([
+      "i",
+      "Take",
+      "Skip",
+    ]);
+    expect(frames[0].stats[1].value).toBe("—");
+
+    // Vietnamese stays the default: the source spec keeps its own copy.
+    expect(spec.title).toContain("House Robber");
+    expect(spec.build(spec.defaultInput, 0)[0].note).toContain(
+      "số tiền lớn nhất",
+    );
+    expect(
+      spec.build(spec.defaultInput, 0)[0].stats.map((stat) => stat.label),
+    ).toEqual(["i", "lấy", "bỏ"]);
+  });
+
+  it("translates the DP 2D knapsack diagram and does not leak Vietnamese", () => {
+    const lesson = findLessonForLocale("dsa", "dp-patterns", "en");
+    const block = lesson?.blocks[9];
+    expect(block?.type).toBe("diagram");
+    if (block?.type !== "diagram") return;
+
+    expect(block.caption).toBe(
+      "Each cell dp[i][c] stores the maximum value achievable using the first i items at capacity c.",
+    );
+    const rows = block.nodes.filter((node) => node.id.startsWith("row-"));
+    expect(rows.map((node) => node.sub)).toEqual([
+      "0 items considered",
+      "1 item considered",
+      "2 items considered",
+    ]);
+
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+    const prose = [
+      block.caption ?? "",
+      ...block.nodes.flatMap((node) => [
+        node.label,
+        ...(node.sub ? [node.sub] : []),
+      ]),
+      ...block.edges.flatMap((edge) => (edge.label ? [edge.label] : [])),
+    ];
     expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
   });
 });
