@@ -55,11 +55,11 @@ export const slidingWindowModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "w0", label: "2", sub: "a[0] · trong cửa sổ", x: 32, y: 28, w: 96, h: 58 },
-            { id: "w1", label: "1", sub: "a[1] · trong cửa sổ", x: 140, y: 28, w: 96, h: 58 },
-            { id: "w2", label: "3", sub: "a[2] · trong cửa sổ", x: 248, y: 28, w: 96, h: 58 },
-            { id: "w3", label: "4", sub: "a[3] · vào tiếp theo", x: 356, y: 28, w: 96, h: 58 },
-            { id: "w4", label: "5", sub: "a[4] · ngoài cửa sổ", x: 464, y: 28, w: 96, h: 58 },
+            { id: "w0", label: "2", sub: "a[0] · trong cửa sổ", tone: "amber", x: 32, y: 28, w: 96, h: 58 },
+            { id: "w1", label: "1", sub: "a[1] · trong cửa sổ", tone: "amber", x: 140, y: 28, w: 96, h: 58 },
+            { id: "w2", label: "3", sub: "a[2] · trong cửa sổ", tone: "amber", x: 248, y: 28, w: 96, h: 58 },
+            { id: "w3", label: "4", sub: "a[3] · vào tiếp theo", tone: "sky", x: 356, y: 28, w: 96, h: 58 },
+            { id: "w4", label: "5", sub: "a[4] · ngoài cửa sổ", tone: "zinc", x: 464, y: 28, w: 96, h: 58 },
           ],
           edges: [],
           caption:

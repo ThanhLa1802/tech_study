@@ -6,6 +6,16 @@ export type NodeState = "idle" | "active" | "success" | "warn" | "down";
 
 export type DiagramShape = "box" | "bucket";
 
+/**
+ * Static accent for a diagram node, following the asset palette
+ * (`asset/dsa-patterns-cheatsheet.html`). Color carries meaning, not
+ * decoration: emerald = compute/primary, sky = client/edge, amber = data,
+ * violet = infrastructure (network/messaging), rose = danger/down,
+ * zinc = muted/neutral. Only applied to nodes in the `idle` state; animation
+ * states win.
+ */
+export type NodeTone = "emerald" | "sky" | "amber" | "rose" | "violet" | "zinc";
+
 export type DiagramNode = {
   id: string;
   label: string;
@@ -16,6 +26,7 @@ export type DiagramNode = {
   h: number;
   shape?: DiagramShape;
   capacity?: number;
+  tone?: NodeTone;
 };
 
 export type DiagramEdge = {
@@ -46,6 +57,12 @@ export type DiagramFrame = {
 
 export type DiagramLegendItem = { state: NodeState | "packet"; label: string };
 
+/** Locale-specific text overrides for one diagram node; geometry is preserved. */
+export type DiagramNodeText = { label?: string; sub?: string };
+
+/** Locale-specific text overrides for one diagram edge; topology is preserved. */
+export type DiagramEdgeText = { label?: string };
+
 /**
  * Locale-specific user-visible text for a diagram. Only the fields provided are
  * replaced; node geometry, ids, and edge topology stay untouched. Vietnamese
@@ -56,6 +73,10 @@ export type DiagramSpecOverrides = {
   /** Full pseudocode replacement; use when a line contains natural language. */
   pseudo?: string[];
   legend?: Partial<Record<NodeState | "packet", string>>;
+  /** Node label/sub overrides keyed by stable node id. */
+  nodes?: Record<string, DiagramNodeText>;
+  /** Edge label overrides keyed by stable edge id. */
+  edges?: Record<string, DiagramEdgeText>;
 };
 
 export type DiagramSpec = {
@@ -69,7 +90,7 @@ export type DiagramSpec = {
   overrides?: Partial<Record<Locale, DiagramSpecOverrides>>;
 };
 
-/** Applies a spec's locale overrides to its title, pseudocode, and legend. */
+/** Applies a spec's locale overrides to its text (title, pseudo, legend, nodes, edges). */
 export function localizeDiagramSpec(
   spec: DiagramSpec,
   locale: Locale,
@@ -84,6 +105,26 @@ export function localizeDiagramSpec(
       ...item,
       label: overrides.legend?.[item.state] ?? item.label,
     })),
+    nodes: overrides.nodes
+      ? spec.nodes.map((node) => {
+          const patch = overrides.nodes?.[node.id];
+          if (!patch) return node;
+          return {
+            ...node,
+            ...(patch.label !== undefined ? { label: patch.label } : {}),
+            ...(patch.sub !== undefined ? { sub: patch.sub } : {}),
+          };
+        })
+      : spec.nodes,
+    edges: overrides.edges
+      ? spec.edges.map((edge) => {
+          const patch = overrides.edges?.[edge.id];
+          if (!patch) return edge;
+          return patch.label !== undefined
+            ? { ...edge, label: patch.label }
+            : edge;
+        })
+      : spec.edges,
   };
 }
 

@@ -31,6 +31,61 @@ Diagram/illustration/icon quality:
 - **Accessible** — provide accessible labels/text alternatives where appropriate, and use semantic markup rather than relying on color/shape alone to carry meaning.
 - **Meaningful icons** — icons are consistent with the existing icon set and genuinely support the meaning of the element they mark; never add icons as decoration alone.
 
+## Reference visual style (follow the assets)
+
+Before drawing anything, read the canonical style references and match their look, rather than inventing a new one:
+
+- `asset/dsa-patterns-cheatsheet.html` — the static-diagram style: dark panels, outlined rounded boxes, monospace value labels, triangular arrow markers, muted dashed guides.
+- `asset/animation-demo.html` — the motion style: CSS `transform`/`opacity` motion, glow accents, `prefers-reduced-motion` respected.
+- The saturated "node flow" diagrams used in the product (e.g. the IP-address flow: Your Device → Router Gateway → Internet Backbone → Server) — filled colored boxes with bold white labels and small inline edge captions.
+
+When the assets and this text disagree, the asset files win.
+
+### Palette (exact tokens)
+
+| Token | Hex | Meaning |
+| --- | --- | --- |
+| background | `#000` / `#0b0b0b` | page / panel background |
+| panel border | `#262626` | panel outlines |
+| green | `#2fe083` | primary · result · success |
+| blue | `#4aa8ff` | secondary · active · pointer |
+| red | `#ff5a5a` | error · reversal · down |
+| amber | `#f5c542` | highlight · current |
+| gray | `#8a8a8a` | muted · inactive |
+| text | `#ededed` | labels |
+| muted text | `#9a9a9a` | captions, secondary labels |
+
+Color carries **meaning**, not decoration: one meaning per color, applied the same way across every figure in a lesson.
+
+### Shapes, edges, type
+
+- Nodes: rounded rectangles (`rx` 6–12) with a 2px stroke. Default is transparent fill on dark; use the filled variant only when nodes carry distinct roles.
+- Filled nodes: solid saturated fill, no stroke, bold **white** centered label — the IP-flow look.
+- Edges: straight lines with triangular end-markers; arrows only where direction matters; dashed for secondary/alternate paths. Edge captions are small (~11px), centered above the line.
+- Typography: UI copy in `"Segoe UI", system-ui, Arial`; values/labels inside figures in `Consolas, monospace`. Keep labels short enough to never clip.
+- Keep every figure on the repo's dark surface — never a light/white figure background.
+
+### Sequence diagrams (lifelines, messages, labels)
+
+Sequence diagrams fail on text collisions first, so design the label space before the arrows:
+
+- **Reserve label space, then place arrows.** Size each message row from its wrapped label (line count × line height), and position the arrow below that block. Never center text on a fixed row and hope it fits.
+- **Row spacing scales with the label.** Longer or multi-line labels get taller rows; do not use one fixed row height for every step.
+- **Keep labels off lifelines, nodes, and each other.** Wrap a label to the gap between its two endpoints, or mask it with a background chip in the surface color, so a dashed lifeline never runs through glyphs. Adjacent label boxes, a label and its own arrow, labels and phase bands, and labels and participant headers must not intersect.
+- **Long labels:** short copy first, then word-wrap on spaces with a measured or estimated width. Keep an over-long single token whole rather than clipping; ellipsis is a last resort and still needs a text/accessible alternative.
+- **Direction and semantics:** arrow orientation follows the real step; request vs response should differ by more than color (e.g. solid vs dashed) with a legend. Participant order and message numbering are the reading order.
+- **Responsive/zoom:** SVG text scales with the viewBox, so a shrinking canvas makes labels unreadable. Keep a readable minimum size and let the container scroll horizontally (or reflow) instead of shrinking the font or hiding labels. Check the narrowest supported width and zoomed states.
+- **Test the geometry, then verify visually.** Unit-test bounding boxes and row spacing from a pure layout function, and state clearly that real font metrics, descenders, and render-time overlap still require a visual smoke check at desktop and the narrowest width.
+- Keep the pure layout (measure/wrap/row math) separate from the renderer so it can be unit-tested.
+
+### Apply it through the repo's mechanisms (no inline hacks)
+
+- Lesson `diagram` blocks are typed by `src/lib/diagram.ts` and rendered by `src/components/diagram-svg.tsx`. Give a node its filled color with the `tone` field (`NodeTone`: `emerald` = compute/primary, `sky` = client/edge, `amber` = data, `violet` = infrastructure (network/messaging), `rose` = danger/down, `zinc` = muted/neutral); animation emphasis uses node/edge **state** (`NODE_FILL` / `NODE_TEXT` / `EDGE_STROKE`) and `tone` only shows while the node is `idle`. Never hardcode colors inside lesson content.
+- Animated System Design diagrams live in `src/components/visualizers/diagram-specs.ts`; static lesson diagrams live in the lesson `blocks`.
+- Icons go through `Icon` / `src/components/course-icons.tsx`.
+- If the target look needs a role or color the schema cannot express, extend the schema in the **three synced places** (`src/content/schema.ts`, `src/lib/course-types.ts`, `src/lib/diagram.ts` + the renderer) and keep the change minimal and backward-compatible — do not bypass the schema.
+- Any user-visible text stays bilingual; add no drawing/icon/animation libraries.
+
 ## Constraints
 
 - Read and follow the repository's `AGENTS.md` and relevant local instructions before changing code.

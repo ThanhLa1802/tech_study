@@ -51,10 +51,10 @@ export default function CourseSwitcher({
           />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold text-zinc-100">
+          <span className="block text-sm font-semibold text-zinc-100">
             {active.title}
           </span>
-          <span className="block truncate text-xs text-zinc-400">
+          <span className="block text-xs text-zinc-400">
             {active.tagline}
           </span>
         </span>
@@ -103,10 +103,10 @@ export default function CourseSwitcher({
                   className="h-5 w-5 shrink-0"
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium">
+                  <span className="block text-sm font-medium">
                     {course.title}
                   </span>
-                  <span className="block truncate text-xs text-zinc-400">
+                  <span className="block text-xs text-zinc-400">
                     {locale === "en" ? `${lessonCount} lessons` : `${lessonCount} bài học`}
                   </span>
                 </span>

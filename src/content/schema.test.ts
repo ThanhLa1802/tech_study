@@ -83,4 +83,26 @@ describe("validateCourseModules", () => {
     ];
     expect(() => validateCourseModules(bad)).toThrow();
   });
+
+  it("accepts an inline h3 visualizer and rejects an unknown one", () => {
+    const makeModule = (visualizer: string) => [
+      {
+        id: "m",
+        title: "M",
+        lessons: [
+          {
+            slug: "l",
+            title: "L",
+            module: "M",
+            summary: "s",
+            duration: "1 phút",
+            blocks: [{ type: "h3", text: "Section", visualizer }],
+          },
+        ],
+      },
+    ];
+
+    expect(validateCourseModules(makeModule("http-https"))).toHaveLength(1);
+    expect(() => validateCourseModules(makeModule("not-a-visualizer"))).toThrow();
+  });
 });

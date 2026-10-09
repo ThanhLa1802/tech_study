@@ -101,21 +101,22 @@ export const sdNetworkingApisModule: CourseModule = {
           caption:
             "Luồng phân giải DNS: client hỏi stub resolver; khi cache miss, stub chuyển tiếp tới recursive resolver. Recursive resolver hỏi lần lượt root → TLD → authoritative, nhận referral trỏ về ở mỗi bước, rồi trả IP cho client để gọi server.",
           nodes: [
-            { id: "client", label: "Client", sub: "ứng dụng", x: 10, y: 150, w: 110, h: 60 },
-            { id: "stub", label: "Stub resolver", sub: "cache cục bộ", x: 210, y: 150, w: 150, h: 60 },
+            { id: "client", label: "Client", sub: "ứng dụng", tone: "sky", x: 10, y: 150, w: 110, h: 60 },
+            { id: "stub", label: "Stub resolver", sub: "cache cục bộ", tone: "violet", x: 210, y: 150, w: 150, h: 60 },
             {
               id: "recursive",
               label: "Recursive resolver",
               sub: "hỏi thay client",
+              tone: "violet",
               x: 430,
               y: 146,
               w: 190,
               h: 68,
             },
-            { id: "root", label: "Root server", sub: "chỉ sang TLD", x: 760, y: 20, w: 160, h: 60 },
-            { id: "tld", label: "TLD server", sub: "chỉ sang auth", x: 760, y: 150, w: 160, h: 60 },
-            { id: "auth", label: "Authoritative", sub: "trả A record", x: 760, y: 280, w: 160, h: 60 },
-            { id: "server", label: "Web server", sub: "nhận HTTP(S)", x: 210, y: 300, w: 150, h: 60 },
+            { id: "root", label: "Root server", sub: "chỉ sang TLD", tone: "violet", x: 760, y: 20, w: 160, h: 60 },
+            { id: "tld", label: "TLD server", sub: "chỉ sang auth", tone: "violet", x: 760, y: 150, w: 160, h: 60 },
+            { id: "auth", label: "Authoritative", sub: "trả A record", tone: "violet", x: 760, y: 280, w: 160, h: 60 },
+            { id: "server", label: "Web server", sub: "nhận HTTP(S)", tone: "emerald", x: 210, y: 300, w: 150, h: 60 },
           ],
           edges: [
             { id: "client-stub", from: "client", to: "stub", label: "hỏi tên miền" },
@@ -301,13 +302,13 @@ export const sdNetworkingApisModule: CourseModule = {
           caption:
             "Kết nối lạnh phải trả DNS, TCP rồi TLS handshake (mỗi bước khoảng 1 RTT) trước khi request đi; kết nối ấm tái dùng kết nối keep-alive nên critical path chỉ còn request → TTFB → body.",
           nodes: [
-            { id: "c-cold", label: "Client", sub: "kết nối lạnh", x: 10, y: 30, w: 130, h: 60 },
-            { id: "dns", label: "DNS", sub: "1 RTT", x: 200, y: 30, w: 100, h: 60 },
-            { id: "tcp", label: "TCP", sub: "1 RTT", x: 350, y: 30, w: 100, h: 60 },
-            { id: "tls", label: "TLS 1.3", sub: "1 RTT", x: 500, y: 30, w: 100, h: 60 },
-            { id: "s-cold", label: "Server", sub: "request → body", x: 660, y: 30, w: 150, h: 60 },
-            { id: "c-warm", label: "Client", sub: "kết nối ấm", x: 10, y: 190, w: 130, h: 60 },
-            { id: "s-warm", label: "Server", sub: "request → body", x: 660, y: 190, w: 150, h: 60 },
+            { id: "c-cold", label: "Client", sub: "kết nối lạnh", tone: "sky", x: 10, y: 30, w: 130, h: 60 },
+            { id: "dns", label: "DNS", sub: "1 RTT", tone: "violet", x: 200, y: 30, w: 100, h: 60 },
+            { id: "tcp", label: "TCP", sub: "1 RTT", tone: "violet", x: 350, y: 30, w: 100, h: 60 },
+            { id: "tls", label: "TLS 1.3", sub: "1 RTT", tone: "violet", x: 500, y: 30, w: 100, h: 60 },
+            { id: "s-cold", label: "Server", sub: "request → body", tone: "emerald", x: 660, y: 30, w: 150, h: 60 },
+            { id: "c-warm", label: "Client", sub: "kết nối ấm", tone: "sky", x: 10, y: 190, w: 130, h: 60 },
+            { id: "s-warm", label: "Server", sub: "request → body", tone: "emerald", x: 660, y: 190, w: 150, h: 60 },
           ],
           edges: [
             { id: "cold-client-dns", from: "c-cold", to: "dns" },
@@ -337,6 +338,7 @@ export const sdNetworkingApisModule: CourseModule = {
       summary:
         "API như một hợp đồng; REST dựa trên tài nguyên và interface đồng nhất (không chỉ là CRUD); GraphQL với query và resolver; và khi nào nên chọn cách nào.",
       duration: "11 phút",
+      visualizer: "rest-request-flow",
       blocks: [
         {
           type: "p",
@@ -409,15 +411,15 @@ export const sdNetworkingApisModule: CourseModule = {
           caption:
             "REST client thường gọi nhiều endpoint resource khi dữ liệu nằm rải rác; GraphQL client gửi một query tới endpoint và schema/resolvers lấy từng field từ nguồn phù hợp. Đây là pattern điển hình — phía server GraphQL vẫn có thể phát sinh nhiều truy vấn nguồn.",
           nodes: [
-            { id: "r-client", label: "REST client", x: 10, y: 90, w: 140, h: 60 },
-            { id: "r-ep1", label: "GET /users/42", x: 250, y: 20, w: 200, h: 50 },
-            { id: "r-ep2", label: "GET /users/42/orders", x: 250, y: 95, w: 200, h: 50 },
-            { id: "r-ep3", label: "GET /orders/12", x: 250, y: 170, w: 200, h: 50 },
-            { id: "r-src", label: "Data sources", sub: "nhiều resource", x: 560, y: 95, w: 170, h: 60 },
-            { id: "g-client", label: "GraphQL client", x: 10, y: 290, w: 160, h: 60 },
-            { id: "g-ep", label: "GraphQL endpoint", x: 260, y: 290, w: 170, h: 60 },
-            { id: "g-res", label: "Schema / resolvers", x: 520, y: 290, w: 180, h: 60 },
-            { id: "g-src", label: "Data sources", x: 780, y: 290, w: 160, h: 60 },
+            { id: "r-client", label: "REST client", tone: "sky", x: 10, y: 90, w: 140, h: 60 },
+            { id: "r-ep1", label: "GET /users/42", tone: "emerald", x: 250, y: 20, w: 200, h: 50 },
+            { id: "r-ep2", label: "GET /users/42/orders", tone: "emerald", x: 250, y: 95, w: 200, h: 50 },
+            { id: "r-ep3", label: "GET /orders/12", tone: "emerald", x: 250, y: 170, w: 200, h: 50 },
+            { id: "r-src", label: "Data sources", sub: "nhiều resource", tone: "amber", x: 560, y: 95, w: 170, h: 60 },
+            { id: "g-client", label: "GraphQL client", tone: "sky", x: 10, y: 290, w: 160, h: 60 },
+            { id: "g-ep", label: "GraphQL endpoint", tone: "emerald", x: 260, y: 290, w: 170, h: 60 },
+            { id: "g-res", label: "Schema / resolvers", tone: "emerald", x: 520, y: 290, w: 180, h: 60 },
+            { id: "g-src", label: "Data sources", tone: "amber", x: 780, y: 290, w: 160, h: 60 },
           ],
           edges: [
             { id: "r-client-ep1", from: "r-client", to: "r-ep1" },
@@ -563,15 +565,15 @@ export const sdNetworkingApisModule: CourseModule = {
           caption:
             "Ba pattern realtime khác nhau ở ai chủ động: Polling để client lặp lại request theo chu kỳ; WebSocket mở kênh hai chiều bền vững giữa client và server; Webhook để provider đẩy một chiều HTTP POST tới callback URL.",
           nodes: [
-            { id: "polling", label: "Polling", sub: "client kéo định kỳ", x: 20, y: 30, w: 170, h: 60 },
-            { id: "poll-client", label: "Client", x: 280, y: 30, w: 120, h: 60 },
-            { id: "poll-server", label: "Server", x: 480, y: 30, w: 140, h: 60 },
-            { id: "ws", label: "WebSocket", sub: "kênh bền vững", x: 20, y: 150, w: 170, h: 60 },
-            { id: "ws-client", label: "Client", x: 280, y: 150, w: 120, h: 60 },
-            { id: "ws-server", label: "Server", x: 480, y: 150, w: 140, h: 60 },
-            { id: "webhook", label: "Webhook", sub: "server đẩy", x: 20, y: 270, w: 170, h: 60 },
-            { id: "hook-provider", label: "Provider", sub: "bên thứ ba", x: 280, y: 270, w: 120, h: 60 },
-            { id: "hook-callback", label: "Callback URL", sub: "server của bạn", x: 480, y: 270, w: 140, h: 60 },
+            { id: "polling", label: "Polling", sub: "client kéo định kỳ", tone: "violet", x: 20, y: 30, w: 170, h: 60 },
+            { id: "poll-client", label: "Client", tone: "sky", x: 280, y: 30, w: 120, h: 60 },
+            { id: "poll-server", label: "Server", tone: "emerald", x: 480, y: 30, w: 140, h: 60 },
+            { id: "ws", label: "WebSocket", sub: "kênh bền vững", tone: "violet", x: 20, y: 150, w: 170, h: 60 },
+            { id: "ws-client", label: "Client", tone: "sky", x: 280, y: 150, w: 120, h: 60 },
+            { id: "ws-server", label: "Server", tone: "emerald", x: 480, y: 150, w: 140, h: 60 },
+            { id: "webhook", label: "Webhook", sub: "server đẩy", tone: "violet", x: 20, y: 270, w: 170, h: 60 },
+            { id: "hook-provider", label: "Provider", sub: "bên thứ ba", tone: "sky", x: 280, y: 270, w: 120, h: 60 },
+            { id: "hook-callback", label: "Callback URL", sub: "server của bạn", tone: "emerald", x: 480, y: 270, w: 140, h: 60 },
           ],
           edges: [
             { id: "poll-client-server", from: "poll-client", to: "poll-server", label: "GET lặp lại" },

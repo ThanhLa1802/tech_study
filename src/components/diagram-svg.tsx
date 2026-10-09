@@ -8,6 +8,7 @@ import {
   type DiagramNode,
   type DiagramPacket,
   type NodeState,
+  type NodeTone,
 } from "@/lib/diagram";
 
 export const NODE_FILL: Record<NodeState, string> = {
@@ -16,6 +17,20 @@ export const NODE_FILL: Record<NodeState, string> = {
   success: "fill-green-950 stroke-green-400",
   warn: "fill-amber-950 stroke-amber-400",
   down: "fill-rose-950 stroke-rose-600",
+};
+
+/**
+ * Filled, saturated node accents from the asset style
+ * (`asset/dsa-patterns-cheatsheet.html`) with bold white labels. Used for the
+ * node-flow look (e.g. Your Device → Router Gateway → Internet Backbone).
+ */
+export const NODE_TONE: Record<NodeTone, string> = {
+  emerald: "fill-emerald-500 stroke-emerald-400",
+  sky: "fill-sky-500 stroke-sky-400",
+  amber: "fill-amber-500 stroke-amber-400",
+  rose: "fill-rose-500 stroke-rose-400",
+  violet: "fill-violet-500 stroke-violet-400",
+  zinc: "fill-zinc-700 stroke-zinc-500",
 };
 
 export const NODE_TEXT: Record<NodeState, string> = {
@@ -42,6 +57,8 @@ type Props = {
   packets?: DiagramPacket[];
   buckets?: Record<string, number>;
   animate?: boolean;
+  /** Accessible name announced for the `role="img"` SVG. */
+  ariaLabel?: string;
 };
 
 export default function DiagramSvg({
@@ -52,6 +69,7 @@ export default function DiagramSvg({
   packets = [],
   buckets = {},
   animate = false,
+  ariaLabel,
 }: Props) {
   const byId = new Map(nodes.map((node) => [node.id, node]));
   const { width, height } = diagramBounds(nodes);
@@ -61,6 +79,7 @@ export default function DiagramSvg({
       viewBox={`0 0 ${width} ${height}`}
       className="h-auto w-full"
       role="img"
+      aria-label={ariaLabel}
     >
       {edges.map((edge) => {
         const from = byId.get(edge.from);
@@ -146,6 +165,10 @@ export default function DiagramSvg({
             </g>
           );
         }
+        const toneClass =
+          node.tone !== undefined && state === "idle"
+            ? NODE_TONE[node.tone]
+            : undefined;
         return (
           <g key={node.id}>
             <rect
@@ -155,7 +178,7 @@ export default function DiagramSvg({
               height={node.h}
               rx={12}
               strokeWidth={1.5}
-              className={`${NODE_FILL[state]} ${
+              className={`${toneClass ?? NODE_FILL[state]} ${
                 animate ? "transition-colors duration-300" : ""
               }`}
             />
@@ -164,7 +187,11 @@ export default function DiagramSvg({
               y={node.sub ? center.y - 6 : center.y}
               textAnchor="middle"
               dominantBaseline="middle"
-              className={`${NODE_TEXT[state]} text-xs font-medium`}
+              className={
+                toneClass
+                  ? "fill-white text-xs font-semibold"
+                  : `${NODE_TEXT[state]} text-xs font-medium`
+              }
             >
               {node.label}
             </text>
@@ -174,7 +201,9 @@ export default function DiagramSvg({
                 y={center.y + 12}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                className="fill-zinc-400 text-[10px]"
+                className={
+                  toneClass ? "fill-white/80 text-[10px]" : "fill-zinc-400 text-[10px]"
+                }
               >
                 {node.sub}
               </text>

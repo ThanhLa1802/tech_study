@@ -51,11 +51,11 @@ export const sdDataModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "node-a", label: "Nút A", sub: "vị trí trên vòng", x: 330, y: 15, w: 90, h: 50 },
-            { id: "node-b", label: "Nút B", sub: "vị trí trên vòng", x: 555, y: 120, w: 90, h: 50 },
-            { id: "node-c", label: "Nút C", sub: "vị trí trên vòng", x: 330, y: 245, w: 90, h: 50 },
-            { id: "node-d", label: "Nút D", sub: "vị trí trên vòng", x: 105, y: 120, w: 90, h: 50 },
-            { id: "key", label: "Key K", sub: "vị trí hash trên vòng", x: 445, y: 55, w: 96, h: 50 },
+            { id: "node-a", label: "Nút A", sub: "vị trí trên vòng", tone: "emerald", x: 330, y: 15, w: 90, h: 50 },
+            { id: "node-b", label: "Nút B", sub: "vị trí trên vòng", tone: "emerald", x: 555, y: 120, w: 90, h: 50 },
+            { id: "node-c", label: "Nút C", sub: "vị trí trên vòng", tone: "emerald", x: 330, y: 245, w: 90, h: 50 },
+            { id: "node-d", label: "Nút D", sub: "vị trí trên vòng", tone: "emerald", x: 105, y: 120, w: 90, h: 50 },
+            { id: "key", label: "Key K", sub: "vị trí hash trên vòng", tone: "amber", x: 445, y: 55, w: 96, h: 50 },
           ],
           edges: [
             { id: "ring-a-b", from: "node-a", to: "node-b", label: "chiều kim đồng hồ" },
@@ -106,9 +106,9 @@ export const sdDataModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "leader", label: "Leader", sub: "nhận thao tác ghi", x: 30, y: 130, w: 120, h: 56 },
-            { id: "follower-1", label: "Follower 1", sub: "bản sao", x: 390, y: 40, w: 140, h: 56 },
-            { id: "follower-2", label: "Follower 2", sub: "bản sao", x: 390, y: 220, w: 140, h: 56 },
+            { id: "leader", label: "Leader", sub: "nhận thao tác ghi", tone: "emerald", x: 30, y: 130, w: 120, h: 56 },
+            { id: "follower-1", label: "Follower 1", sub: "bản sao", tone: "sky", x: 390, y: 40, w: 140, h: 56 },
+            { id: "follower-2", label: "Follower 2", sub: "bản sao", tone: "sky", x: 390, y: 220, w: 140, h: 56 },
           ],
           edges: [
             { id: "leader-follower-1", from: "leader", to: "follower-1", label: "sao chép dữ liệu" },

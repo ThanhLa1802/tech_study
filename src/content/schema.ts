@@ -43,6 +43,9 @@ const diagramNodeSchema = z.object({
   h: z.number(),
   shape: z.enum(["box", "bucket"]).optional(),
   capacity: z.number().optional(),
+  tone: z
+    .enum(["emerald", "sky", "amber", "rose", "violet", "zinc"])
+    .optional(),
 });
 
 const diagramEdgeSchema = z.object({
@@ -62,6 +65,8 @@ const visualizerSchema = z.enum([
   "big-o-growth",
   "load-balancer-round-robin",
   "token-bucket",
+  "http-https",
+  "rest-request-flow",
   "linked-list",
   "binary-search-tree",
   "stack",
@@ -76,7 +81,11 @@ const visualizerSchema = z.enum([
 const lessonBlockSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("p"), text: z.string().min(1) }),
   z.object({ type: z.literal("h2"), text: z.string().min(1) }),
-  z.object({ type: z.literal("h3"), text: z.string().min(1) }),
+  z.object({
+    type: z.literal("h3"),
+    text: z.string().min(1),
+    visualizer: visualizerSchema.optional(),
+  }),
   z.object({ type: z.literal("ul"), items: z.array(z.string().min(1)).min(1) }),
   z.object({
     type: z.literal("code"),

@@ -5,9 +5,11 @@ import type { Locale } from "@/lib/locale";
 import AlgorithmVisualizer from "./algorithm-visualizer";
 import ComplexityVisualizer from "./complexity-visualizer";
 import DiagramVisualizer from "./diagram-visualizer";
+import SequenceVisualizer from "./sequence-visualizer";
 import FixedSlidingWindowMotion from "./fixed-sliding-window-motion";
 import SlidingWindowMotion from "./sliding-window-motion";
 import { diagramVisualizers } from "./diagram-specs";
+import { sequenceVisualizers } from "./sequence-specs";
 import { visualizers } from "./specs";
 import {
   structureArrayVisualizers,
@@ -58,6 +60,14 @@ export default function LessonVisualizer({
     return (
       <DiagramVisualizer
         spec={diagramVisualizers[type as keyof typeof diagramVisualizers]}
+        locale={locale}
+      />
+    );
+  }
+  if (type in sequenceVisualizers) {
+    return (
+      <SequenceVisualizer
+        spec={sequenceVisualizers[type as keyof typeof sequenceVisualizers]}
         locale={locale}
       />
     );

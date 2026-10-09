@@ -20,13 +20,13 @@ export const heapsModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "h0", label: "1", sub: "i=0", x: 334, y: 20, w: 56, h: 46 },
-            { id: "h1", label: "3", sub: "i=1", x: 180, y: 112, w: 56, h: 46 },
-            { id: "h2", label: "2", sub: "i=2", x: 488, y: 112, w: 56, h: 46 },
-            { id: "h3", label: "7", sub: "i=3", x: 103, y: 204, w: 56, h: 46 },
-            { id: "h4", label: "9", sub: "i=4", x: 257, y: 204, w: 56, h: 46 },
-            { id: "h5", label: "8", sub: "i=5", x: 411, y: 204, w: 56, h: 46 },
-            { id: "h6", label: "5", sub: "i=6", x: 565, y: 204, w: 56, h: 46 },
+            { id: "h0", label: "1", sub: "i=0", tone: "amber", x: 334, y: 20, w: 56, h: 46 },
+            { id: "h1", label: "3", sub: "i=1", tone: "sky", x: 180, y: 112, w: 56, h: 46 },
+            { id: "h2", label: "2", sub: "i=2", tone: "sky", x: 488, y: 112, w: 56, h: 46 },
+            { id: "h3", label: "7", sub: "i=3", tone: "sky", x: 103, y: 204, w: 56, h: 46 },
+            { id: "h4", label: "9", sub: "i=4", tone: "sky", x: 257, y: 204, w: 56, h: 46 },
+            { id: "h5", label: "8", sub: "i=5", tone: "sky", x: 411, y: 204, w: 56, h: 46 },
+            { id: "h6", label: "5", sub: "i=6", tone: "sky", x: 565, y: 204, w: 56, h: 46 },
           ],
           edges: [
             { id: "m01", from: "h0", to: "h1", label: "L" },
@@ -42,13 +42,13 @@ export const heapsModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "x0", label: "9", sub: "i=0", x: 334, y: 20, w: 56, h: 46 },
-            { id: "x1", label: "8", sub: "i=1", x: 180, y: 112, w: 56, h: 46 },
-            { id: "x2", label: "7", sub: "i=2", x: 488, y: 112, w: 56, h: 46 },
-            { id: "x3", label: "6", sub: "i=3", x: 103, y: 204, w: 56, h: 46 },
-            { id: "x4", label: "5", sub: "i=4", x: 257, y: 204, w: 56, h: 46 },
-            { id: "x5", label: "4", sub: "i=5", x: 411, y: 204, w: 56, h: 46 },
-            { id: "x6", label: "3", sub: "i=6", x: 565, y: 204, w: 56, h: 46 },
+            { id: "x0", label: "9", sub: "i=0", tone: "amber", x: 334, y: 20, w: 56, h: 46 },
+            { id: "x1", label: "8", sub: "i=1", tone: "sky", x: 180, y: 112, w: 56, h: 46 },
+            { id: "x2", label: "7", sub: "i=2", tone: "sky", x: 488, y: 112, w: 56, h: 46 },
+            { id: "x3", label: "6", sub: "i=3", tone: "sky", x: 103, y: 204, w: 56, h: 46 },
+            { id: "x4", label: "5", sub: "i=4", tone: "sky", x: 257, y: 204, w: 56, h: 46 },
+            { id: "x5", label: "4", sub: "i=5", tone: "sky", x: 411, y: 204, w: 56, h: 46 },
+            { id: "x6", label: "3", sub: "i=6", tone: "sky", x: 565, y: 204, w: 56, h: 46 },
           ],
           edges: [
             { id: "M01", from: "x0", to: "x1", label: "L" },

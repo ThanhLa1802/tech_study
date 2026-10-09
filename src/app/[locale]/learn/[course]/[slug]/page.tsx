@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import CodeBlock from "@/components/code-block";
 import DiagramBlock from "@/components/diagram-block";
 import LessonToc, { type TocItem } from "@/components/lesson-toc";
@@ -57,12 +57,14 @@ function Blocks({
         }
         if (block.type === "h3") {
           return (
-            <h3
-              key={index}
-              className="pt-3 text-lg font-semibold text-zinc-200"
-            >
-              {block.text}
-            </h3>
+            <Fragment key={index}>
+              <h3 className="pt-3 text-lg font-semibold text-zinc-200">
+                {block.text}
+              </h3>
+              {block.visualizer ? (
+                <LessonVisualizer type={block.visualizer} locale={locale} />
+              ) : null}
+            </Fragment>
           );
         }
         if (block.type === "ul") {

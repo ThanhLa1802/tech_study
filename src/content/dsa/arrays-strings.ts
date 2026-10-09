@@ -24,11 +24,11 @@ export const arraysStringsModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "a0", label: "1", sub: "i = 0", x: 16, y: 28, w: 96, h: 58 },
-            { id: "a1", label: "3", sub: "i = 1", x: 128, y: 28, w: 96, h: 58 },
-            { id: "a2", label: "5", sub: "i = 2", x: 240, y: 28, w: 96, h: 58 },
-            { id: "a3", label: "7", sub: "i = 3", x: 352, y: 28, w: 96, h: 58 },
-            { id: "a4", label: "9", sub: "i = 4", x: 464, y: 28, w: 96, h: 58 },
+            { id: "a0", label: "1", sub: "i = 0", tone: "sky", x: 16, y: 28, w: 96, h: 58 },
+            { id: "a1", label: "3", sub: "i = 1", tone: "sky", x: 128, y: 28, w: 96, h: 58 },
+            { id: "a2", label: "5", sub: "i = 2", tone: "sky", x: 240, y: 28, w: 96, h: 58 },
+            { id: "a3", label: "7", sub: "i = 3", tone: "sky", x: 352, y: 28, w: 96, h: 58 },
+            { id: "a4", label: "9", sub: "i = 4", tone: "sky", x: 464, y: 28, w: 96, h: 58 },
           ],
           edges: [],
           caption:
@@ -68,14 +68,14 @@ export const arraysStringsModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "s0", label: "1", sub: "dùng", x: 16, y: 28, w: 80, h: 58 },
-            { id: "s1", label: "3", sub: "dùng", x: 108, y: 28, w: 80, h: 58 },
-            { id: "s2", label: "5", sub: "dùng", x: 200, y: 28, w: 80, h: 58 },
-            { id: "s3", label: "7", sub: "dùng", x: 292, y: 28, w: 80, h: 58 },
-            { id: "s4", label: "9", sub: "dùng", x: 384, y: 28, w: 80, h: 58 },
-            { id: "s5", label: "·", sub: "trống", x: 476, y: 28, w: 80, h: 58 },
-            { id: "s6", label: "·", sub: "trống", x: 568, y: 28, w: 80, h: 58 },
-            { id: "s7", label: "·", sub: "trống", x: 660, y: 28, w: 80, h: 58 },
+            { id: "s0", label: "1", sub: "dùng", tone: "sky", x: 16, y: 28, w: 80, h: 58 },
+            { id: "s1", label: "3", sub: "dùng", tone: "sky", x: 108, y: 28, w: 80, h: 58 },
+            { id: "s2", label: "5", sub: "dùng", tone: "sky", x: 200, y: 28, w: 80, h: 58 },
+            { id: "s3", label: "7", sub: "dùng", tone: "sky", x: 292, y: 28, w: 80, h: 58 },
+            { id: "s4", label: "9", sub: "dùng", tone: "sky", x: 384, y: 28, w: 80, h: 58 },
+            { id: "s5", label: "·", sub: "trống", tone: "zinc", x: 476, y: 28, w: 80, h: 58 },
+            { id: "s6", label: "·", sub: "trống", tone: "zinc", x: 568, y: 28, w: 80, h: 58 },
+            { id: "s7", label: "·", sub: "trống", tone: "zinc", x: 660, y: 28, w: 80, h: 58 },
           ],
           edges: [],
           caption:

@@ -4,6 +4,7 @@ import type {
   DiagramNode,
   DiagramSpec,
   NodeState,
+  StatTone,
 } from "@/lib/diagram";
 import type { SystemDesignVisualizer } from "@/lib/course";
 import type { Locale } from "@/lib/locale";
@@ -267,6 +268,332 @@ function buildTokenBucket(locale: Locale = "vi"): DiagramFrame[] {
   return frames;
 }
 
+const httpNodes: DiagramNode[] = [
+  {
+    id: "client",
+    label: "Client",
+    sub: "trình duyệt / app",
+    tone: "sky",
+    x: 20,
+    y: 150,
+    w: 120,
+    h: 64,
+  },
+  {
+    id: "observer",
+    label: "Người quan sát",
+    sub: "trên mạng",
+    tone: "violet",
+    x: 210,
+    y: 150,
+    w: 150,
+    h: 64,
+  },
+  {
+    id: "server",
+    label: "Server",
+    sub: "trang web",
+    tone: "emerald",
+    x: 430,
+    y: 150,
+    w: 130,
+    h: 64,
+  },
+  {
+    id: "cert",
+    label: "Chứng chỉ",
+    sub: "danh tính",
+    tone: "zinc",
+    x: 430,
+    y: 30,
+    w: 130,
+    h: 56,
+  },
+  {
+    id: "key",
+    label: "Khoá phiên",
+    sub: "hai bên cùng suy ra",
+    tone: "zinc",
+    x: 210,
+    y: 30,
+    w: 150,
+    h: 56,
+  },
+];
+
+const httpEdges: DiagramEdge[] = [
+  { id: "client-observer", from: "client", to: "observer" },
+  { id: "observer-server", from: "observer", to: "server" },
+  { id: "server-cert", from: "server", to: "cert", dashed: true },
+  { id: "client-key", from: "client", to: "key", dashed: true },
+  { id: "server-key", from: "server", to: "key", dashed: true },
+];
+
+/**
+ * Teaches the difference between HTTP and HTTPS. The first half sends plaintext
+ * HTTP that an observer on the network can read; the second half performs the
+ * TLS handshake (certificate + shared session key) and then protects the same
+ * HTTP request/response in transit. Node/edge geometry is fixed; only states,
+ * packets, notes, and stats change per frame.
+ */
+function buildHttpHttps(locale: Locale = "vi"): DiagramFrame[] {
+  const en = locale === "en";
+  const base = (): Record<string, NodeState> => ({
+    client: "idle",
+    observer: "idle",
+    server: "idle",
+    cert: "idle",
+    key: "idle",
+  });
+  const stats = (
+    scheme: string,
+    transit: string,
+    transitTone: StatTone,
+    observer: string,
+    observerTone: StatTone,
+  ): DiagramFrame["stats"] => [
+    { label: en ? "Scheme" : "Giao thức", value: scheme, tone: "slate" },
+    {
+      label: en ? "In transit" : "Trên đường",
+      value: transit,
+      tone: transitTone,
+    },
+    {
+      label: en ? "Observer" : "Người quan sát",
+      value: observer,
+      tone: observerTone,
+    },
+  ];
+  const plainEdges: Record<string, NodeState> = {
+    "client-observer": "warn",
+    "observer-server": "warn",
+  };
+  const activeEdges: Record<string, NodeState> = {
+    "client-observer": "active",
+    "observer-server": "active",
+  };
+  const secureEdges: Record<string, NodeState> = {
+    "client-observer": "success",
+    "observer-server": "success",
+  };
+  const packet = (
+    id: string,
+    from: string,
+    to: string,
+    t: number,
+    label: string,
+  ): DiagramFrame["packets"] => [{ id, from, to, t, label }];
+
+  const frames: DiagramFrame[] = [];
+
+  frames.push({
+    states: base(),
+    line: 0,
+    note: en
+      ? "HTTP: requests and responses travel as plaintext on the network."
+      : "HTTP: request và response đi trên mạng dưới dạng văn bản thường (plaintext).",
+    stats: stats("HTTP", "plaintext", "rose", "—", "slate"),
+  });
+
+  frames.push({
+    states: { ...base(), client: "active", observer: "warn" },
+    edgeStates: plainEdges,
+    packets: packet("http-req", "client", "server", 0.15, "GET /login"),
+    line: 1,
+    note: en
+      ? "The client sends an HTTP request; the observer reads the whole request."
+      : "Client gửi HTTP request; người quan sát đọc được toàn bộ nội dung.",
+    stats: stats(
+      "HTTP",
+      "plaintext",
+      "rose",
+      en ? "reads" : "đọc được",
+      "rose",
+    ),
+  });
+
+  frames.push({
+    states: { ...base(), client: "active", observer: "warn", server: "active" },
+    edgeStates: plainEdges,
+    packets: packet("http-res", "server", "client", 0.15, "200 OK"),
+    line: 2,
+    note: en
+      ? "The server returns an HTTP response; the observer reads it too."
+      : "Server trả HTTP response; người quan sát vẫn đọc được nội dung.",
+    stats: stats(
+      "HTTP",
+      "plaintext",
+      "rose",
+      en ? "reads" : "đọc được",
+      "rose",
+    ),
+  });
+
+  frames.push({
+    states: { ...base(), observer: "warn" },
+    edgeStates: plainEdges,
+    line: 3,
+    note: en
+      ? "Because HTTP is plaintext, the observer reads every request and response."
+      : "Vì HTTP là plaintext, người quan sát đọc được mọi request và response.",
+    stats: stats(
+      "HTTP",
+      "plaintext",
+      "rose",
+      en ? "reads everything" : "đọc tất cả",
+      "rose",
+    ),
+  });
+
+  frames.push({
+    states: { ...base(), client: "active", observer: "active", server: "active" },
+    edgeStates: activeEdges,
+    packets: packet("hello", "client", "server", 0.15, "ClientHello"),
+    line: 4,
+    note: en
+      ? "HTTPS: before any data, the client and server perform a TLS handshake."
+      : "HTTPS: trước khi gửi dữ liệu, client và server bắt tay TLS.",
+    stats: stats(
+      "HTTPS",
+      "TLS handshake",
+      "indigo",
+      en ? "sees handshake" : "thấy bắt tay",
+      "indigo",
+    ),
+  });
+
+  frames.push({
+    states: {
+      ...base(),
+      client: "active",
+      observer: "active",
+      server: "active",
+      cert: "success",
+    },
+    edgeStates: { ...activeEdges, "server-cert": "success" },
+    packets: packet(
+      "cert",
+      "server",
+      "client",
+      0.15,
+      en ? "certificate" : "chứng chỉ",
+    ),
+    line: 5,
+    note: en
+      ? "The server sends a certificate so the client can verify it is the real server. A certificate proves identity; it is not the secret key used to encrypt data."
+      : "Server gửi chứng chỉ để client xác thực đúng là server thật. Chứng chỉ chứng minh danh tính, không phải khoá bí mật dùng để mã hoá dữ liệu.",
+    stats: stats(
+      "HTTPS",
+      en ? "certificate" : "chứng chỉ",
+      "amber",
+      en ? "sees handshake" : "thấy bắt tay",
+      "indigo",
+    ),
+  });
+
+  frames.push({
+    states: {
+      ...base(),
+      client: "active",
+      observer: "active",
+      server: "active",
+      key: "success",
+    },
+    edgeStates: {
+      ...activeEdges,
+      "client-key": "success",
+      "server-key": "success",
+    },
+    line: 6,
+    note: en
+      ? "Both sides derive a shared session key from the TLS handshake; no secret key is sent over the network. In a normal authenticated TLS connection, the observer sees the handshake messages but cannot derive the session key."
+      : "Hai bên cùng suy ra một khoá phiên từ quá trình bắt tay TLS; khoá bí mật không được gửi qua mạng. Trong một kết nối TLS xác thực bình thường, người quan sát chỉ thấy các thông điệp bắt tay và không suy ra được khoá phiên.",
+    stats: stats(
+      "HTTPS",
+      en ? "key agreement" : "thoả thuận khoá",
+      "amber",
+      en ? "cannot derive" : "không suy ra được",
+      "emerald",
+    ),
+  });
+
+  frames.push({
+    states: {
+      ...base(),
+      client: "active",
+      observer: "down",
+      server: "active",
+      key: "success",
+    },
+    edgeStates: secureEdges,
+    packets: packet(
+      "enc-req",
+      "client",
+      "server",
+      0.15,
+      en ? "encrypted GET" : "GET đã mã hoá",
+    ),
+    line: 7,
+    note: en
+      ? "The request is still HTTP, but TLS uses the session key to encrypt it in transit; the observer only sees ciphertext."
+      : "Request vẫn là HTTP, nhưng TLS dùng khoá phiên để mã hoá nó khi truyền; người quan sát chỉ thấy dữ liệu đã mã hoá.",
+    stats: stats(
+      "HTTPS",
+      en ? "encrypted" : "đã mã hoá",
+      "emerald",
+      en ? "ciphertext only" : "chỉ thấy mã hoá",
+      "emerald",
+    ),
+  });
+
+  frames.push({
+    states: {
+      ...base(),
+      client: "active",
+      observer: "down",
+      server: "active",
+      key: "success",
+    },
+    edgeStates: secureEdges,
+    packets: packet(
+      "enc-res",
+      "server",
+      "client",
+      0.15,
+      en ? "encrypted 200 OK" : "200 OK đã mã hoá",
+    ),
+    line: 8,
+    note: en
+      ? "The response is encrypted in transit with the same session key."
+      : "Response cũng được mã hoá khi truyền bằng khoá phiên đó.",
+    stats: stats(
+      "HTTPS",
+      en ? "encrypted" : "đã mã hoá",
+      "emerald",
+      en ? "ciphertext only" : "chỉ thấy mã hoá",
+      "emerald",
+    ),
+  });
+
+  frames.push({
+    states: { ...base(), observer: "down", key: "success" },
+    edgeStates: secureEdges,
+    line: 9,
+    note: en
+      ? "HTTPS = HTTP inside a TLS channel. The content is still HTTP; TLS protects the data in transit, while routing and IP addresses still work as usual."
+      : "HTTPS = HTTP chạy trong kênh TLS. Nội dung vẫn là HTTP; TLS bảo vệ dữ liệu khi truyền, còn việc định tuyến và địa chỉ IP vẫn diễn ra bình thường.",
+    stats: stats(
+      "HTTPS",
+      en ? "encrypted" : "đã mã hoá",
+      "emerald",
+      en ? "unreadable" : "không đọc được",
+      "emerald",
+    ),
+  });
+
+  return frames;
+}
+
 export const diagramVisualizers: Record<SystemDesignVisualizer, DiagramSpec> = {
   "load-balancer-round-robin": {
     title: "Round Robin — mô phỏng",
@@ -349,5 +676,63 @@ export const diagramVisualizers: Record<SystemDesignVisualizer, DiagramSpec> = {
       },
     },
     build: buildTokenBucket,
+  },
+  "http-https": {
+    title: "HTTP / HTTPS — mô phỏng",
+    nodes: httpNodes,
+    edges: httpEdges,
+    pseudo: [
+      "HTTP: request/response = plaintext",
+      "client → server: GET /login",
+      "server → client: 200 OK",
+      "observer: đọc được tất cả",
+      "HTTPS: bắt tay TLS trước",
+      "server → client: chứng chỉ (danh tính)",
+      "client ⇄ server: cùng suy ra khoá phiên",
+      "client → server: request đã mã hoá",
+      "server → client: response đã mã hoá",
+      "HTTP trong kênh TLS: nội dung không đổi",
+    ],
+    legend: [
+      { state: "idle", label: "Chờ" },
+      { state: "active", label: "Đang truyền" },
+      { state: "success", label: "Đã bảo vệ" },
+      { state: "warn", label: "Lộ plaintext" },
+      { state: "down", label: "Không đọc được" },
+      { state: "packet", label: "Dữ liệu" },
+    ],
+    overrides: {
+      en: {
+        title: "HTTP / HTTPS — simulation",
+        pseudo: [
+          "HTTP: request/response = plaintext",
+          "client → server: GET /login",
+          "server → client: 200 OK",
+          "observer: reads everything",
+          "HTTPS: TLS handshake first",
+          "server → client: certificate (identity)",
+          "client ⇄ server: derive the session key",
+          "client → server: encrypted request",
+          "server → client: encrypted response",
+          "HTTP inside TLS: same content",
+        ],
+        legend: {
+          idle: "Waiting",
+          active: "In transit",
+          success: "Protected",
+          warn: "Plaintext exposed",
+          down: "Unreadable",
+          packet: "Data",
+        },
+        nodes: {
+          client: { sub: "browser / app" },
+          observer: { label: "Observer", sub: "on the network" },
+          server: { sub: "website" },
+          cert: { label: "Certificate", sub: "identity" },
+          key: { label: "Session key", sub: "derived by both sides" },
+        },
+      },
+    },
+    build: buildHttpHttps,
   },
 };

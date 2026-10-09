@@ -100,11 +100,11 @@ export const sdBuildingBlocksModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "client", label: "Client", sub: "gửi yêu cầu", x: 20, y: 126, w: 110, h: 54 },
-            { id: "cache", label: "Cache", sub: "kiểm tra", x: 220, y: 126, w: 110, h: 54 },
-            { id: "database", label: "Database", sub: "khi cache miss", x: 420, y: 220, w: 120, h: 54 },
-            { id: "cache-fill", label: "Cache", sub: "ghi kết quả", x: 420, y: 32, w: 110, h: 54 },
-            { id: "client-response", label: "Client", sub: "nhận dữ liệu", x: 620, y: 126, w: 110, h: 54 },
+            { id: "client", label: "Client", sub: "gửi yêu cầu", tone: "sky", x: 20, y: 126, w: 110, h: 54 },
+            { id: "cache", label: "Cache", sub: "kiểm tra", tone: "amber", x: 220, y: 126, w: 110, h: 54 },
+            { id: "database", label: "Database", sub: "khi cache miss", tone: "amber", x: 420, y: 220, w: 120, h: 54 },
+            { id: "cache-fill", label: "Cache", sub: "ghi kết quả", tone: "amber", x: 420, y: 32, w: 110, h: 54 },
+            { id: "client-response", label: "Client", sub: "nhận dữ liệu", tone: "sky", x: 620, y: 126, w: 110, h: 54 },
           ],
           edges: [
             { id: "client-cache", from: "client", to: "cache", label: "yêu cầu" },
@@ -159,11 +159,11 @@ export const sdBuildingBlocksModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "user", label: "User", sub: "gửi request", x: 20, y: 126, w: 110, h: 54 },
-            { id: "edge", label: "CDN Edge", sub: "gần nhất · kiểm tra", x: 220, y: 126, w: 120, h: 54 },
-            { id: "origin", label: "Origin", sub: "nguồn nội dung", x: 420, y: 220, w: 110, h: 54 },
-            { id: "edge-cache", label: "CDN Edge", sub: "cache nội dung", x: 420, y: 32, w: 120, h: 54 },
-            { id: "user-response", label: "User", sub: "nhận nội dung", x: 620, y: 126, w: 110, h: 54 },
+            { id: "user", label: "User", sub: "gửi request", tone: "sky", x: 20, y: 126, w: 110, h: 54 },
+            { id: "edge", label: "CDN Edge", sub: "gần nhất · kiểm tra", tone: "violet", x: 220, y: 126, w: 120, h: 54 },
+            { id: "origin", label: "Origin", sub: "nguồn nội dung", tone: "amber", x: 420, y: 220, w: 110, h: 54 },
+            { id: "edge-cache", label: "CDN Edge", sub: "cache nội dung", tone: "amber", x: 420, y: 32, w: 120, h: 54 },
+            { id: "user-response", label: "User", sub: "nhận nội dung", tone: "sky", x: 620, y: 126, w: 110, h: 54 },
           ],
           edges: [
             { id: "user-edge", from: "user", to: "edge", label: "yêu cầu" },

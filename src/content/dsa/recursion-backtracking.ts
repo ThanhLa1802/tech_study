@@ -117,13 +117,13 @@ export const recursionBacktrackingModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "start", label: "Bắt đầu", sub: "nums = [1, 2]", x: 320, y: 20, w: 104, h: 58 },
-            { id: "skip-1", label: "[]", sub: "sau khi xét 1", x: 150, y: 112, w: 104, h: 58 },
-            { id: "choose-1", label: "[1]", sub: "sau khi xét 1", x: 460, y: 112, w: 104, h: 58 },
-            { id: "leaf-empty", label: "[]", sub: "kết quả", x: 20, y: 212, w: 104, h: 58 },
-            { id: "leaf-two", label: "[2]", sub: "kết quả", x: 210, y: 212, w: 104, h: 58 },
-            { id: "leaf-one", label: "[1]", sub: "kết quả", x: 420, y: 212, w: 104, h: 58 },
-            { id: "leaf-one-two", label: "[1,2]", sub: "kết quả", x: 610, y: 212, w: 104, h: 58 },
+            { id: "start", label: "Bắt đầu", sub: "nums = [1, 2]", tone: "violet", x: 320, y: 20, w: 104, h: 58 },
+            { id: "skip-1", label: "[]", sub: "sau khi xét 1", tone: "sky", x: 150, y: 112, w: 104, h: 58 },
+            { id: "choose-1", label: "[1]", sub: "sau khi xét 1", tone: "sky", x: 460, y: 112, w: 104, h: 58 },
+            { id: "leaf-empty", label: "[]", sub: "kết quả", tone: "emerald", x: 20, y: 212, w: 104, h: 58 },
+            { id: "leaf-two", label: "[2]", sub: "kết quả", tone: "emerald", x: 210, y: 212, w: 104, h: 58 },
+            { id: "leaf-one", label: "[1]", sub: "kết quả", tone: "emerald", x: 420, y: 212, w: 104, h: 58 },
+            { id: "leaf-one-two", label: "[1,2]", sub: "kết quả", tone: "emerald", x: 610, y: 212, w: 104, h: 58 },
           ],
           edges: [
             { id: "start-skip-1", from: "start", to: "skip-1", label: "Bỏ qua 1" },

@@ -73,13 +73,14 @@ export default function DiagramVisualizer({
         <div>
           <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3">
             <DiagramSvg
-              nodes={spec.nodes}
-              edges={spec.edges}
+              nodes={display.nodes}
+              edges={display.edges}
               states={frame.states}
               edgeStates={frame.edgeStates}
               packets={frame.packets}
               buckets={frame.buckets}
               animate
+              ariaLabel={`${display.title}. ${frame.note}`}
             />
           </div>
 

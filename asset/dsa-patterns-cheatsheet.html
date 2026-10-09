@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>DSA Patterns Cheat Sheet</title>
+<style>
+  :root {
+    --bg: #000;
+    --panel-bg: #0b0b0b;
+    --panel-border: #262626;
+    --green: #2fe083;
+    --blue: #4aa8ff;
+    --red: #ff5a5a;
+    --text: #ededed;
+    --muted: #9a9a9a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #000;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 18px;
+  }
+  .sheet {
+    width: 780px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .cell .title {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 7px;
+    color: #f4f4f4;
+  }
+  .panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    min-height: 132px;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .fig { width: 100%; height: auto; display: block; }
+
+  /* HTML arrays (simple panels) */
+  .arr { display: flex; align-items: center; gap: 5px; }
+  .ab {
+    width: 30px; height: 30px;
+    border: 2px solid var(--green);
+    border-radius: 6px;
+    display: grid; place-items: center;
+    color: var(--green);
+    font: 700 15px/1 Consolas, monospace;
+  }
+  .ab.blue { border-color: var(--blue); color: var(--blue); }
+  .col { display: flex; flex-direction: column; align-items: center; }
+  .row { display: flex; align-items: center; }
+  .sub { color: var(--muted); font-size: 12px; }
+  .lbl { color: var(--text); font-size: 12px; }
+
+  /* Monotonic stack */
+  .stackrow { display: flex; align-items: center; gap: 10px; }
+  .stackbox { border: 2px solid var(--blue); border-radius: 8px; padding: 3px 4px; display: flex; flex-direction: column; gap: 3px; }
+  .stackbox .ab { border: 0; width: 42px; height: 26px; color: var(--blue); }
+
+  /* Overlapping intervals */
+  .ivars { display: flex; flex-direction: column; gap: 12px; }
+  .ivrow { display: flex; gap: 26px; }
+  .iv { height: 16px; border-radius: 4px; border: 2px solid var(--blue); }
+  .iv.g { border-color: var(--green); }
+
+  /* SVG classes */
+  .fig .s-box { fill: #000; stroke: var(--green); stroke-width: 2; }
+  .fig .s-box.blue { stroke: var(--blue); }
+  .fig .s-t { fill: var(--green); font: 700 15px Consolas, monospace; text-anchor: middle; dominant-baseline: central; }
+  .fig .s-t.blue { fill: var(--blue); }
+  .fig .s-ar { fill: none; stroke: #fff; stroke-width: 1.6; }
+  .fig .s-ar.g { stroke: var(--green); }
+  .fig .s-ar.b { stroke: var(--blue); }
+  .fig .s-ar.r { stroke: var(--red); }
+  .fig .s-ar.d { stroke-dasharray: 5 4; }
+  .fig .s-lbl { fill: #fff; font: 600 11px Consolas, monospace; text-anchor: middle; }
+  .fig .s-c { fill: #000; stroke: var(--green); stroke-width: 2; }
+  .fig .s-c.y { stroke: #f5c542; }
+  .fig .s-c.b { stroke: var(--blue); }
+  .fig .s-ct { fill: var(--green); font: 700 12px Consolas, monospace; text-anchor: middle; dominant-baseline: central; }
+  .fig .s-ct.y { fill: #f5c542; }
+  .fig .s-ct.b { fill: var(--blue); }
+  .fig .s-gray { stroke: #8a8a8a; stroke-width: 1.4; fill: none; stroke-dasharray: 6 5; }
+  .fig .s-grayl { stroke: #8a8a8a; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+  .fig .s-leg { fill: #eaeaea; font: 600 11px Consolas, monospace; }
+  .fig .s-num { fill: var(--green); font: 700 13px Consolas, monospace; text-anchor: middle; dominant-baseline: central; }
+  .fig .s-hdr { fill: var(--green); font: 700 12px Consolas, monospace; text-anchor: middle; dominant-baseline: central; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ah-w" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L8 4 L0 8 z" fill="#fff"/>
+    </marker>
+    <marker id="ah-g" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L8 4 L0 8 z" fill="#2fe083"/>
+    </marker>
+    <marker id="ah-b" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L8 4 L0 8 z" fill="#4aa8ff"/>
+    </marker>
+    <marker id="ah-r" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L8 4 L0 8 z" fill="#ff5a5a"/>
+    </marker>
+    <marker id="ah-gy" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L8 4 L0 8 z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+</svg>
+
+<div class="sheet">
+
+  <!-- 1. Prefix Sum -->
+  <div class="cell">
+    <div class="title">Prefix Sum</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 104">
+        <!-- top row -->
+        <rect class="s-box" x="16"  y="6" width="30" height="30" rx="6"/><text class="s-t" x="31"  y="21">1</text>
+        <rect class="s-box" x="52"  y="6" width="30" height="30" rx="6"/><text class="s-t" x="67"  y="21">2</text>
+        <rect class="s-box" x="88"  y="6" width="30" height="30" rx="6"/><text class="s-t" x="103" y="21">3</text>
+        <rect class="s-box" x="124" y="6" width="30" height="30" rx="6"/><text class="s-t" x="139" y="21">4</text>
+        <rect class="s-box" x="160" y="6" width="30" height="30" rx="6"/><text class="s-t" x="175" y="21">5</text>
+        <rect class="s-box" x="196" y="6" width="30" height="30" rx="6"/><text class="s-t" x="211" y="21">6</text>
+        <!-- down arrows -->
+        <line class="s-ar" x1="31"  y1="41" x2="31"  y2="52" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="67"  y1="41" x2="67"  y2="52" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="103" y1="41" x2="103" y2="52" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="139" y1="41" x2="139" y2="52" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="175" y1="41" x2="175" y2="52" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="211" y1="41" x2="211" y2="52" marker-end="url(#ah-w)"/>
+        <!-- bottom row -->
+        <rect class="s-box" x="16"  y="60" width="30" height="30" rx="6"/><text class="s-t" x="31"  y="75">1</text>
+        <rect class="s-box" x="52"  y="60" width="30" height="30" rx="6"/><text class="s-t" x="67"  y="75">3</text>
+        <rect class="s-box" x="88"  y="60" width="30" height="30" rx="6"/><text class="s-t" x="103" y="75">6</text>
+        <rect class="s-box" x="124" y="60" width="30" height="30" rx="6"/><text class="s-t" x="139" y="75">10</text>
+        <rect class="s-box" x="160" y="60" width="30" height="30" rx="6"/><text class="s-t" x="175" y="75">15</text>
+        <rect class="s-box" x="196" y="60" width="30" height="30" rx="6"/><text class="s-t" x="211" y="75">21</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 2. Two Pointers -->
+  <div class="cell">
+    <div class="title">Two Pointers</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 92">
+        <rect class="s-box" x="16"  y="8" width="30" height="30" rx="6"/><text class="s-t" x="31"  y="23">1</text>
+        <rect class="s-box" x="52"  y="8" width="30" height="30" rx="6"/><text class="s-t" x="67"  y="23">2</text>
+        <rect class="s-box" x="88"  y="8" width="30" height="30" rx="6"/><text class="s-t" x="103" y="23">3</text>
+        <rect class="s-box" x="124" y="8" width="30" height="30" rx="6"/><text class="s-t" x="139" y="23">4</text>
+        <rect class="s-box" x="160" y="8" width="30" height="30" rx="6"/><text class="s-t" x="175" y="23">5</text>
+        <rect class="s-box" x="196" y="8" width="30" height="30" rx="6"/><text class="s-t" x="211" y="23">6</text>
+        <line class="s-ar" x1="31"  y1="76" x2="31"  y2="46" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="175" y1="76" x2="175" y2="46" marker-end="url(#ah-w)"/>
+        <text class="s-lbl" x="31"  y="88">left</text>
+        <text class="s-lbl" x="175" y="88">right</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 3. Sliding Window -->
+  <div class="cell">
+    <div class="title">Sliding Window</div>
+    <div class="panel">
+      <div class="arr">
+        <div class="ab blue">1</div><div class="ab blue">2</div><div class="ab blue">3</div>
+        <div class="ab">4</div><div class="ab">5</div><div class="ab">6</div>
+      </div>
+      <div class="arr">
+        <div class="ab">1</div><div class="ab blue">2</div><div class="ab blue">3</div>
+        <div class="ab blue">4</div><div class="ab">5</div><div class="ab">6</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Fast & Slow Pointers -->
+  <div class="cell">
+    <div class="title">Fast &amp; Slow Pointers</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 -18 236 116">
+        <!-- fast path (above) -->
+        <path class="s-ar d" d="M26 4 C 26 -12, 210 -12, 210 4" marker-end="url(#ah-w)"/>
+        <text class="s-lbl" x="118" y="4">fast</text>
+        <!-- linked list -->
+        <rect class="s-box" x="12"  y="10" width="28" height="28" rx="6"/><text class="s-t" x="26"  y="24">1</text>
+        <line class="s-ar" x1="42" y1="24" x2="55" y2="24" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="58"  y="10" width="28" height="28" rx="6"/><text class="s-t" x="72"  y="24">3</text>
+        <line class="s-ar" x1="88" y1="24" x2="101" y2="24" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="104" y="10" width="28" height="28" rx="6"/><text class="s-t" x="118" y="24">5</text>
+        <line class="s-ar" x1="134" y1="24" x2="147" y2="24" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="150" y="10" width="28" height="28" rx="6"/><text class="s-t" x="164" y="24">7</text>
+        <line class="s-ar" x1="180" y1="24" x2="193" y2="24" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="196" y="10" width="28" height="28" rx="6"/><text class="s-t" x="210" y="24">9</text>
+        <!-- slow pointer (below) -->
+        <line class="s-ar" x1="118" y1="78" x2="118" y2="48" marker-end="url(#ah-w)"/>
+        <text class="s-lbl" x="118" y="92">slow</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 5. In-Place Reversal -->
+  <div class="cell">
+    <div class="title">In-Place Reversal</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 96">
+        <!-- row 1 -->
+        <rect class="s-box" x="12"  y="6" width="28" height="28" rx="6"/><text class="s-t" x="26"  y="20">1</text>
+        <line class="s-ar" x1="42" y1="20" x2="55" y2="20" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="58"  y="6" width="28" height="28" rx="6"/><text class="s-t" x="72"  y="20">3</text>
+        <line class="s-ar" x1="88" y1="20" x2="101" y2="20" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="104" y="6" width="28" height="28" rx="6"/><text class="s-t" x="118" y="20">5</text>
+        <line class="s-ar" x1="134" y1="20" x2="147" y2="20" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="150" y="6" width="28" height="28" rx="6"/><text class="s-t" x="164" y="20">7</text>
+        <line class="s-ar" x1="180" y1="20" x2="193" y2="20" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="196" y="6" width="28" height="28" rx="6"/><text class="s-t" x="210" y="20">9</text>
+        <!-- row 2 : first link reversed -->
+        <rect class="s-box" x="12"  y="54" width="28" height="28" rx="6"/><text class="s-t" x="26"  y="68">1</text>
+        <line class="s-ar r" x1="55" y1="68" x2="44" y2="68" marker-end="url(#ah-r)"/>
+        <rect class="s-box" x="58"  y="54" width="28" height="28" rx="6"/><text class="s-t" x="72"  y="68">3</text>
+        <line class="s-ar" x1="88" y1="68" x2="101" y2="68" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="104" y="54" width="28" height="28" rx="6"/><text class="s-t" x="118" y="68">5</text>
+        <line class="s-ar" x1="134" y1="68" x2="147" y2="68" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="150" y="54" width="28" height="28" rx="6"/><text class="s-t" x="164" y="68">7</text>
+        <line class="s-ar" x1="180" y1="68" x2="193" y2="68" marker-end="url(#ah-w)"/>
+        <rect class="s-box" x="196" y="54" width="28" height="28" rx="6"/><text class="s-t" x="210" y="68">9</text>
+        <!-- reversed pointer hint -->
+        <path class="s-ar b d" d="M72 50 C 72 44, 26 44, 26 50" marker-end="url(#ah-b)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 6. Monotonic Stack -->
+  <div class="cell">
+    <div class="title">Monotonic Stack</div>
+    <div class="panel">
+      <div class="sub">Array</div>
+      <div class="arr">
+        <div class="ab">1</div><div class="ab">5</div><div class="ab">11</div>
+        <div class="ab">9</div><div class="ab">7</div>
+      </div>
+      <div class="stackrow">
+        <span class="lbl">Stack →</span>
+        <div class="stackbox">
+          <div class="ab">7</div><div class="ab">5</div><div class="ab">1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Top K Elements -->
+  <div class="cell">
+    <div class="title">Top K Elements</div>
+    <div class="panel">
+      <div class="sub">Array</div>
+      <div class="arr">
+        <div class="ab">1</div><div class="ab">5</div><div class="ab">11</div>
+        <div class="ab">9</div><div class="ab">7</div>
+      </div>
+      <div class="row" style="gap:14px;">
+        <div class="col" style="gap:2px;">
+          <span class="lbl">Min</span><span class="lbl">Heap →</span>
+        </div>
+        <svg width="118" height="74" viewBox="0 0 118 74">
+          <line x1="58" y1="26" x2="34" y2="44" stroke="#33553f" stroke-width="1.5"/>
+          <line x1="58" y1="26" x2="82" y2="44" stroke="#33553f" stroke-width="1.5"/>
+          <circle cx="58" cy="16" r="12" fill="none" stroke="#33553f" stroke-width="2"/>
+          <text x="58" y="20" fill="#7fdcae" font-size="12" text-anchor="middle" font-family="Consolas,monospace">7</text>
+          <circle cx="34" cy="56" r="12" fill="none" stroke="#2fe083" stroke-width="2"/>
+          <text x="34" y="60" fill="#2fe083" font-size="12" text-anchor="middle" font-family="Consolas,monospace">9</text>
+          <circle cx="82" cy="56" r="12" fill="none" stroke="#2fe083" stroke-width="2"/>
+          <text x="82" y="60" fill="#2fe083" font-size="12" text-anchor="middle" font-family="Consolas,monospace">11</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Overlapping Intervals -->
+  <div class="cell">
+    <div class="title">Overlapping Intervals</div>
+    <div class="panel">
+      <div class="ivars">
+        <div class="ivrow">
+          <div class="iv" style="width:64px;"></div>
+          <div class="iv" style="width:64px;"></div>
+        </div>
+        <div style="padding-left:34px;"><div class="iv g" style="width:74px;"></div></div>
+        <div style="padding-left:118px;"><div class="iv g" style="width:64px;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. Modified Binary Search -->
+  <div class="cell">
+    <div class="title">9. Modified Binary Search</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 92">
+        <rect class="s-box" x="2"   y="8" width="28" height="30" rx="6"/><text class="s-t" x="16"  y="23">1</text>
+        <rect class="s-box" x="36"  y="8" width="28" height="30" rx="6"/><text class="s-t" x="50"  y="23">2</text>
+        <rect class="s-box" x="70"  y="8" width="28" height="30" rx="6"/><text class="s-t" x="84"  y="23">3</text>
+        <rect class="s-box" x="104" y="8" width="28" height="30" rx="6"/><text class="s-t" x="118" y="23">4</text>
+        <rect class="s-box" x="138" y="8" width="28" height="30" rx="6"/><text class="s-t" x="152" y="23">5</text>
+        <rect class="s-box" x="172" y="8" width="28" height="30" rx="6"/><text class="s-t" x="186" y="23">6</text>
+        <rect class="s-box" x="206" y="8" width="28" height="30" rx="6"/><text class="s-t" x="220" y="23">7</text>
+        <line class="s-ar" x1="16"  y1="76" x2="16"  y2="46" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="118" y1="76" x2="118" y2="46" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="220" y1="76" x2="220" y2="46" marker-end="url(#ah-w)"/>
+        <text class="s-lbl" x="16"  y="88">left</text>
+        <text class="s-lbl" x="118" y="88">mid</text>
+        <text class="s-lbl" x="220" y="88">right</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 10. Tree Traversal -->
+  <div class="cell">
+    <div class="title">Tree Traversal</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 116">
+        <line class="s-ar" x1="60" y1="25" x2="40" y2="46" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="66" y1="25" x2="88" y2="46" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="33" y1="66" x2="19" y2="87" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="40" y1="66" x2="55" y2="87" marker-end="url(#ah-w)"/>
+        <circle class="s-c" cx="62" cy="16" r="11"/><text class="s-ct" x="62" y="16">7</text>
+        <circle class="s-c" cx="36" cy="56" r="11"/><text class="s-ct" x="36" y="56">9</text>
+        <circle class="s-c" cx="92" cy="56" r="11"/><text class="s-ct" x="92" y="56">11</text>
+        <circle class="s-c" cx="16" cy="98" r="11"/><text class="s-ct" x="16" y="98">5</text>
+        <circle class="s-c" cx="58" cy="98" r="11"/><text class="s-ct" x="58" y="98">2</text>
+        <text class="s-leg" x="126" y="41">InOrder</text>
+        <text class="s-leg" x="126" y="59">PreOrder</text>
+        <text class="s-leg" x="126" y="77">PostOrder</text>
+        <text class="s-leg" x="126" y="95">LevelOrder</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 11. DFS -->
+  <div class="cell">
+    <div class="title">DFS</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 116">
+        <line class="s-ar" x1="46" y1="25" x2="34" y2="46" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="52" y1="25" x2="70" y2="46" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="30" y1="66" x2="18" y2="87" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="36" y1="66" x2="48" y2="87" marker-end="url(#ah-w)"/>
+        <circle class="s-c y" cx="48" cy="16" r="11"/><text class="s-ct y" x="48" y="16">7</text>
+        <circle class="s-c b" cx="30" cy="56" r="11"/><text class="s-ct b" x="30" y="56">9</text>
+        <circle class="s-c" cx="74" cy="56" r="11"/><text class="s-ct" x="74" y="56">11</text>
+        <circle class="s-c y" cx="14" cy="98" r="11"/><text class="s-ct y" x="14" y="98">5</text>
+        <circle class="s-c" cx="52" cy="98" r="11"/><text class="s-ct" x="52" y="98">2</text>
+        <circle class="s-c y" cx="126" cy="40" r="6"/><text class="s-leg" x="138" y="44">Visited</text>
+        <circle class="s-c b" cx="126" cy="63" r="6"/><text class="s-leg" x="138" y="67">Current</text>
+        <circle class="s-c" cx="126" cy="86" r="6"/><text class="s-leg" x="138" y="90">UnVisited</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 12. BFS -->
+  <div class="cell">
+    <div class="title">BFS</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 116">
+        <line class="s-ar" x1="34" y1="27" x2="34" y2="45" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="40" y1="25" x2="71" y2="46" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="30" y1="66" x2="26" y2="87" marker-end="url(#ah-w)"/>
+        <line class="s-ar" x1="39" y1="66" x2="56" y2="87" marker-end="url(#ah-w)"/>
+        <circle class="s-c" cx="34" cy="16" r="11"/><text class="s-ct" x="34" y="16">7</text>
+        <circle class="s-c" cx="34" cy="56" r="11"/><text class="s-ct" x="34" y="56">9</text>
+        <circle class="s-c" cx="74" cy="56" r="11"/><text class="s-ct" x="74" y="56">11</text>
+        <circle class="s-c" cx="24" cy="98" r="11"/><text class="s-ct" x="24" y="98">5</text>
+        <circle class="s-c" cx="60" cy="98" r="11"/><text class="s-ct" x="60" y="98">2</text>
+        <line class="s-grayl" x1="50" y1="16" x2="150" y2="16"/>
+        <text class="s-leg" x="156" y="20">Level 1</text>
+        <line class="s-grayl" x1="89" y1="56" x2="150" y2="56"/>
+        <text class="s-leg" x="156" y="60">Level 2</text>
+        <line class="s-grayl" x1="75" y1="98" x2="150" y2="98"/>
+        <text class="s-leg" x="156" y="102">Level 3</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 13. Matrix Traversal -->
+  <div class="cell">
+    <div class="title">Matrix Traversal</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 128">
+        <rect class="s-box" x="48"  y="2"  width="34" height="30" rx="3"/><text class="s-num" x="65"  y="17">0</text>
+        <rect class="s-box" x="82"  y="2"  width="34" height="30" rx="3"/><text class="s-num" x="99"  y="17">0</text>
+        <rect class="s-box" x="116" y="2"  width="34" height="30" rx="3"/><text class="s-num" x="133" y="17">0</text>
+        <rect class="s-box" x="150" y="2"  width="34" height="30" rx="3"/><text class="s-num" x="167" y="17">0</text>
+        <rect class="s-box" x="48"  y="32" width="34" height="30" rx="3"/><text class="s-num" x="65"  y="47">0</text>
+        <rect class="s-box" x="82"  y="32" width="34" height="30" rx="3"/><text class="s-num" x="99"  y="47">0</text>
+        <rect class="s-box" x="116" y="32" width="34" height="30" rx="3"/><text class="s-num" x="133" y="47">1</text>
+        <rect class="s-box" x="150" y="32" width="34" height="30" rx="3"/><text class="s-num" x="167" y="47">0</text>
+        <rect class="s-box" x="48"  y="62" width="34" height="30" rx="3"/><text class="s-num" x="65"  y="77">0</text>
+        <rect class="s-box" x="82"  y="62" width="34" height="30" rx="3"/><text class="s-num" x="99"  y="77">1</text>
+        <rect class="s-box" x="116" y="62" width="34" height="30" rx="3"/><text class="s-num" x="133" y="77">1</text>
+        <rect class="s-box" x="150" y="62" width="34" height="30" rx="3"/><text class="s-num" x="167" y="77">1</text>
+        <rect class="s-box" x="48"  y="92" width="34" height="30" rx="3"/><text class="s-num" x="65"  y="107">0</text>
+        <rect class="s-box" x="82"  y="92" width="34" height="30" rx="3"/><text class="s-num" x="99"  y="107">0</text>
+        <rect class="s-box" x="116" y="92" width="34" height="30" rx="3"/><text class="s-num" x="133" y="107">1</text>
+        <rect class="s-box" x="150" y="92" width="34" height="30" rx="3"/><text class="s-num" x="167" y="107">0</text>
+        <line class="s-ar b" x1="95"  y1="68" x2="122" y2="68" marker-end="url(#ah-b)"/>
+        <line class="s-ar b" x1="130" y1="68" x2="158" y2="68" marker-end="url(#ah-b)"/>
+        <line class="s-ar b" x1="133" y1="64" x2="133" y2="44" marker-end="url(#ah-b)"/>
+        <line class="s-ar b" x1="133" y1="110" x2="133" y2="90" marker-end="url(#ah-b)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 14. Backtracking -->
+  <div class="cell">
+    <div class="title">Backtracking</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 128">
+        <line class="s-gray" x1="112" y1="25" x2="78" y2="45" marker-end="url(#ah-gy)"/>
+        <line class="s-gray" x1="126" y1="25" x2="146" y2="45" marker-end="url(#ah-gy)"/>
+        <line class="s-gray" x1="72" y1="65" x2="94" y2="89" marker-end="url(#ah-gy)"/>
+        <line class="s-gray" x1="150" y1="66" x2="150" y2="89" marker-end="url(#ah-gy)"/>
+        <path class="s-grayl" d="M92 96 C 55 92, 48 55, 62 60" marker-end="url(#ah-gy)"/>
+        <path class="s-grayl" d="M158 92 C 196 86, 196 55, 158 60" marker-end="url(#ah-gy)"/>
+        <circle class="s-c" cx="118" cy="16" r="11"/><text class="s-ct" x="118" y="16">3</text>
+        <circle class="s-c" cx="66" cy="56" r="11"/><text class="s-ct" x="66" y="56">5</text>
+        <circle class="s-c" cx="150" cy="56" r="11"/><text class="s-ct" x="150" y="56">7</text>
+        <circle class="s-c" cx="100" cy="98" r="11"/><text class="s-ct" x="100" y="98">9</text>
+        <circle class="s-c" cx="150" cy="98" r="11"/><text class="s-ct" x="150" y="98">11</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 15. DP Patterns -->
+  <div class="cell">
+    <div class="title">DP Patterns</div>
+    <div class="panel">
+      <svg class="fig" viewBox="0 0 236 152">
+        <text class="s-leg" x="19" y="12" text-anchor="middle">i</text>
+        <text class="s-leg" x="19" y="24" text-anchor="middle">↓</text>
+        <text class="s-leg" x="205" y="14" text-anchor="middle">j →</text>
+        <!-- column headers -->
+        <rect class="s-box" x="34"  y="26" width="30" height="22" rx="2"/><text class="s-hdr" x="49"  y="37">0</text>
+        <rect class="s-box" x="64"  y="26" width="30" height="22" rx="2"/><text class="s-hdr" x="79"  y="37">1</text>
+        <rect class="s-box" x="94"  y="26" width="30" height="22" rx="2"/><text class="s-hdr" x="109" y="37">2</text>
+        <rect class="s-box" x="124" y="26" width="30" height="22" rx="2"/><text class="s-hdr" x="139" y="37">3</text>
+        <rect class="s-box" x="154" y="26" width="30" height="22" rx="2"/><text class="s-hdr" x="169" y="37">4</text>
+        <!-- row 0 -->
+        <rect class="s-box" x="4" y="48" width="30" height="24" rx="2"/><text class="s-hdr" x="19" y="60">0</text>
+        <rect class="s-box" x="34"  y="48" width="30" height="24" rx="2"/><text class="s-num" x="49"  y="60">0</text>
+        <rect class="s-box" x="64"  y="48" width="30" height="24" rx="2"/><text class="s-num" x="79"  y="60">0</text>
+        <rect class="s-box" x="94"  y="48" width="30" height="24" rx="2"/><text class="s-num" x="109" y="60">0</text>
+        <rect class="s-box" x="124" y="48" width="30" height="24" rx="2"/><text class="s-num" x="139" y="60">0</text>
+        <rect class="s-box" x="154" y="48" width="30" height="24" rx="2"/><text class="s-num" x="169" y="60">0</text>
+        <!-- row 1 -->
+        <rect class="s-box" x="4" y="72" width="30" height="24" rx="2"/><text class="s-hdr" x="19" y="84">1</text>
+        <rect class="s-box" x="34"  y="72" width="30" height="24" rx="2"/><text class="s-num" x="49"  y="84">0</text>
+        <rect class="s-box" x="64"  y="72" width="30" height="24" rx="2"/><text class="s-num" x="79"  y="84">1</text>
+        <rect class="s-box" x="94"  y="72" width="30" height="24" rx="2"/><text class="s-num" x="109" y="84">1</text>
+        <rect class="s-box" x="124" y="72" width="30" height="24" rx="2"/><text class="s-num" x="139" y="84">1</text>
+        <rect class="s-box" x="154" y="72" width="30" height="24" rx="2"/><text class="s-num" x="169" y="84">1</text>
+        <!-- row 2 -->
+        <rect class="s-box" x="4" y="96" width="30" height="24" rx="2"/><text class="s-hdr" x="19" y="108">2</text>
+        <rect class="s-box" x="34"  y="96" width="30" height="24" rx="2"/><text class="s-num" x="49"  y="108">0</text>
+        <rect class="s-box" x="64"  y="96" width="30" height="24" rx="2"/><text class="s-num" x="79"  y="108">1</text>
+        <rect class="s-box" x="94"  y="96" width="30" height="24" rx="2"/><text class="s-num" x="109" y="108">2</text>
+        <rect class="s-box" x="124" y="96" width="30" height="24" rx="2"/><text class="s-num" x="139" y="108">3</text>
+        <rect class="s-box" x="154" y="96" width="30" height="24" rx="2"/><text class="s-num" x="169" y="108">4</text>
+        <!-- row 3 -->
+        <rect class="s-box" x="4" y="120" width="30" height="24" rx="2"/><text class="s-hdr" x="19" y="132">3</text>
+        <rect class="s-box" x="34"  y="120" width="30" height="24" rx="2"/><text class="s-num" x="49"  y="132">0</text>
+        <rect class="s-box" x="64"  y="120" width="30" height="24" rx="2"/><text class="s-num" x="79"  y="132">1</text>
+        <rect class="s-box" x="94"  y="120" width="30" height="24" rx="2"/><text class="s-num" x="109" y="132">3</text>
+        <rect class="s-box" x="124" y="120" width="30" height="24" rx="2"/><text class="s-num" x="139" y="132">6</text>
+        <rect class="s-box" x="154" y="120" width="30" height="24" rx="2"/><text class="s-num" x="169" y="132">10</text>
+      </svg>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

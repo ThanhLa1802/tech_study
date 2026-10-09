@@ -52,12 +52,12 @@ export const graphsModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "A", label: "A", x: 20, y: 130, w: 52, h: 46 },
-            { id: "B", label: "B", x: 170, y: 30, w: 52, h: 46 },
-            { id: "C", label: "C", x: 170, y: 230, w: 52, h: 46 },
-            { id: "D", label: "D", x: 340, y: 30, w: 52, h: 46 },
-            { id: "E", label: "E", x: 340, y: 230, w: 52, h: 46 },
-            { id: "F", label: "F", x: 500, y: 130, w: 52, h: 46 },
+            { id: "A", label: "A", tone: "amber", x: 20, y: 130, w: 52, h: 46 },
+            { id: "B", label: "B", tone: "sky", x: 170, y: 30, w: 52, h: 46 },
+            { id: "C", label: "C", tone: "sky", x: 170, y: 230, w: 52, h: 46 },
+            { id: "D", label: "D", tone: "sky", x: 340, y: 30, w: 52, h: 46 },
+            { id: "E", label: "E", tone: "sky", x: 340, y: 230, w: 52, h: 46 },
+            { id: "F", label: "F", tone: "sky", x: 500, y: 130, w: 52, h: 46 },
           ],
           edges: [
             { id: "A-B", from: "A", to: "B" },

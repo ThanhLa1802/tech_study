@@ -177,19 +177,20 @@ export const sdCoreConceptsModule: CourseModule = {
           caption:
             "Load balancer chỉ có một bản là điểm chết đơn: nó hỏng thì mọi request đều thất bại dù các server vẫn khỏe.",
           nodes: [
-            { id: "client", label: "Client", x: 20, y: 120, w: 110, h: 54 },
+            { id: "client", label: "Client", tone: "sky", x: 20, y: 120, w: 110, h: 54 },
             {
               id: "lb",
               label: "Load Balancer",
               sub: "một bản duy nhất",
+              tone: "rose",
               x: 190,
               y: 120,
               w: 150,
               h: 56,
             },
-            { id: "server-1", label: "Server 1", x: 400, y: 30, w: 120, h: 54 },
-            { id: "server-2", label: "Server 2", x: 400, y: 120, w: 120, h: 54 },
-            { id: "server-3", label: "Server 3", x: 400, y: 210, w: 120, h: 54 },
+            { id: "server-1", label: "Server 1", tone: "emerald", x: 400, y: 30, w: 120, h: 54 },
+            { id: "server-2", label: "Server 2", tone: "emerald", x: 400, y: 120, w: 120, h: 54 },
+            { id: "server-3", label: "Server 3", tone: "emerald", x: 400, y: 210, w: 120, h: 54 },
           ],
           edges: [
             { id: "client-lb", from: "client", to: "lb", label: "request" },
@@ -301,11 +302,11 @@ export const sdCoreConceptsModule: CourseModule = {
           caption:
             "Hash của key nằm trên vòng giữa hai node; key thuộc về node kế tiếp theo chiều kim đồng hồ.",
           nodes: [
-            { id: "node-a", label: "Node A", x: 330, y: 15, w: 90, h: 50 },
-            { id: "node-b", label: "Node B", x: 555, y: 120, w: 90, h: 50 },
-            { id: "node-c", label: "Node C", x: 330, y: 245, w: 90, h: 50 },
-            { id: "node-d", label: "Node D", x: 105, y: 120, w: 90, h: 50 },
-            { id: "key", label: "Key K", x: 445, y: 55, w: 96, h: 50 },
+            { id: "node-a", label: "Node A", tone: "emerald", x: 330, y: 15, w: 90, h: 50 },
+            { id: "node-b", label: "Node B", tone: "emerald", x: 555, y: 120, w: 90, h: 50 },
+            { id: "node-c", label: "Node C", tone: "emerald", x: 330, y: 245, w: 90, h: 50 },
+            { id: "node-d", label: "Node D", tone: "emerald", x: 105, y: 120, w: 90, h: 50 },
+            { id: "key", label: "Key K", tone: "amber", x: 445, y: 55, w: 96, h: 50 },
           ],
           edges: [
             {
@@ -362,9 +363,9 @@ export const sdCoreConceptsModule: CourseModule = {
         {
           type: "diagram",
           nodes: [
-            { id: "consistency", label: "Consistency", sub: "nhất quán", x: 250, y: 15, w: 160, h: 56 },
-            { id: "availability", label: "Availability", sub: "sẵn sàng", x: 35, y: 205, w: 160, h: 56 },
-            { id: "partition", label: "Partition Tolerance", sub: "chịu phân vùng mạng", x: 465, y: 205, w: 190, h: 56 },
+            { id: "consistency", label: "Consistency", sub: "nhất quán", tone: "emerald", x: 250, y: 15, w: 160, h: 56 },
+            { id: "availability", label: "Availability", sub: "sẵn sàng", tone: "sky", x: 35, y: 205, w: 160, h: 56 },
+            { id: "partition", label: "Partition Tolerance", sub: "chịu phân vùng mạng", tone: "violet", x: 465, y: 205, w: 190, h: 56 },
           ],
           edges: [
             { id: "consistency-availability", from: "consistency", to: "availability", label: "khi P: không thể đảm bảo cả hai", dashed: true },

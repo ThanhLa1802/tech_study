@@ -129,21 +129,22 @@ export const sdFoundationsModule: CourseModule = {
           type: "diagram",
           caption: "Kiến trúc ứng dụng chia sẻ ảnh ở quy mô lớn.",
           nodes: [
-            { id: "client", label: "Clients", x: 20, y: 150, w: 100, h: 54 },
-            { id: "lb", label: "Load Balancer", x: 160, y: 150, w: 110, h: 54 },
-            { id: "app", label: "App Server", x: 310, y: 150, w: 120, h: 54 },
-            { id: "db", label: "Database", x: 490, y: 30, w: 130, h: 54 },
+            { id: "client", label: "Clients", tone: "sky", x: 20, y: 150, w: 100, h: 54 },
+            { id: "lb", label: "Load Balancer", tone: "violet", x: 160, y: 150, w: 110, h: 54 },
+            { id: "app", label: "App Server", tone: "emerald", x: 310, y: 150, w: 120, h: 54 },
+            { id: "db", label: "Database", tone: "amber", x: 490, y: 30, w: 130, h: 54 },
             {
               id: "obj",
               label: "Object Storage",
+              tone: "amber",
               x: 490,
               y: 120,
               w: 130,
               h: 54,
             },
-            { id: "queue", label: "Message Queue", x: 490, y: 210, w: 130, h: 54 },
-            { id: "worker", label: "Worker", x: 490, y: 300, w: 130, h: 54 },
-            { id: "cdn", label: "CDN", x: 160, y: 280, w: 110, h: 54 },
+            { id: "queue", label: "Message Queue", tone: "violet", x: 490, y: 210, w: 130, h: 54 },
+            { id: "worker", label: "Worker", tone: "emerald", x: 490, y: 300, w: 130, h: 54 },
+            { id: "cdn", label: "CDN", tone: "violet", x: 160, y: 280, w: 110, h: 54 },
           ],
           edges: [
             { id: "client-lb", from: "client", to: "lb" },
@@ -271,10 +272,40 @@ export const sdFoundationsModule: CourseModule = {
           type: "p",
           text: "Client (trình duyệt, app, hoặc một server khác) gửi request; server lắng nghe, xử lý và trả response. Việc tách client/server cho phép thay đổi client mà không đụng server, và scale server độc lập với client.",
         },
+        {
+          type: "diagram",
+          caption:
+            "Luồng client–server: client gửi request, server xử lý rồi trả response. Tách hai vai trò giúp thay đổi và mở rộng mỗi phía độc lập.",
+          nodes: [
+            { id: "client", label: "Client", sub: "gửi request", tone: "sky", x: 20, y: 40, w: 160, h: 60 },
+            { id: "server", label: "Server", sub: "xử lý · trả response", tone: "emerald", x: 360, y: 95, w: 180, h: 64 },
+            { id: "client-resp", label: "Client", sub: "nhận response", tone: "sky", x: 20, y: 240, w: 160, h: 60 },
+          ],
+          edges: [
+            { id: "client-server", from: "client", to: "server", label: "1. request" },
+            { id: "server-client", from: "server", to: "client-resp", label: "2. response" },
+          ],
+        },
         { type: "h3", text: "2. Địa chỉ IP" },
         {
           type: "p",
           text: "Mỗi thiết bị trên Internet có một địa chỉ IP duy nhất để định tuyến. IPv4 (~4.3 tỉ địa chỉ) đã cạn, IPv6 mở ra không gian gần như vô hạn. Trong system design, IP định danh server, load balancer và node database trên mạng.",
+        },
+        {
+          type: "diagram",
+          caption:
+            "Packet được định tuyến theo địa chỉ IP đích. Trong mạng riêng, thiết bị dùng IP riêng; router NAT ánh xạ sang IP public khi ra Internet.",
+          nodes: [
+            { id: "device", label: "Thiết bị", sub: "IP riêng 192.168.1.5", tone: "sky", x: 20, y: 140, w: 150, h: 64 },
+            { id: "router", label: "Router (NAT)", sub: "IP public 203.0.113.7", tone: "violet", x: 210, y: 140, w: 160, h: 64 },
+            { id: "internet", label: "Internet", sub: "chuyển tiếp theo IP đích", tone: "violet", x: 420, y: 140, w: 150, h: 64 },
+            { id: "dest", label: "Server đích", sub: "IP 93.184.216.34", tone: "emerald", x: 650, y: 140, w: 170, h: 64 },
+          ],
+          edges: [
+            { id: "device-router", from: "device", to: "router", label: "gửi" },
+            { id: "router-internet", from: "router", to: "internet", label: "NAT" },
+            { id: "internet-dest", from: "internet", to: "dest", label: "định tuyến" },
+          ],
         },
         { type: "h3", text: "3. DNS (Domain Name System)" },
         {
@@ -286,13 +317,13 @@ export const sdFoundationsModule: CourseModule = {
           caption:
             "DNS phân giải tên miền qua cache cục bộ, resolver, root, TLD và máy chủ authoritative; sau đó client dùng IP để gọi server.",
           nodes: [
-            { id: "client", label: "Client", x: 30, y: 30, w: 110, h: 56 },
-            { id: "local-cache", label: "Cache cục bộ", sub: "miss", x: 190, y: 30, w: 140, h: 56 },
-            { id: "resolver", label: "Resolver", sub: "phân giải", x: 370, y: 30, w: 120, h: 56 },
-            { id: "root", label: "Root server", sub: "chỉ TLD", x: 370, y: 150, w: 120, h: 52 },
-            { id: "tld", label: "TLD server", sub: "chỉ authoritative", x: 530, y: 150, w: 110, h: 52 },
-            { id: "auth", label: "Authoritative", sub: "trả IP", x: 680, y: 150, w: 150, h: 52 },
-            { id: "server", label: "Server", sub: "nhận HTTP(S)", x: 30, y: 270, w: 110, h: 56 },
+            { id: "client", label: "Client", tone: "sky", x: 30, y: 30, w: 110, h: 56 },
+            { id: "local-cache", label: "Cache cục bộ", sub: "miss", tone: "amber", x: 190, y: 30, w: 140, h: 56 },
+            { id: "resolver", label: "Resolver", sub: "phân giải", tone: "violet", x: 370, y: 30, w: 120, h: 56 },
+            { id: "root", label: "Root server", sub: "chỉ TLD", tone: "violet", x: 370, y: 150, w: 120, h: 52 },
+            { id: "tld", label: "TLD server", sub: "chỉ authoritative", tone: "violet", x: 530, y: 150, w: 110, h: 52 },
+            { id: "auth", label: "Authoritative", sub: "trả IP", tone: "violet", x: 680, y: 150, w: 150, h: 52 },
+            { id: "server", label: "Server", sub: "nhận HTTP(S)", tone: "emerald", x: 30, y: 270, w: 110, h: 56 },
           ],
           edges: [
             { id: "client-local-cache", from: "client", to: "local-cache", label: "tên miền" },
@@ -309,12 +340,31 @@ export const sdFoundationsModule: CourseModule = {
           type: "p",
           text: "Forward proxy đứng trước client, che giấu danh tính client (VPN, proxy công ty) — dùng cho riêng tư, lọc nội dung và vượt giới hạn vùng. Reverse proxy đứng trước server, che giấu server (Nginx, HAProxy) — xử lý TLS termination, cache, nén và cân bằng tải.",
         },
+        {
+          type: "diagram",
+          caption:
+            "Forward proxy đứng trước client và che danh tính client (VPN, proxy công ty); reverse proxy đứng trước server, che server và xử lý TLS, cache, cân bằng tải (Nginx, HAProxy).",
+          nodes: [
+            { id: "client-fwd", label: "Client", sub: "ẩn danh", tone: "sky", x: 20, y: 40, w: 140, h: 56 },
+            { id: "fwd-proxy", label: "Forward Proxy", sub: "che client · lọc", tone: "violet", x: 200, y: 40, w: 160, h: 56 },
+            { id: "dest-server", label: "Server", sub: "thấy IP proxy", tone: "emerald", x: 420, y: 40, w: 150, h: 56 },
+            { id: "client-rev", label: "Client", sub: "chỉ thấy proxy", tone: "sky", x: 20, y: 200, w: 140, h: 56 },
+            { id: "rev-proxy", label: "Reverse Proxy", sub: "che server · TLS · cache", tone: "violet", x: 200, y: 200, w: 160, h: 56 },
+            { id: "backend", label: "Backend 1 · 2 · 3", sub: "Nginx, HAProxy", tone: "emerald", x: 420, y: 200, w: 150, h: 56 },
+          ],
+          edges: [
+            { id: "client-fwd-proxy", from: "client-fwd", to: "fwd-proxy", label: "request" },
+            { id: "fwd-proxy-dest", from: "fwd-proxy", to: "dest-server", label: "thay mặt client" },
+            { id: "client-rev-proxy", from: "client-rev", to: "rev-proxy", label: "request" },
+            { id: "rev-proxy-backend", from: "rev-proxy", to: "backend", label: "thay mặt server" },
+          ],
+        },
         { type: "h3", text: "5. Độ trễ (Latency)" },
         {
           type: "p",
           text: "Latency là thời gian dữ liệu đi từ A tới B, tính bằng mili-giây. 100 ms gần như không cảm nhận, 1 giây đã chậm, 3 giây thì người dùng rời đi. Nguồn gây trễ: khoảng cách vật lý, serialize dữ liệu, xử lý phía server và xếp hàng khi quá tải. CDN, cache và đặt server theo vùng là các cách giảm latency.",
         },
-        { type: "h3", text: "6. HTTP / HTTPS" },
+        { type: "h3", text: "6. HTTP / HTTPS", visualizer: "http-https" },
         {
           type: "p",
           text: "HTTP là ngôn ngữ client–server trên web: định nghĩa cấu trúc request/response. HTTPS là HTTP mã hoá bằng TLS để chống nghe lén. HTTP không trạng thái (stateless) nên dễ scale, nhưng cần cookie/token/session để giữ trạng thái. Cần nhớ: method (GET/POST/PUT/DELETE), status code (200/404/500) và header.",
@@ -384,11 +434,11 @@ export const sdFoundationsModule: CourseModule = {
           caption:
             "Với cache-aside, ứng dụng đọc cache trước: cache hit thì trả kết quả ngay; cache miss thì đọc database rồi ghi lại vào cache. Khó nhất là invalidation cache.",
           nodes: [
-            { id: "app", label: "Ứng dụng", sub: "đọc dữ liệu", x: 20, y: 150, w: 130, h: 56 },
-            { id: "cache", label: "Cache", sub: "kiểm tra", x: 200, y: 150, w: 120, h: 56 },
-            { id: "db", label: "Database", sub: "khi miss", x: 350, y: 270, w: 140, h: 56 },
-            { id: "cache-fill", label: "Cache", sub: "ghi lại", x: 350, y: 40, w: 130, h: 56 },
-            { id: "result", label: "Kết quả", sub: "trả về ứng dụng", x: 640, y: 150, w: 150, h: 56 },
+            { id: "app", label: "Ứng dụng", sub: "đọc dữ liệu", tone: "emerald", x: 20, y: 150, w: 130, h: 56 },
+            { id: "cache", label: "Cache", sub: "kiểm tra", tone: "amber", x: 200, y: 150, w: 120, h: 56 },
+            { id: "db", label: "Database", sub: "khi miss", tone: "amber", x: 350, y: 270, w: 140, h: 56 },
+            { id: "cache-fill", label: "Cache", sub: "ghi lại", tone: "amber", x: 350, y: 40, w: 130, h: 56 },
+            { id: "result", label: "Kết quả", sub: "trả về ứng dụng", tone: "sky", x: 640, y: 150, w: 150, h: 56 },
           ],
           edges: [
             { id: "app-cache", from: "app", to: "cache", label: "1. đọc" },
@@ -452,12 +502,12 @@ export const sdFoundationsModule: CourseModule = {
           caption:
             "Replication sao chép toàn bộ dữ liệu để giảm tải đọc; sharding chia dữ liệu theo shard key để phân tải và dung lượng lưu trữ.",
           nodes: [
-            { id: "primary", label: "Primary", sub: "toàn bộ dữ liệu", x: 60, y: 40, w: 180, h: 64 },
-            { id: "replica", label: "Replica", sub: "bản sao đầy đủ", x: 60, y: 200, w: 180, h: 64 },
-            { id: "router", label: "Router", sub: "hash(shard key)", x: 500, y: 40, w: 180, h: 64 },
-            { id: "shard1", label: "Shard 1", sub: "A, B, C", x: 360, y: 210, w: 120, h: 60 },
-            { id: "shard2", label: "Shard 2", sub: "D, E, F", x: 520, y: 210, w: 120, h: 60 },
-            { id: "shard3", label: "Shard 3", sub: "G, H, I", x: 680, y: 210, w: 120, h: 60 },
+            { id: "primary", label: "Primary", sub: "toàn bộ dữ liệu", tone: "amber", x: 60, y: 40, w: 180, h: 64 },
+            { id: "replica", label: "Replica", sub: "bản sao đầy đủ", tone: "amber", x: 60, y: 200, w: 180, h: 64 },
+            { id: "router", label: "Router", sub: "hash(shard key)", tone: "violet", x: 500, y: 40, w: 180, h: 64 },
+            { id: "shard1", label: "Shard 1", sub: "A, B, C", tone: "amber", x: 360, y: 210, w: 120, h: 60 },
+            { id: "shard2", label: "Shard 2", sub: "D, E, F", tone: "amber", x: 520, y: 210, w: 120, h: 60 },
+            { id: "shard3", label: "Shard 3", sub: "G, H, I", tone: "amber", x: 680, y: 210, w: 120, h: 60 },
           ],
           edges: [
             { id: "primary-replica", from: "primary", to: "replica", label: "sao chép toàn bộ" },
@@ -486,13 +536,13 @@ export const sdFoundationsModule: CourseModule = {
           caption:
             "Request đầu tiên trong vùng bị cache miss và đi đến origin; các request sau được phục vụ từ cache ở edge gần người dùng.",
           nodes: [
-            { id: "user1", label: "Người dùng 1", sub: "request đầu", x: 20, y: 40, w: 120, h: 56 },
-            { id: "edge", label: "Edge cache", sub: "gần người dùng", x: 220, y: 150, w: 140, h: 64 },
-            { id: "origin", label: "Origin", sub: "nguồn nội dung", x: 450, y: 40, w: 120, h: 56 },
-            { id: "edge-cache", label: "Edge cache", sub: "cache nội dung", x: 450, y: 150, w: 140, h: 56 },
-            { id: "resp1", label: "Người dùng 1", sub: "nhận nội dung", x: 660, y: 150, w: 140, h: 56 },
-            { id: "user2", label: "Người dùng 2", sub: "request sau", x: 20, y: 280, w: 120, h: 56 },
-            { id: "resp2", label: "Người dùng 2", sub: "trả từ cache", x: 450, y: 280, w: 140, h: 56 },
+            { id: "user1", label: "Người dùng 1", sub: "request đầu", tone: "sky", x: 20, y: 40, w: 120, h: 56 },
+            { id: "edge", label: "Edge cache", sub: "gần người dùng", tone: "violet", x: 220, y: 150, w: 140, h: 64 },
+            { id: "origin", label: "Origin", sub: "nguồn nội dung", tone: "amber", x: 450, y: 40, w: 120, h: 56 },
+            { id: "edge-cache", label: "Edge cache", sub: "cache nội dung", tone: "amber", x: 450, y: 150, w: 140, h: 56 },
+            { id: "resp1", label: "Người dùng 1", sub: "nhận nội dung", tone: "sky", x: 660, y: 150, w: 140, h: 56 },
+            { id: "user2", label: "Người dùng 2", sub: "request sau", tone: "sky", x: 20, y: 280, w: 120, h: 56 },
+            { id: "resp2", label: "Người dùng 2", sub: "trả từ cache", tone: "sky", x: 450, y: 280, w: 140, h: 56 },
           ],
           edges: [
             { id: "user1-edge", from: "user1", to: "edge", label: "1. miss" },
@@ -547,12 +597,12 @@ export const sdFoundationsModule: CourseModule = {
           caption:
             "API gateway là điểm vào hệ thống, xử lý routing, xác thực và giới hạn tần suất; service có thể đẩy công việc bất đồng bộ vào message queue để worker xử lý.",
           nodes: [
-            { id: "client", label: "Client", x: 20, y: 150, w: 110, h: 56 },
-            { id: "gateway", label: "API Gateway", sub: "xác thực · giới hạn", x: 180, y: 150, w: 180, h: 64 },
-            { id: "service", label: "Service", sub: "xử lý nghiệp vụ", x: 440, y: 60, w: 140, h: 60 },
-            { id: "db", label: "Database", x: 650, y: 60, w: 120, h: 56 },
-            { id: "queue", label: "Message Queue", sub: "việc bất đồng bộ", x: 440, y: 230, w: 150, h: 56 },
-            { id: "worker", label: "Worker", x: 650, y: 230, w: 120, h: 56 },
+            { id: "client", label: "Client", tone: "sky", x: 20, y: 150, w: 110, h: 56 },
+            { id: "gateway", label: "API Gateway", sub: "xác thực · giới hạn", tone: "violet", x: 180, y: 150, w: 180, h: 64 },
+            { id: "service", label: "Service", sub: "xử lý nghiệp vụ", tone: "emerald", x: 440, y: 60, w: 140, h: 60 },
+            { id: "db", label: "Database", tone: "amber", x: 650, y: 60, w: 120, h: 56 },
+            { id: "queue", label: "Message Queue", sub: "việc bất đồng bộ", tone: "violet", x: 440, y: 230, w: 150, h: 56 },
+            { id: "worker", label: "Worker", tone: "emerald", x: 650, y: 230, w: 120, h: 56 },
           ],
           edges: [
             { id: "client-gateway", from: "client", to: "gateway", label: "request" },

@@ -22,7 +22,7 @@ export type Quiz = {
 export type LessonBlock =
   | { type: "p"; text: string }
   | { type: "h2"; text: string }
-  | { type: "h3"; text: string }
+  | { type: "h3"; text: string; visualizer?: Visualizer }
   | { type: "ul"; items: string[] }
   | { type: "code"; snippets: CodeSnippet[] }
   | {
@@ -43,7 +43,11 @@ export type ComplexityVisualizer = "big-o-growth";
 
 export type SystemDesignVisualizer =
   | "load-balancer-round-robin"
-  | "token-bucket";
+  | "token-bucket"
+  | "http-https";
+
+/** Sequence-diagram visualizers (lifelines + numbered message steps). */
+export type SequenceVisualizer = "rest-request-flow";
 
 export type DataStructureVisualizer =
   | "linked-list"
@@ -60,6 +64,7 @@ export type Visualizer =
   | DsaVisualizer
   | ComplexityVisualizer
   | SystemDesignVisualizer
+  | SequenceVisualizer
   | DataStructureVisualizer;
 
 export type Lesson = {

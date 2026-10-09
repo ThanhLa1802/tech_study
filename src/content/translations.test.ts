@@ -551,7 +551,7 @@ describe("English lesson translations", () => {
       "sd-top-30-concepts",
       "en",
     );
-    const idempotency = concepts?.blocks[69];
+    const idempotency = concepts?.blocks[72];
     expect(idempotency?.type).toBe("code");
     if (idempotency?.type !== "code") return;
     expect(idempotency.snippets[0].code).toContain("no second charge");
@@ -724,31 +724,46 @@ describe("English lesson translations", () => {
     }
   });
 
-  it("translates the five sd-top-30-concepts diagrams at their indices", () => {
+  it("translates the eight sd-top-30-concepts diagrams at their indices", () => {
     const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
     const cases = [
       {
-        blockIndex: 10,
+        blockIndex: 6,
+        caption:
+          "The client–server flow: the client sends a request, the server processes it and returns a response. Separating the two roles lets each side change and scale independently.",
+      },
+      {
+        blockIndex: 9,
+        caption:
+          "A packet is routed toward the destination IP address. On a private network, devices use private IPs; a NAT router maps them to a public IP on the way out to the Internet.",
+      },
+      {
+        blockIndex: 12,
         caption:
           "DNS resolves a domain through the local cache, resolver, root, TLD, and authoritative servers; the client then uses the IP address to reach the server.",
       },
       {
-        blockIndex: 41,
+        blockIndex: 15,
+        caption:
+          "A forward proxy sits in front of clients and hides their identity; a reverse proxy sits in front of servers, hides them, and handles TLS, caching, and load balancing.",
+      },
+      {
+        blockIndex: 44,
         caption:
           "With cache-aside, the application checks the cache first: on a hit, it returns the result immediately; on a miss, it reads from the database and updates the cache. Cache invalidation is the hard part.",
       },
       {
-        blockIndex: 59,
+        blockIndex: 62,
         caption:
           "Replication copies the full dataset to reduce read load; sharding partitions the dataset by shard key to distribute traffic and storage.",
       },
       {
-        blockIndex: 66,
+        blockIndex: 69,
         caption:
           "The first request in a region misses the cache and goes to the origin; later requests are served from an edge cache near the user.",
       },
       {
-        blockIndex: 80,
+        blockIndex: 83,
         caption:
           "The API gateway is the system’s entry point, handling routing, authentication, and rate limiting. Services can enqueue asynchronous work for workers to process.",
       },
@@ -790,6 +805,34 @@ describe("English lesson translations", () => {
         `${blockIndex}:leak`,
       ).toEqual([]);
     }
+  });
+
+  it("keeps the HTTP/HTTPS inline visualizer on h3 section 6 in both locales", () => {
+    const source = findLesson("system-design", "sd-top-30-concepts");
+    const translated = findLessonForLocale(
+      "system-design",
+      "sd-top-30-concepts",
+      "en",
+    );
+
+    // The h3 for section 6 carries the inline visualizer (index shifted by the
+    // Proxy diagram added in section 4).
+    expect(source?.blocks[18]).toMatchObject({
+      type: "h3",
+      text: "6. HTTP / HTTPS",
+      visualizer: "http-https",
+    });
+    expect(translated?.blocks[18]).toMatchObject({
+      type: "h3",
+      text: "6. HTTP / HTTPS",
+      visualizer: "http-https",
+    });
+
+    // The animation sits between the heading and the HTTP/HTTPS paragraph,
+    // without shifting any neighbouring block.
+    expect(source?.blocks[17]?.type).toBe("p");
+    expect(source?.blocks[19]?.type).toBe("p");
+    expect(translated?.blocks[19]?.type).toBe("p");
   });
 
   it("localizes the Round Robin visualizer without leaking Vietnamese", () => {
@@ -920,6 +963,92 @@ describe("English lesson translations", () => {
     expect(spec.pseudo.join("\n")).toContain("nạp token theo thời gian");
     expect(spec.build()[0].note).toContain("bộ đếm đầy");
     expect(spec.build()[0].stats.at(-1)?.label).toBe("Kết quả");
+  });
+
+  it("localizes the HTTP/HTTPS visualizer without leaking Vietnamese", () => {
+    const spec = diagramVisualizers["http-https"];
+    const localized = localizeDiagramSpec(spec, "en");
+    const frames = spec.build("en");
+
+    expect(localized.title).toBe("HTTP / HTTPS — simulation");
+    expect(localized.legend.map((item) => item.label)).toEqual([
+      "Waiting",
+      "In transit",
+      "Protected",
+      "Plaintext exposed",
+      "Unreadable",
+      "Data",
+    ]);
+    expect(localized.pseudo.join("\n")).toContain("observer: reads everything");
+    expect(localized.pseudo.join("\n")).toContain("derive the session key");
+    expect(localized.pseudo.join("\n")).not.toContain("đọc được tất cả");
+
+    // Node labels/subs are localized, not accidentally left in Vietnamese.
+    const enNode = (id: string) =>
+      localized.nodes.find((node) => node.id === id);
+    expect(enNode("observer")).toMatchObject({
+      label: "Observer",
+      sub: "on the network",
+    });
+    expect(enNode("cert")).toMatchObject({
+      label: "Certificate",
+      sub: "identity",
+    });
+    expect(enNode("key")).toMatchObject({
+      label: "Session key",
+      sub: "derived by both sides",
+    });
+
+    const prose = [
+      localized.title,
+      ...localized.pseudo,
+      ...localized.legend.map((item) => item.label),
+      ...localized.nodes.flatMap((node) => [
+        node.label,
+        ...(node.sub ? [node.sub] : []),
+      ]),
+      ...frames.flatMap((frame) => [
+        frame.note,
+        ...frame.stats.flatMap((stat) => [stat.label, String(stat.value)]),
+        ...(frame.packets ?? []).flatMap((packet) =>
+          packet.label ? [packet.label] : [],
+        ),
+      ]),
+    ];
+
+    // Vietnamese-only letters; unlike the NFD combining-mark check above, this
+    // ignores math/arrow symbols such as "→" or "⇄", which are outside the ranges.
+    const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
+
+    expect(prose).not.toEqual([]);
+    expect(prose.filter((text) => vietnamese.test(text))).toEqual([]);
+
+    // Reviewed English copy is used verbatim for the key teaching frames.
+    expect(frames[0].note).toBe(
+      "HTTP: requests and responses travel as plaintext on the network.",
+    );
+    expect(frames[5].packets?.[0]?.label).toBe("certificate");
+    // The session key is derived from the handshake; no key is sent as a packet.
+    expect(frames[6].packets ?? []).toEqual([]);
+    expect(frames[6].note).toContain("no secret key is sent");
+    expect(frames[7].note).toContain("TLS uses the session key");
+    expect(frames[9].stats.map((stat) => stat.label)).toEqual([
+      "Scheme",
+      "In transit",
+      "Observer",
+    ]);
+
+    // Vietnamese stays the default and its node text is genuinely localized.
+    expect(spec.title).toContain("mô phỏng");
+    expect(spec.build()[0].note).toContain("văn bản thường");
+    expect(spec.build()[5].packets?.[0]?.label).toBe("chứng chỉ");
+    expect(spec.build()[9].stats[0].label).toBe("Giao thức");
+    expect(spec.nodes.find((node) => node.id === "observer")?.label).toBe(
+      "Người quan sát",
+    );
+    expect(spec.nodes.find((node) => node.id === "key")?.label).toBe(
+      "Khoá phiên",
+    );
   });
 
   it("navigates through the translated Arrays & Strings lessons in order", () => {
