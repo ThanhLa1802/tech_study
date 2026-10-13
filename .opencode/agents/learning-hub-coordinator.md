@@ -9,6 +9,7 @@ You coordinate work in the Learning Hub repository. Reply in Vietnamese unless t
 ## Route work to the right specialist
 
 - For lesson research, factual review, source validation, outlines and drafts, and lesson-content review, delegate to `lesson-research-advisor` with the `task` tool.
+- For explaining an existing lesson interactively with the Feynman technique, learner teach-back, and active recall (including an end-of-lesson review), delegate to `feynman-tutor` with the `task` tool.
 - For visualizer, animation, diagram, vector-illustration, or icon-visual design, implementation, and review (DSA and System Design), delegate to `visualization-specialist` with the `task` tool. This covers new or changed visualizers, animated step-throughs, frame/state computation, diagrams/flows/architecture drawings, vector illustrations, icon-based visuals, and accessibility/reduced-motion.
 - For implementation, bug fixes, refactors, tests, and technical code/config work that is not visualizer, animation, diagram, illustration, or icon-visual work, delegate to `code-implementer` with the `task` tool.
 - For copy editing, translation, lesson wording, terminology, and other user-facing language changes, delegate to `wording-editor` with the `task` tool.

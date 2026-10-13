@@ -9,7 +9,7 @@ Nền tảng học **Data Structures & Algorithms** và **System Design** bằng
 - **Trang bài học**: breadcrumb, mục lục (TOC) bên phải có scroll-spy và click nhảy tới phần, thanh reading progress trên cùng.
 - **Code block đa ngôn ngữ**: tab chuyển giữa JavaScript và Python; block một snippet không hiện nhãn.
 - **Visualizer thuật toán** (DSA): Bubble Sort, Selection Sort, Insertion Sort, Binary Search, Two Sum — play/step/tốc độ, highlight mã giả theo bước.
-- **Visualizer System Design**: Round Robin (load balancing) và Token Bucket (rate limiting) dạng sơ đồ SVG có animation; block `diagram` cho sơ đồ khối tĩnh.
+- **Visualizer System Design**: 7 mô phỏng dạng sơ đồ SVG có animation — Round Robin (cân bằng tải), Token Bucket và fixed/sliding window (giới hạn tốc độ), HTTP/HTTPS, luồng request REST, vòng consistent hashing và luồng request tải ảnh/bảng tin; block `diagram` cho sơ đồ khối tĩnh.
 - **Nội dung tiếng Việt** chuyên sâu, dễ hiểu.
 
 ## Công nghệ
@@ -52,7 +52,11 @@ src/
       algorithm-visualizer.tsx        # engine mô phỏng DSA (bar)
       specs.ts                        # spec 5 thuật toán DSA
       diagram-visualizer.tsx          # engine mô phỏng System Design
-      diagram-specs.ts                # spec Round Robin, Token Bucket
+      diagram-specs.ts                # spec mô phỏng Round Robin, Token Bucket, HTTP/HTTPS
+      sequence-specs.ts               # spec mô phỏng luồng request REST
+      consistent-hashing-ring.tsx     # component mô phỏng consistent hashing
+      rate-limit-window.tsx           # component mô phỏng rate limit fixed/sliding window
+      request-flow.tsx                # component mô phỏng luồng request tải ảnh/bảng tin
       lesson-visualizer.tsx           # chọn engine theo loại visualizer
   lib/
     course.ts                         # dữ liệu khóa học, bài học, helpers
@@ -69,14 +73,12 @@ src/
 - [x] Reading progress và mục lục (TOC) có scroll-spy.
 - [x] Code block đa ngôn ngữ (JavaScript + Python); ẩn nhãn khi chỉ có 1 snippet.
 - [x] 5 visualizer DSA (Bubble, Selection, Insertion, Binary Search, Two Sum).
-- [x] 2 visualizer System Design (Round Robin, Token Bucket) + block sơ đồ tĩnh.
+- [x] 7 visualizer System Design: Round Robin, Token Bucket, HTTP/HTTPS, luồng request REST, vòng consistent hashing, rate limit fixed/sliding window, luồng request tải ảnh/bảng tin; kèm block sơ đồ tĩnh.
 - [x] Trang chủ dạng thẻ khóa học (bấm cả thẻ để vào).
 - [x] Nội dung DSA: Welcome, Big O, Sorting, Two Pointers, Binary Search.
-- [x] Nội dung System Design: What is System Design?, 30 Must-Know Concepts, Scalability, Availability, Reliability, Single Point of Failure, Latency vs Throughput vs Bandwidth, Consistent Hashing, CAP, Load Balancing, Caching, CDN, Sharding, Replication, Message Queues, Rate Limiting.
+- [x] Nội dung System Design đầy đủ 11 module: Nền tảng (What is System Design?, 30 Must-Know Concepts), Core Concepts (Scalability, Availability, Reliability, Single Point of Failure, Latency vs Throughput vs Bandwidth, Consistent Hashing, CAP), Networking & APIs (DNS & Networking, HTTP/Proxy & Latency, REST vs GraphQL, Realtime Communication), Database Fundamentals (Data Models, Transactions & ACID, Indexes & Queries), Building Blocks (Load Balancing, Caching, CDN), Data at Scale (Sharding, Replication), Distributed Systems (Consistency Models, Timeouts & Retries & Idempotency, Failure Detection, Cascading Failures), Reliability (Message Queues, Rate Limiting), Architecture Patterns (Monolith/Modular/Microservices, Sync & Async/Event-Driven, Saga & Outbox), Design Process (Design Process, Back-of-Envelope Estimation), và Case Studies (URL Shortener, News Feed, Chat).
 
 ### Việc tiếp theo
 
-- [ ] Bổ sung các bài System Design còn lại (Networking, API, Databases, Distributed Systems, Architecture Patterns...).
-- [ ] Thêm visualizer: Consistent Hashing, Fixed/Sliding Window, request flow upload/feed.
 - [ ] Lưu tiến độ đọc / đánh dấu bài đã học.
 - [ ] Sidebar mobile (drawer) và tìm kiếm bài học.

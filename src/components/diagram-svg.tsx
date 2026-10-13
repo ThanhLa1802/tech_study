@@ -2,6 +2,7 @@ import {
   arrowPoints,
   diagramBounds,
   edgeGeometry,
+  edgeLabelAnchor,
   lerpPoint,
   nodeCenter,
   type DiagramEdge,
@@ -10,6 +11,7 @@ import {
   type NodeState,
   type NodeTone,
 } from "@/lib/diagram";
+import { Icon } from "@/components/course-icons";
 
 export const NODE_FILL: Record<NodeState, string> = {
   idle: "fill-zinc-800 stroke-zinc-600",
@@ -108,8 +110,8 @@ export default function DiagramSvg({
             />
             {edge.label ? (
               <text
-                x={(geometry.start.x + geometry.end.x) / 2}
-                y={(geometry.start.y + geometry.end.y) / 2 - 8}
+                x={edgeLabelAnchor(from, to).x}
+                y={edgeLabelAnchor(from, to).y}
                 textAnchor="middle"
                 className="fill-zinc-400 text-[11px]"
               >
@@ -182,9 +184,25 @@ export default function DiagramSvg({
                 animate ? "transition-colors duration-300" : ""
               }`}
             />
+            {node.icon ? (
+              <Icon
+                name={node.icon}
+                x={center.x - 12}
+                y={node.y + 9}
+                width={24}
+                height={24}
+                className="text-white"
+              />
+            ) : null}
             <text
               x={center.x}
-              y={node.sub ? center.y - 6 : center.y}
+              y={
+                node.icon
+                  ? node.y + node.h - 24
+                  : node.sub
+                    ? center.y - 6
+                    : center.y
+              }
               textAnchor="middle"
               dominantBaseline="middle"
               className={
@@ -198,7 +216,7 @@ export default function DiagramSvg({
             {node.sub ? (
               <text
                 x={center.x}
-                y={center.y + 12}
+                y={node.icon ? node.y + node.h - 8 : center.y + 12}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 className={

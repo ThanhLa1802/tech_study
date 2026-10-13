@@ -81,6 +81,11 @@ export const sdReliabilityModule: CourseModule = {
             },
           ],
         },
+        {
+          type: "h3",
+          text: "So sánh fixed window và sliding window",
+          visualizer: "rate-limit-window",
+        },
       ],
     },
   ],

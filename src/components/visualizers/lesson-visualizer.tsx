@@ -6,6 +6,9 @@ import AlgorithmVisualizer from "./algorithm-visualizer";
 import ComplexityVisualizer from "./complexity-visualizer";
 import DiagramVisualizer from "./diagram-visualizer";
 import SequenceVisualizer from "./sequence-visualizer";
+import ConsistentHashingRing from "./consistent-hashing-ring";
+import RateLimitWindow from "./rate-limit-window";
+import RequestFlow from "./request-flow";
 import FixedSlidingWindowMotion from "./fixed-sliding-window-motion";
 import SlidingWindowMotion from "./sliding-window-motion";
 import { diagramVisualizers } from "./diagram-specs";
@@ -31,6 +34,15 @@ export default function LessonVisualizer({
   }
   if (type === "fixed-sliding-window") {
     return <FixedSlidingWindowMotion locale={locale} />;
+  }
+  if (type === "consistent-hashing-ring") {
+    return <ConsistentHashingRing locale={locale} />;
+  }
+  if (type === "rate-limit-window") {
+    return <RateLimitWindow locale={locale} />;
+  }
+  if (type === "request-flow") {
+    return <RequestFlow locale={locale} />;
   }
   if (type in structureDiagramVisualizers) {
     return (

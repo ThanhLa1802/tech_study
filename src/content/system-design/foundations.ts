@@ -137,8 +137,8 @@ export const sdFoundationsModule: CourseModule = {
               id: "obj",
               label: "Object Storage",
               tone: "amber",
-              x: 490,
-              y: 120,
+              x: 20,
+              y: 280,
               w: 130,
               h: 54,
             },
@@ -150,7 +150,7 @@ export const sdFoundationsModule: CourseModule = {
             { id: "client-lb", from: "client", to: "lb" },
             { id: "lb-app", from: "lb", to: "app" },
             { id: "app-db", from: "app", to: "db" },
-            { id: "app-obj", from: "app", to: "obj" },
+            { id: "client-obj", from: "client", to: "obj", label: "upload ảnh trực tiếp" },
             { id: "app-queue", from: "app", to: "queue" },
             { id: "queue-worker", from: "queue", to: "worker" },
             { id: "cdn-client", from: "cdn", to: "client", label: "ảnh" },
@@ -168,6 +168,11 @@ export const sdFoundationsModule: CourseModule = {
             "Cache: giảm tải database cho các lần đọc lặp lại.",
             "Object storage: cho ta nơi lưu file lớn có thể mở rộng.",
           ],
+        },
+        {
+          type: "h3",
+          text: "Minh hoạ: luồng upload ảnh và đọc feed",
+          visualizer: "request-flow",
         },
         { type: "h2", text: "Ta thiết kế để đạt điều gì" },
         {
@@ -277,9 +282,9 @@ export const sdFoundationsModule: CourseModule = {
           caption:
             "Luồng client–server: client gửi request, server xử lý rồi trả response. Tách hai vai trò giúp thay đổi và mở rộng mỗi phía độc lập.",
           nodes: [
-            { id: "client", label: "Client", sub: "gửi request", tone: "sky", x: 20, y: 40, w: 160, h: 60 },
-            { id: "server", label: "Server", sub: "xử lý · trả response", tone: "emerald", x: 360, y: 95, w: 180, h: 64 },
-            { id: "client-resp", label: "Client", sub: "nhận response", tone: "sky", x: 20, y: 240, w: 160, h: 60 },
+            { id: "client", label: "Client", sub: "gửi request", tone: "sky", icon: "window", x: 24, y: 24, w: 150, h: 76 },
+            { id: "server", label: "Server", sub: "xử lý · trả response", tone: "emerald", icon: "server", x: 314, y: 24, w: 170, h: 76 },
+            { id: "client-resp", label: "Client", sub: "nhận response", tone: "sky", icon: "window", x: 24, y: 152, w: 150, h: 76 },
           ],
           edges: [
             { id: "client-server", from: "client", to: "server", label: "1. request" },
@@ -296,10 +301,10 @@ export const sdFoundationsModule: CourseModule = {
           caption:
             "Packet được định tuyến theo địa chỉ IP đích. Trong mạng riêng, thiết bị dùng IP riêng; router NAT ánh xạ sang IP public khi ra Internet.",
           nodes: [
-            { id: "device", label: "Thiết bị", sub: "IP riêng 192.168.1.5", tone: "sky", x: 20, y: 140, w: 150, h: 64 },
-            { id: "router", label: "Router (NAT)", sub: "IP public 203.0.113.7", tone: "violet", x: 210, y: 140, w: 160, h: 64 },
-            { id: "internet", label: "Internet", sub: "chuyển tiếp theo IP đích", tone: "violet", x: 420, y: 140, w: 150, h: 64 },
-            { id: "dest", label: "Server đích", sub: "IP 93.184.216.34", tone: "emerald", x: 650, y: 140, w: 170, h: 64 },
+            { id: "device", label: "Thiết bị", sub: "IP riêng 192.168.1.5", tone: "sky", icon: "window", x: 20, y: 30, w: 150, h: 76 },
+            { id: "router", label: "Router (NAT)", sub: "IP public 203.0.113.7", tone: "violet", icon: "router", x: 210, y: 30, w: 160, h: 76 },
+            { id: "internet", label: "Internet", sub: "chuyển tiếp theo IP đích", tone: "violet", icon: "globe", x: 410, y: 30, w: 160, h: 76 },
+            { id: "dest", label: "Server đích", sub: "IP 93.184.216.34", tone: "emerald", icon: "server", x: 610, y: 30, w: 170, h: 76 },
           ],
           edges: [
             { id: "device-router", from: "device", to: "router", label: "gửi" },

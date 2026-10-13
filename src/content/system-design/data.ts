@@ -2,12 +2,12 @@ import type { CourseModule } from "@/lib/course-types";
 
 export const sdDataModule: CourseModule = {
   id: "sd-data",
-  title: "Data at Scale",
+  title: "Database Scaling Techniques",
   lessons: [
     {
       slug: "sd-sharding",
       title: "Database Sharding",
-      module: "Data at Scale",
+      module: "Database Scaling Techniques",
       summary:
         "Chia dữ liệu thành nhiều shard: chọn shard key, thách thức, và consistent hashing.",
       duration: "9 phút",
@@ -72,7 +72,7 @@ export const sdDataModule: CourseModule = {
     {
       slug: "sd-replication",
       title: "Replication",
-      module: "Data at Scale",
+      module: "Database Scaling Techniques",
       summary:
         "Sao chép dữ liệu sang nhiều node: leader-follower, đồng bộ vs bất đồng bộ, và failover.",
       duration: "7 phút",

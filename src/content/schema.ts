@@ -46,6 +46,7 @@ const diagramNodeSchema = z.object({
   tone: z
     .enum(["emerald", "sky", "amber", "rose", "violet", "zinc"])
     .optional(),
+  icon: z.string().min(1).optional(),
 });
 
 const diagramEdgeSchema = z.object({
@@ -66,7 +67,12 @@ const visualizerSchema = z.enum([
   "load-balancer-round-robin",
   "token-bucket",
   "http-https",
+  "cache-aside",
+  "cache-stampede",
   "rest-request-flow",
+  "consistent-hashing-ring",
+  "rate-limit-window",
+  "request-flow",
   "linked-list",
   "binary-search-tree",
   "stack",
@@ -111,6 +117,8 @@ const lessonSchema = z.object({
   quiz: quizSchema.optional(),
   icon: z.string().optional(),
   parentSlug: z.string().optional(),
+  group: z.string().min(1).optional(),
+  isNew: z.boolean().optional(),
   blocks: z.array(lessonBlockSchema),
 });
 

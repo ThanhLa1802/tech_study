@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Fragment,
   useEffect,
   useRef,
   useState,
@@ -318,14 +319,18 @@ export default function CourseSidebar({ locale }: { locale: Locale }) {
                       <ul className="space-y-1 py-1 pl-2">
                         {courseModule.lessons
                           .filter((lesson) => !lesson.parentSlug)
-                          .map((lesson) => {
+                          .map((lesson, index, groupLessons) => {
                             const children = courseModule.lessons.filter(
                               (child) => child.parentSlug === lesson.slug,
                             );
+                            const startsGroup =
+                              Boolean(lesson.group) &&
+                              lesson.group !== groupLessons[index - 1]?.group;
 
                             const renderItem = (
                               item: (typeof lesson),
                               nested: boolean,
+                              grouped: boolean,
                             ) => {
                               const href = localePath(locale, `/learn/${activeCourse.slug}/${item.slug}`);
                               const active = pathname === href;
@@ -333,7 +338,13 @@ export default function CourseSidebar({ locale }: { locale: Locale }) {
                                 <Link
                                   href={href}
                                   className={`flex items-center justify-between rounded-r-lg border-l-2 py-2 pr-2 text-sm transition ${
-                                    nested ? "pl-5 text-[13px]" : "pl-2.5"
+                                    nested
+                                      ? grouped
+                                        ? "pl-8 text-[13px]"
+                                        : "pl-5 text-[13px]"
+                                      : grouped
+                                        ? "pl-6"
+                                        : "pl-2.5"
                                   } ${
                                     active
                                       ? "border-green-500 bg-zinc-800/70 text-green-300"
@@ -350,6 +361,11 @@ export default function CourseSidebar({ locale }: { locale: Locale }) {
                                       }`}
                                     />
                                     <span>{item.title}</span>
+                                    {item.isNew ? (
+                                      <span className="ml-2 shrink-0 rounded bg-green-500 px-1.5 py-0.5 text-[10px] font-bold text-black">
+                                        NEW
+                                      </span>
+                                    ) : null}
                                   </span>
                                   {item.quiz ? (
                                     <span className="ml-2 shrink-0 rounded bg-green-500/15 px-1.5 py-0.5 text-[10px] font-medium text-green-300">
@@ -365,18 +381,27 @@ export default function CourseSidebar({ locale }: { locale: Locale }) {
                             };
 
                             return (
-                              <li key={lesson.slug}>
-                                {renderItem(lesson, false)}
-                                {children.length > 0 ? (
-                                  <ul className="mt-1 space-y-1 pl-4">
-                                    {children.map((child) => (
-                                      <li key={child.slug}>
-                                        {renderItem(child, true)}
-                                      </li>
-                                    ))}
-                                  </ul>
+                              <Fragment key={lesson.slug}>
+                                {startsGroup ? (
+                                  <li>
+                                    <span className="block px-2.5 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-green-300">
+                                      {lesson.group}
+                                    </span>
+                                  </li>
                                 ) : null}
-                              </li>
+                                <li>
+                                  {renderItem(lesson, false, Boolean(lesson.group))}
+                                  {children.length > 0 ? (
+                                    <ul className="mt-1 space-y-1 pl-4">
+                                      {children.map((child) => (
+                                        <li key={child.slug}>
+                                          {renderItem(child, true, Boolean(lesson.group))}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  ) : null}
+                                </li>
+                              </Fragment>
                             );
                           })}
                       </ul>

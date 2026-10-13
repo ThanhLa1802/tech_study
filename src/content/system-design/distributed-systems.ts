@@ -9,73 +9,73 @@ export const sdDistributedSystemsModule: CourseModule = {
       title: "Consistency Models",
       module: "Distributed Systems",
       summary:
-        "Từ linearizable (mạnh) tới eventual (đọc dữ liệu cũ): mỗi model hứa điều gì, và chọn theo yêu cầu nghiệp vụ.",
+        "Từ linearizable (nhất quán mạnh) đến eventual consistency (nhất quán cuối cùng, có thể đọc dữ liệu cũ): tìm hiểu từng mô hình và cách chọn theo yêu cầu nghiệp vụ.",
       duration: "9 phút",
       blocks: [
         {
           type: "p",
-          text: "Consistency model là một hợp đồng về những gì client được phép thấy khi đọc và ghi trên dữ liệu đã được sao chép (replicated). Nó trả lời câu hỏi cụ thể hơn CAP: một thao tác đọc có thể trả về giá trị nào, và theo thứ tự nào?",
+          text: "Consistency model (mô hình nhất quán) là cam kết về những gì client có thể thấy khi đọc và ghi dữ liệu đã được sao chép (replicated). Mô hình này trả lời câu hỏi cụ thể hơn CAP: một thao tác đọc có thể trả về giá trị nào và theo thứ tự nào?",
         },
-        { type: "h2", text: "Nối tiếp CAP và PACELC" },
+        { type: "h2", text: "Mối liên hệ với CAP và PACELC" },
         {
           type: "ul",
           items: [
-            "CAP (xem bài sd-cap) chỉ ràng buộc hành vi khi có phân vùng mạng: hệ CP từ chối để giữ nhất quán, hệ AP vẫn trả lời nhưng dữ liệu có thể cũ.",
-            "PACELC bổ sung: ngay cả khi không phân vùng (Else), hệ thống vẫn phải chọn giữa Latency và Consistency.",
-            "Consistency model đi sâu hơn: nó định nghĩa chính xác tập lịch sử (history) mà hệ thống được phép tạo ra — client thấy gì và theo thứ tự nào.",
+            "CAP (xem bài sd-cap) mô tả lựa chọn của hệ thống khi xảy ra phân vùng mạng: hệ CP từ chối một số yêu cầu để giữ tính nhất quán; hệ AP vẫn phản hồi nhưng có thể trả dữ liệu cũ.",
+            "PACELC bổ sung rằng ngay cả khi không có phân vùng (Else), hệ thống vẫn phải đánh đổi giữa độ trễ (Latency) và tính nhất quán (Consistency).",
+            "Consistency model đi sâu hơn: mô hình này xác định chính xác những lịch sử thao tác (history) mà hệ thống được phép tạo ra — tức client nhìn thấy gì và theo thứ tự nào.",
           ],
         },
-        { type: "h2", text: "Linearizable — nhất quán mạnh" },
+        { type: "h2", text: "Linearizable: nhất quán mạnh" },
         {
           type: "p",
-          text: "Linearizability là một trong những model mạnh nhất cho một đối tượng đơn (single object). Mỗi thao tác trông như được thực thi tức thời (atomically) tại một điểm nằm giữa lúc gọi và lúc trả về, và thứ tự đó tôn trọng thời gian thực: nếu thao tác A hoàn tất trước khi B bắt đầu, thì B phải thấy kết quả sau A.",
+          text: "Linearizability là một trong những mô hình mạnh nhất cho một đối tượng đơn (single object). Mỗi thao tác được xem như xảy ra tức thời (atomically) tại một thời điểm giữa lúc được gọi và lúc trả kết quả. Thứ tự thao tác phải tôn trọng thời gian thực: nếu A hoàn tất trước khi B bắt đầu, B phải thấy kết quả của A.",
         },
         {
           type: "ul",
           items: [
-            "Hệ quả: đọc luôn thấy giá trị ghi mới nhất đã hoàn tất — không có stale read.",
-            "Cái giá: hệ thống phải phối hợp giữa các node (consensus hoặc quorum đọc/ghi), nên latency cao hơn và kém sẵn sàng hơn khi phân vùng (CP theo CAP).",
-            "Phạm vi “object” tùy hệ thống: linearizable cho từng key không có nghĩa linearizable trên nhiều key. Cần nhiều đối tượng thì nghĩ tới strict serializability.",
+            "Hệ quả: thao tác đọc luôn thấy giá trị mới nhất đã được ghi thành công — không có stale read (lần đọc dữ liệu cũ).",
+            "Đánh đổi: các node phải phối hợp với nhau (bằng consensus hoặc quorum đọc/ghi), nên độ trễ cao hơn và hệ thống kém sẵn sàng hơn khi có phân vùng mạng (CP theo CAP).",
+            "Phạm vi của “object” tùy hệ thống: linearizability trên từng key không đồng nghĩa với linearizability trên nhiều key. Nếu cần bảo đảm cho nhiều đối tượng, hãy tìm hiểu strict serializability.",
           ],
         },
-        { type: "h2", text: "Eventual consistency — nhất quán cuối cùng" },
+        { type: "h2", text: "Eventual consistency: nhất quán cuối cùng" },
         {
           type: "p",
-          text: "Eventual consistency chỉ hứa một điều: nếu ngừng ghi, thì sau một khoảng thời gian (không xác định), mọi replica sẽ hội tụ về cùng giá trị mới nhất. Trong lúc chưa hội tụ, các bản sao có thể trả về giá trị cũ.",
+          text: "Eventual consistency chỉ cam kết một điều: nếu không có thêm thao tác ghi, sau một khoảng thời gian không xác định, mọi replica (bản sao) sẽ hội tụ về cùng một giá trị mới nhất. Trước khi hội tụ, các bản sao có thể trả về dữ liệu cũ.",
         },
         {
           type: "ul",
           items: [
-            "Không quy định “bao lâu” và không đảm bảo thứ tự: client có thể đọc bản mới rồi đọc lại bản cũ (dữ liệu “lùi thời gian”).",
-            "Rất sẵn sàng và chịu phân vùng tốt, latency thấp — phù hợp feed, catalog, đếm lượt xem.",
-            "Không phù hợp số dư tài khoản, tồn kho hay kiểm tra trùng — nơi đọc cũ gây sai nghiệp vụ.",
+            "Không quy định thời gian hội tụ và không bảo đảm thứ tự đọc: client có thể đọc bản mới rồi lại đọc bản cũ (dữ liệu như thể “lùi thời gian”).",
+            "Tính sẵn sàng cao, chịu phân vùng tốt và độ trễ thấp — phù hợp với bảng tin, danh mục sản phẩm, bộ đếm lượt xem.",
+            "Không phù hợp với số dư tài khoản, tồn kho hay kiểm tra trùng lặp — những nơi dữ liệu cũ có thể dẫn đến sai sót nghiệp vụ.",
           ],
         },
-        { type: "h2", text: "Các model trung gian hữu dụng" },
+        { type: "h2", text: "Một số mô hình trung gian hữu ích" },
         {
           type: "ul",
           items: [
-            "Causal consistency: giữ thứ tự nhân quả — ai thấy nguyên nhân thì thấy cả kết quả; các ghi đồng thời có thể khác thứ tự.",
-            "Read-your-writes: người dùng luôn đọc lại được thay đổi của chính mình.",
-            "Monotonic reads: một client không bao giờ thấy dữ liệu lùi thời gian.",
+            "Causal consistency (nhất quán nhân quả): giữ thứ tự nguyên nhân – kết quả; ai thấy nguyên nhân thì cũng thấy kết quả, còn các lần ghi đồng thời có thể được thấy theo thứ tự khác nhau.",
+            "Read-your-writes: người dùng luôn nhìn thấy những thay đổi do chính mình thực hiện.",
+            "Monotonic reads (đọc đơn điệu): một client không bao giờ thấy dữ liệu quay ngược về phiên bản cũ hơn.",
           ],
         },
-        { type: "h2", text: "Đọc dữ liệu cũ (stale reads)" },
+        { type: "h2", text: "Đọc phải dữ liệu cũ (stale read)" },
         {
           type: "p",
-          text: "Ví dụ: bạn đổi ảnh đại diện, F5 lại vẫn thấy ảnh cũ. Ghi đã tới leader, nhưng request đọc tiếp theo rơi vào follower đang tụt lại (replication lag). Đây là stale read điển hình của hệ AP.",
+          text: "Ví dụ: bạn đổi ảnh đại diện nhưng tải lại trang vẫn thấy ảnh cũ. Lần ghi đã đến leader, nhưng yêu cầu đọc tiếp theo được gửi đến follower đang chậm cập nhật (replication lag). Đây là stale read điển hình trong hệ AP.",
         },
         {
           type: "ul",
           items: [
-            "Chữa theo nhu cầu: read-your-writes (đưa user vừa ghi về leader, hoặc yêu cầu version tối thiểu); monotonic reads (ghim mỗi user vào một replica); chờ replica bắt kịp; hoặc dùng quorum đọc mạnh hơn.",
-            "Bounded staleness: hứa dữ liệu cũ không quá một ngưỡng theo thời gian (vài giây) hoặc theo version — một điểm cân bằng phổ biến.",
+            "Cách xử lý tùy nhu cầu: với read-your-writes, gửi yêu cầu đọc của người vừa ghi về leader hoặc yêu cầu một version tối thiểu; với monotonic reads, giữ mỗi người dùng trên cùng một replica; hoặc chờ replica cập nhật, hay dùng quorum đọc mạnh hơn.",
+            "Bounded staleness (độ cũ có giới hạn): cam kết dữ liệu không cũ quá một ngưỡng thời gian (vài giây) hoặc số version — đây là một điểm cân bằng phổ biến.",
           ],
         },
-        { type: "h2", text: "Chọn model nào?" },
+        { type: "h2", text: "Nên chọn mô hình nào?" },
         {
           type: "p",
-          text: "Câu hỏi then chốt không phải “model nào mạnh nhất” mà là “client chịu được sai lệch nào”. Đọc cũ vài giây có sao không? Sai một lần có mất tiền không? Nếu không, eventual hoặc bounded staleness đổi lại latency thấp và availability cao. Nếu có, cần linearizable hoặc giao dịch ở tầng trên.",
+          text: "Câu hỏi then chốt không phải là “mô hình nào mạnh nhất?” mà là “client có thể chấp nhận mức sai lệch nào?”. Đọc dữ liệu cũ vài giây có sao không? Một lần sai có thể làm mất tiền không? Nếu có thể chấp nhận sai lệch, eventual consistency hoặc bounded staleness giúp giảm độ trễ và tăng tính sẵn sàng. Nếu không, cần linearizability hoặc giao dịch ở tầng cao hơn.",
         },
         {
           type: "code",
@@ -135,7 +135,7 @@ export const sdDistributedSystemsModule: CourseModule = {
             },
           ],
           caption:
-            "Model càng mạnh (trên) càng cần phối hợp: latency cao và kém sẵn sàng khi phân vùng. Càng xuống dưới càng sẵn sàng nhưng client có thể đọc dữ liệu cũ.",
+            "Mô hình càng mạnh (ở phía trên) càng cần phối hợp giữa các node: độ trễ cao hơn và kém sẵn sàng hơn khi có phân vùng. Càng xuống dưới, tính sẵn sàng càng cao nhưng client có thể đọc dữ liệu cũ.",
         },
       ],
     },
@@ -144,43 +144,43 @@ export const sdDistributedSystemsModule: CourseModule = {
       title: "Timeouts, Retries & Idempotency",
       module: "Distributed Systems",
       summary:
-        "Đặt timeout, retry với exponential backoff + jitter, và idempotency để retry an toàn — không hứa exactly-once.",
+        "Tìm hiểu cách đặt timeout, retry (thử lại) với exponential backoff + jitter và idempotency để retry an toàn — không thể bảo đảm exactly-once.",
       duration: "10 phút",
       blocks: [
         {
           type: "p",
-          text: "Một lời gọi qua mạng có thể thất bại tạm thời (timeout, mất gói, service quá tải). Ba công cụ nền tảng để chịu được loại lỗi này là timeout, retry với backoff + jitter, và idempotency. Điểm mấu chốt: retry không tạo ra bảo đảm exactly-once — nó chỉ an toàn khi thao tác là idempotent.",
+          text: "Một lời gọi qua mạng có thể tạm thời thất bại do timeout, mất gói tin hoặc service quá tải. Ba công cụ cơ bản để xử lý loại lỗi này là timeout, retry với backoff + jitter và idempotency (tính lặp an toàn). Điểm mấu chốt: retry không bảo đảm exactly-once (xử lý đúng một lần); chỉ an toàn khi thao tác có tính idempotent.",
         },
-        { type: "h2", text: "Timeout: fail fast thay vì chờ vô hạn" },
+        { type: "h2", text: "Timeout: dừng sớm thay vì chờ vô hạn" },
         {
           type: "p",
-          text: "Không đặt timeout, một dependency treo sẽ giữ thread/connection cho tới khi cạn tài nguyên — đó là một kiểu resource exhaustion dẫn tới cascading failure. Ngược lại, timeout quá ngắn lại cắt cả những request bình thường.",
+          text: "Nếu không đặt timeout, một dependency bị treo sẽ giữ thread/connection cho đến khi cạn tài nguyên — một dạng resource exhaustion (cạn kiệt tài nguyên) có thể dẫn đến cascading failure (lỗi lan truyền). Ngược lại, timeout quá ngắn có thể ngắt cả những request bình thường.",
         },
         {
           type: "ul",
           items: [
-            "Đặt timeout cho mọi lời gọi mạng; chọn đủ dài cho phần lớn request thành công nhưng đủ ngắn để không giữ tài nguyên.",
-            "Deadline propagation: đặt hạn chót ở tầng cao (frontend) rồi truyền xuống, mỗi tầng trừ đi thời gian đã dùng. Server nên kiểm tra hạn chót trước mỗi bước để không làm việc client đã bỏ.",
-            "Khi client hủy (cancellation), hủy công việc ở các tầng dưới để giải phóng tài nguyên.",
+            "Đặt timeout cho mọi lời gọi mạng: đủ dài để phần lớn request thành công, nhưng đủ ngắn để tránh giữ tài nguyên quá lâu.",
+            "Deadline propagation (truyền hạn chót): đặt hạn chót ở tầng cao (frontend) rồi truyền xuống; mỗi tầng trừ đi khoảng thời gian đã dùng. Server nên kiểm tra hạn chót trước mỗi bước để không tiếp tục xử lý việc client đã bỏ.",
+            "Khi client hủy yêu cầu (cancellation), hãy hủy công việc ở các tầng dưới để giải phóng tài nguyên.",
           ],
         },
-        { type: "h2", text: "Retry và cái bẫy retry storm" },
+        { type: "h2", text: "Retry và nguy cơ retry storm" },
         {
           type: "p",
-          text: "Retry giúp vượt lỗi ngẫu nhiên, tạm thời. Nhưng nếu lỗi là do quá tải, mỗi lần retry lại tăng tải — hệ thống càng lỗi càng bị retry nhiều, tạo vòng phản hồi dương (retry storm / error amplification).",
+          text: "Retry (thử lại) giúp vượt qua các lỗi ngẫu nhiên, tạm thời. Nhưng nếu lỗi bắt nguồn từ quá tải, mỗi lần thử lại càng làm tăng tải: hệ thống càng lỗi thì càng có nhiều retry, tạo thành vòng phản hồi dương (retry storm/error amplification — bão retry/khuếch đại lỗi).",
         },
         {
           type: "ul",
           items: [
-            "Chỉ retry lỗi tạm thời (transient): timeout, 429, 503. Không retry lỗi vĩnh viễn như 400, 401, 422 — chúng sẽ không bao giờ thành công.",
-            "Giới hạn số lần retry và tổng thời gian; đặt retry budget (ví dụ tối đa X retry mỗi phút cho toàn process).",
-            "Tránh retry lồng ở nhiều tầng: số nỗ lực nhân lên theo cấp số (xem sơ đồ). Tôn trọng header Retry-After khi bị chặn.",
+            "Chỉ retry lỗi tạm thời (transient), như timeout, 429, 503. Không retry lỗi không thể tự khắc phục như 400, 401, 422 — thử lại cũng không giúp yêu cầu thành công.",
+            "Giới hạn số lần retry và tổng thời gian thử lại; đặt retry budget (ngân sách retry), chẳng hạn tối đa X lần thử lại mỗi phút cho toàn process.",
+            "Tránh retry lồng nhau ở nhiều tầng: số lần thử có thể tăng theo cấp số nhân (xem sơ đồ). Nếu bị giới hạn, hãy tuân theo header Retry-After.",
           ],
         },
-        { type: "h2", text: "Exponential backoff + jitter" },
+        { type: "h2", text: "Exponential backoff + jitter: chờ lâu dần và lệch thời điểm thử lại" },
         {
           type: "p",
-          text: "Thay vì retry ngay, client chờ lâu dần sau mỗi lần thất bại — exponential backoff — và giới hạn ở một mức tối đa (capped). Vấn đề: nếu mọi client backoff theo cùng công thức, chúng sẽ thử lại đúng cùng lúc và lại dồn tải. Thêm yếu tố ngẫu nhiên (jitter) phá sự đồng bộ đó.",
+          text: "Thay vì retry ngay, client chờ lâu hơn sau mỗi lần thất bại — exponential backoff — nhưng giới hạn thời gian chờ ở một mức tối đa (capped). Nếu mọi client chờ theo cùng một công thức, chúng sẽ đồng loạt thử lại và lại dồn tải. Thêm yếu tố ngẫu nhiên (jitter) giúp phân tán thời điểm thử lại.",
         },
         {
           type: "code",
@@ -194,24 +194,24 @@ export const sdDistributedSystemsModule: CourseModule = {
         {
           type: "ul",
           items: [
-            "Full jitter: sleep = random(0, min(cap, base × 2^attempt)) — giảm tải nền nhiều nhất.",
-            "Equal jitter: giữ một nửa backoff cố định rồi cộng ngẫu nhiên — tránh sleep quá ngắn.",
-            "Decorrelated jitter: mở rộng dần khoảng ngẫu nhiên theo lần trước — phân tán tốt hơn nữa.",
-            "Các cách này không đổi bản chất số việc phải làm, nhưng giảm mạnh tải dồn và thời gian hoàn tất.",
+            "Full jitter: sleep = random(0, min(cap, base × 2^attempt)) — phân tán thời gian chờ trên toàn khoảng và giảm tải dồn hiệu quả.",
+            "Equal jitter: giữ cố định một nửa thời gian backoff rồi chọn ngẫu nhiên nửa còn lại — tránh thời gian chờ quá ngắn.",
+            "Decorrelated jitter: mở rộng dần khoảng thời gian ngẫu nhiên dựa trên lần trước — giúp phân tán thời điểm thử lại hơn nữa.",
+            "Các cách này không làm thay đổi số thao tác cần xử lý, nhưng giảm đáng kể tải dồn và thời gian hoàn tất.",
           ],
         },
-        { type: "h2", text: "Idempotency: retry an toàn" },
+        { type: "h2", text: "Idempotency: thử lại an toàn" },
         {
           type: "p",
-          text: "Một thao tác là idempotent nếu gửi lại nhiều lần vẫn cho kết quả/tác dụng giống như gửi một lần. Đây là điều kiện để retry không gây tác dụng phụ trùng lặp — ví dụ tạo hai đơn hàng, trừ tiền hai lần.",
+          text: "Một thao tác có tính idempotent nếu gửi lặp lại nhiều lần vẫn tạo ra kết quả hoặc tác dụng tương đương với việc gửi một lần. Nhờ đó, retry không gây tác dụng phụ trùng lặp — chẳng hạn tạo hai đơn hàng hoặc trừ tiền hai lần.",
         },
         {
           type: "ul",
           items: [
-            "Với HTTP, GET/PUT/DELETE được định nghĩa là idempotent, còn POST thì không (RFC 9110). Đừng tự động retry POST nếu chưa xử lý idempotency.",
-            "Idempotency key: client sinh một khóa duy nhất (UUID) cho mỗi thao tác; server lưu key → kết quả và trả lại kết quả tương đương cho các lần gửi lặp.",
-            "Việc lưu key và thay đổi dữ liệu phải nguyên tử (atomic) để không xảy ra cảnh lưu key mà quên tạo resource hoặc ngược lại.",
-            "Cần vòng đời cho key (thường gắn với vòng đời resource). Cùng key nhưng khác tham số nên trả lỗi validation để tránh gộp nhầm hai ý định khác nhau.",
+            "Trong HTTP, GET/PUT/DELETE được định nghĩa là idempotent, còn POST thì không (RFC 9110). Đừng tự động retry POST nếu chưa xử lý idempotency.",
+            "Idempotency key (khóa chống xử lý lặp): client tạo một khóa duy nhất (UUID) cho mỗi thao tác; server lưu key cùng kết quả và trả lại kết quả tương ứng nếu nhận yêu cầu lặp.",
+            "Việc lưu key và thay đổi dữ liệu phải diễn ra nguyên tử (atomic) để tránh trường hợp đã lưu key nhưng quên tạo resource, hoặc ngược lại.",
+            "Cần quy định vòng đời của key (thường gắn với vòng đời resource). Nếu cùng key nhưng tham số khác nhau, nên trả lỗi validation để tránh gộp nhầm hai ý định khác nhau.",
           ],
         },
         {
@@ -223,13 +223,13 @@ export const sdDistributedSystemsModule: CourseModule = {
             },
           ],
         },
-        { type: "h2", text: "Ranh giới cần nhớ: đừng hứa exactly-once" },
+        { type: "h2", text: "Điều cần nhớ: không thể hứa exactly-once" },
         {
           type: "ul",
           items: [
-            "Khi timeout, bạn không biết thao tác đã xảy ra hay chưa: request có thể đã tới server và xử lý xong, chỉ response bị thất lạc. Vì vậy timeout không đồng nghĩa với thất bại.",
-            "Retry cho ra at-least-once: ít nhất một lần. Kết hợp với thao tác idempotent, tác dụng phụ phía server đạt mức “effectively once” / “at most once” — chỉ một đơn hàng được tạo.",
-            "Exactly-once thật sự rất khó đạt tuyệt đối trong hệ phân tán; thực tế người ta mô phỏng nó bằng idempotency, không phải bằng retry.",
+            "Khi xảy ra timeout, bạn không biết thao tác đã được thực hiện hay chưa: request có thể đã đến server và xử lý xong, nhưng response bị thất lạc. Vì vậy, timeout không đồng nghĩa với thao tác thất bại.",
+            "Retry tạo ra bảo đảm at-least-once (ít nhất một lần). Khi kết hợp với thao tác idempotent, tác dụng phụ ở server có thể đạt mức “effectively once” — trên thực tế chỉ xảy ra một lần — hay “at most once” ở cấp hiệu ứng, chẳng hạn chỉ tạo một đơn hàng.",
+            "Bảo đảm exactly-once tuyệt đối rất khó đạt trong hệ phân tán; trên thực tế, người ta mô phỏng hành vi này bằng idempotency chứ không phải bằng retry.",
           ],
         },
         {
@@ -282,7 +282,7 @@ export const sdDistributedSystemsModule: CourseModule = {
             { id: "backend-database", from: "backend", to: "database", label: "×3 mỗi lỗi" },
           ],
           caption:
-            "Retry lồng ở nhiều tầng nhân số nỗ lực lên (3 × 3 × 3 ≈ 27). Khi lỗi do quá tải, chính retry biến một cố nhỏ thành sập toàn hệ.",
+            "Retry lồng nhau ở nhiều tầng làm số lần thử tăng lên (3 × 3 × 3 ≈ 27). Khi lỗi do quá tải, retry có thể biến một sự cố nhỏ thành lỗi lan rộng toàn hệ thống.",
         },
       ],
     },
@@ -298,53 +298,53 @@ export const sdDistributedSystemsModule: CourseModule = {
           type: "p",
           text: "Trước khi có thể chuyển lưu lượng khỏi một node lỗi, hệ thống phải phát hiện node đó lỗi. Nhưng trong mạng bất đồng bộ (asynchronous), ta không phân biệt được chắc chắn giữa “node đã chết” và “node/mạng chỉ đang chậm”.",
         },
-        { type: "h2", text: "Vì sao phát hiện lỗi khó" },
+        { type: "h2", text: "Vì sao khó phát hiện lỗi?" },
         {
           type: "p",
-          text: "Không có giới hạn thời gian cho việc gửi message, nên mọi phán đoán dựa trên timeout đều có thể sai theo hai hướng: false positive (báo chết nhầm node còn sống) và false negative (bỏ sót node đã chết).",
+          text: "Vì không có giới hạn thời gian cố định cho việc gửi message, mọi phán đoán dựa trên timeout đều có thể sai theo hai hướng: false positive (báo nhầm node còn sống là đã chết) và false negative (không phát hiện node đã chết).",
         },
         {
           type: "ul",
           items: [
-            "False positive nguy hiểm: node khỏe bị gỡ khỏi pool, tải dồn sang node còn lại, có thể khởi động cascading failure.",
-            "Vì vậy đừng tin một lần timeout đơn lẻ: cần nhiều lần lỗi liên tiếp, một khoảng thời gian, và ngưỡng.",
+            "False positive đặc biệt nguy hiểm: node khỏe bị gỡ khỏi pool, khiến tải dồn lên các node còn lại và có thể khởi phát cascading failure.",
+            "Vì vậy, không nên kết luận chỉ từ một lần timeout; hãy xét nhiều lần lỗi liên tiếp, khoảng thời gian và ngưỡng phù hợp.",
           ],
         },
-        { type: "h2", text: "Cơ chế phổ biến" },
+        { type: "h2", text: "Các cơ chế phổ biến" },
         {
           type: "ul",
           items: [
-            "Heartbeat: node gửi tín hiệu định kỳ; thiếu tín hiệu quá ngưỡng thì coi là nghi ngờ lỗi (pull hoặc push).",
-            "Ngưỡng nhiều lần lỗi (consecutive failures) kèm cửa sổ thời gian để tránh rung (flapping) khi mạng chập chờn.",
-            "Phi-accrual failure detector: thay vì trả true/false, trả về mức độ nghi ngờ (suspicion level) trên thang liên tục, tự điều chỉnh theo điều kiện mạng — dùng trong các hệ như Cassandra, Akka.",
-            "Gossip: lan truyền thông tin node sống/chết cho toàn cluster mà không cần một điểm trung tâm.",
+            "Heartbeat (tín hiệu sống): node gửi tín hiệu định kỳ; nếu không nhận được tín hiệu trong ngưỡng cho phép, hệ thống đánh dấu node là đáng ngờ (theo cơ chế pull hoặc push).",
+            "Dùng ngưỡng số lần lỗi liên tiếp (consecutive failures) cùng một cửa sổ thời gian để tránh trạng thái lên xuống liên tục (flapping) khi mạng chập chờn.",
+            "Phi-accrual failure detector: thay vì trả về true/false, đưa ra mức độ nghi ngờ (suspicion level) trên một thang liên tục và tự điều chỉnh theo điều kiện mạng — được dùng trong các hệ như Cassandra, Akka.",
+            "Gossip: lan truyền thông tin về trạng thái sống/chết của node trong toàn cluster mà không cần một điểm trung tâm.",
           ],
         },
-        { type: "h2", text: "Health check: liveness vs readiness" },
+        { type: "h2", text: "Health check: liveness và readiness" },
         {
           type: "ul",
           items: [
-            "Liveness: tiến trình còn phản hồi không? Fail → restart tiến trình.",
-            "Readiness: instance đã sẵn sàng phục vụ chưa (khởi tạo xong, dependency thiết yếu ổn)? Fail → gỡ khỏi load balancer nhưng không restart.",
-            "Tách hai tín hiệu là quan trọng: một dependency dùng chung hỏng không nên khiến mọi instance bị restart.",
+            "Liveness (kiểm tra tiến trình còn sống): tiến trình có còn phản hồi không? Nếu không, khởi động lại tiến trình.",
+            "Readiness (kiểm tra mức độ sẵn sàng): instance đã khởi tạo xong và các dependency thiết yếu còn hoạt động để phục vụ chưa? Nếu chưa, gỡ instance khỏi load balancer nhưng không khởi động lại.",
+            "Điều quan trọng là tách hai tín hiệu này: một dependency dùng chung bị lỗi không nên khiến mọi instance đều khởi động lại.",
           ],
         },
-        { type: "h2", text: "Shallow vs deep check" },
+        { type: "h2", text: "Kiểm tra nông và kiểm tra sâu" },
         {
           type: "ul",
           items: [
-            "Shallow check: chỉ xác nhận tiến trình trả lời, không chạm dependency — rẻ, hợp cho liveness.",
-            "Deep check: kiểm tra cả dependency thiết yếu (DB, cache) — hợp cho readiness.",
-            "Cảnh báo: deep check gọi dependency qua mạng mỗi lần probe có thể tạo false positive và biến chính cơ chế giám sát thành nguyên nhân sập. Hãy bound timeout cho từng dependency, dùng circuit breaker cho dependency chập chờn, và trả “degraded” thay vì “unhealthy” cho dependency phụ.",
+            "Kiểm tra nông (shallow check): chỉ xác nhận tiến trình có phản hồi, không gọi dependency — ít tốn tài nguyên, phù hợp cho liveness.",
+            "Kiểm tra sâu (deep check): kiểm tra cả các dependency thiết yếu (DB, cache) — phù hợp cho readiness.",
+            "Cảnh báo: deep check gọi dependency qua mạng mỗi lần probe có thể tạo false positive và biến chính cơ chế giám sát thành nguyên nhân gây lỗi. Hãy giới hạn (bound) timeout cho từng dependency, dùng circuit breaker cho dependency chập chờn và trả trạng thái “degraded” (suy giảm) thay vì “unhealthy” (không khỏe) khi dependency phụ gặp lỗi.",
           ],
         },
-        { type: "h2", text: "Nguyên tắc thực hành" },
+        { type: "h2", text: "Nguyên tắc khi triển khai" },
         {
           type: "ul",
           items: [
-            "Probe nên rẻ, read-only, không thay đổi dữ liệu production; tách endpoint cho liveness và readiness.",
-            "Cảnh báo theo SLO và đường đi quan trọng, không theo từng probe đơn lẻ.",
-            "Khi một dependency dùng chung chết, đừng để load balancer gỡ hết instance — lúc đó cần degradation ở tầng ứng dụng (xem bài sau).",
+            "Probe nên nhẹ, chỉ đọc (read-only) và không thay đổi dữ liệu production; dùng endpoint riêng cho liveness và readiness.",
+            "Thiết lập cảnh báo dựa trên SLO và các luồng quan trọng, không dựa trên từng probe riêng lẻ.",
+            "Nếu một dependency dùng chung gặp sự cố, đừng để load balancer gỡ bỏ mọi instance — khi đó cần suy giảm chức năng có kiểm soát ở tầng ứng dụng (xem bài sau).",
           ],
         },
         {
@@ -355,6 +355,10 @@ export const sdDistributedSystemsModule: CourseModule = {
               code: "GET /healthz/live  → 200 nếu process chạy (không chạm dependency)\nGET /healthz/ready → 200 nếu DB + cache OK, ngược lại 503",
             },
           ],
+        },
+        {
+          type: "p",
+          text: "Endpoint /healthz/live trả về 200 nếu tiến trình đang chạy (không kiểm tra dependency); endpoint /healthz/ready trả về 200 nếu DB và cache đều hoạt động tốt, ngược lại trả về 503.",
         },
         {
           type: "diagram",
@@ -405,7 +409,7 @@ export const sdDistributedSystemsModule: CourseModule = {
             { id: "app-db", from: "app", to: "db", label: "readiness gọi DB" },
           ],
           caption:
-            "Liveness chỉ kiểm tra tiến trình app; readiness còn kiểm tra dependency thiết yếu. Đừng để một deep check phụ thuộc dependency chập chờn gỡ bỏ những instance đang khỏe.",
+            "Liveness chỉ kiểm tra tiến trình app; readiness còn kiểm tra dependency thiết yếu. Đừng để deep check phụ thuộc vào một dependency chập chờn khiến các instance vẫn khỏe bị gỡ bỏ.",
         },
       ],
     },
@@ -414,26 +418,26 @@ export const sdDistributedSystemsModule: CourseModule = {
       title: "Circuit Breaker, Bulkhead & Graceful Degradation",
       module: "Distributed Systems",
       summary:
-        "Ngăn lỗi lan rộng: circuit breaker, bulkhead, load shedding và graceful degradation/fallback.",
+        "Tìm hiểu cách ngăn lỗi lan rộng bằng circuit breaker, bulkhead, load shedding và graceful degradation/fallback.",
       duration: "10 phút",
       blocks: [
         {
           type: "p",
-          text: "Cascading failure là lỗi lan rộng do phản hồi dương: một thành phần hỏng làm thành phần khác quá tải rồi hỏng theo. Nguyên nhân phổ biến nhất là quá tải (overload), thường bị đẩy nhanh bởi retry. Ba kỹ thuật để chặn vòng xoáy này là circuit breaker, bulkhead và graceful degradation.",
+          text: "Cascading failure (lỗi lan truyền) là tình trạng một thành phần gặp sự cố khiến thành phần khác quá tải rồi cũng hỏng theo, tạo thành vòng phản hồi dương. Nguyên nhân phổ biến là quá tải (overload), thường trầm trọng hơn do retry. Ba kỹ thuật giúp chặn vòng xoáy này là circuit breaker, bulkhead và graceful degradation.",
         },
         { type: "h2", text: "Circuit breaker" },
         {
           type: "p",
-          text: "Circuit breaker là một proxy đứng trước một dependency hay lỗi. Nó đếm số lỗi gần đây; khi vượt ngưỡng, mạch “ngắt” và các request bị trả lỗi ngay (fail fast) thay vì chờ timeout và giữ tài nguyên.",
+          text: "Circuit breaker (cầu dao ngắt mạch) là một proxy đặt trước dependency thường gặp lỗi. Nó đếm số lỗi gần đây; khi vượt ngưỡng, mạch “ngắt” và request được trả lỗi ngay (fail fast) thay vì chờ timeout, nhờ đó tránh giữ tài nguyên.",
         },
         {
           type: "ul",
           items: [
-            "Closed: cho request đi qua, đếm lỗi. Vượt ngưỡng → Open.",
-            "Open: fail ngay, có cooldown để dependency kịp hồi. Hết cooldown → Half-Open.",
-            "Half-Open: cho một số ít request thử. Thành công → Closed; thất bại → Open lại.",
-            "Circuit breaker khác retry: retry kỳ vọng sẽ thành công, breaker ngăn gọi thứ gần như chắc thất bại. Khi ghép cả hai, retry phải dừng nếu breaker báo lỗi không phải tạm thời; cần observability và khả năng reset thủ công.",
-            "Cẩn thận khi dùng chung breaker cho nhiều shard/tenant độc lập: một shard lỗi có thể làm ngắt cả những shard đang khỏe.",
+            "Closed (đóng): cho request đi qua và đếm lỗi. Khi vượt ngưỡng, chuyển sang Open.",
+            "Open (mở): trả lỗi ngay và chờ hết cooldown (thời gian nghỉ) để dependency có cơ hội phục hồi. Hết cooldown thì chuyển sang Half-Open.",
+            "Half-Open (bán mở): cho một số ít request đi qua để kiểm tra. Nếu thành công, chuyển về Closed; nếu thất bại, chuyển lại Open.",
+            "Circuit breaker khác retry: retry thử lại vì kỳ vọng thao tác sẽ thành công; breaker ngăn những lời gọi gần như chắc chắn sẽ thất bại. Khi kết hợp hai cơ chế, cần dừng retry nếu breaker báo lỗi không phải tạm thời; đồng thời cần observability (khả năng quan sát hệ thống) và cách reset thủ công.",
+            "Thận trọng khi dùng chung breaker cho nhiều shard/tenant độc lập: lỗi ở một shard có thể khiến mạch ngắt cả những shard đang khỏe.",
           ],
         },
         {
@@ -477,42 +481,42 @@ export const sdDistributedSystemsModule: CourseModule = {
             { id: "half-open-again", from: "half-open", to: "open", label: "thử thất bại" },
           ],
           caption:
-            "Circuit breaker là một máy trạng thái: đếm lỗi ở Closed, ngắt ở Open, và chỉ thử lại dè dặt ở Half-Open trước khi đóng lại.",
+            "Circuit breaker là một máy trạng thái: đếm lỗi ở Closed, ngắt ở Open và chỉ cho thử lại một cách dè dặt ở Half-Open trước khi đóng mạch.",
         },
         { type: "h2", text: "Bulkhead" },
         {
           type: "p",
-          text: "Bulkhead chia tài nguyên thành các khoang độc lập (thread pool, connection pool, queue, instance) để một khoang bị “ngập” không làm chìm cả hệ thống — lấy cảm hứng từ vách ngăn của tàu.",
+          text: "Bulkhead (vách ngăn) chia tài nguyên thành các khoang độc lập (thread pool, connection pool, queue, instance), để một khoang bị “ngập” không kéo sập cả hệ thống. Ý tưởng này lấy cảm hứng từ các vách ngăn trên tàu.",
         },
         {
           type: "ul",
           items: [
-            "Consumer bulkhead: mỗi dependency một connection/thread pool riêng, để một service treo không đốt hết pool dùng cho service khác.",
-            "Service bulkhead: mỗi tenant/nhóm người dùng chạy trên instance/queue riêng (cell-based architecture) để cô lập phạm vi ảnh hưởng.",
-            "Đánh đổi: cô lập tốt nhưng dùng tài nguyên kém hiệu quả hơn và tăng độ phức tạp vận hành.",
+            "Consumer bulkhead: dành connection/thread pool riêng cho từng dependency để một service bị treo không chiếm hết pool của các service khác.",
+            "Service bulkhead: chạy từng tenant/nhóm người dùng trên instance/queue riêng (cell-based architecture) để cô lập phạm vi ảnh hưởng.",
+            "Đánh đổi: khả năng cô lập tốt hơn nhưng sử dụng tài nguyên kém hiệu quả hơn và làm tăng độ phức tạp khi vận hành.",
           ],
         },
-        { type: "h2", text: "Graceful degradation & fallback" },
+        { type: "h2", text: "Graceful degradation và fallback" },
         {
           type: "p",
-          text: "Thay vì trả lỗi cứng, phục vụ kết quả ít đầy đủ hơn nhưng vẫn hữu ích: trả dữ liệu cache cũ, bỏ tính năng phụ, hoặc tính toán rẻ hơn. Mục tiêu là giữ chức năng cốt lõi hoạt động.",
+          text: "Thay vì trả lỗi hoàn toàn, hệ thống có thể cung cấp kết quả ít đầy đủ hơn nhưng vẫn hữu ích: trả dữ liệu cũ từ cache, tắt tính năng phụ hoặc dùng cách tính toán ít tốn kém hơn. Mục tiêu là giữ cho chức năng cốt lõi vẫn hoạt động.",
         },
         {
           type: "ul",
           items: [
-            "Load shedding: chủ động bỏ một phần request khi gần quá tải (thường trả 503), ưu tiên request quan trọng.",
-            "Fallback: giá trị mặc định, cache cũ, hoặc đường xử lý thay thế. Fallback phải đúng ngữ nghĩa nghiệp vụ — trả dữ liệu sai còn tệ hơn trả lỗi.",
-            "Cảnh báo: code path degraded ít khi chạy nên dễ hỏng. Hãy test định kỳ, giữ nó đơn giản, và có cách tắt nhanh khi nó gây lỗi dây chuyền.",
+            "Load shedding (loại bỏ tải): chủ động từ chối một phần request khi hệ thống gần quá tải (thường trả 503) để ưu tiên các request quan trọng.",
+            "Fallback (phương án dự phòng): dùng giá trị mặc định, dữ liệu cũ trong cache hoặc một luồng xử lý thay thế. Fallback phải đúng ngữ nghĩa nghiệp vụ — trả dữ liệu sai còn tệ hơn trả lỗi.",
+            "Cảnh báo: code path degraded (luồng xử lý khi chức năng suy giảm) ít khi chạy nên dễ phát sinh lỗi. Hãy kiểm thử định kỳ, giữ luồng này đơn giản và có cách tắt nhanh nếu nó gây lỗi dây chuyền.",
           ],
         },
-        { type: "h2", text: "Ghép lại thành phòng thủ nhiều lớp" },
+        { type: "h2", text: "Kết hợp thành nhiều lớp bảo vệ" },
         {
           type: "ul",
           items: [
-            "Timeout + retry (backoff + jitter) + circuit breaker + bulkhead + fallback là các lớp bổ trợ, không thay thế nhau.",
-            "Giám sát tỉ lệ lỗi, số lần ngắt mạch và tỉ lệ fallback để phát hiện sớm.",
-            "Tránh gọi chéo trong cùng một tầng (intra-layer) làm tăng phụ thuộc; thường nên để client gọi lại đúng node.",
-            "Liên hệ: availability (sd-availability) và SPOF (sd-single-point-of-failure) nói về loại bỏ điểm chết đơn; bài này nói về giữ hệ thống sống khi một phần đã hỏng.",
+            "Timeout, retry (backoff + jitter), circuit breaker, bulkhead và fallback là các lớp bảo vệ bổ trợ cho nhau, không thay thế nhau.",
+            "Theo dõi tỷ lệ lỗi, số lần ngắt mạch và tỷ lệ fallback để phát hiện sự cố sớm.",
+            "Tránh gọi vòng trong cùng một tầng (intra-layer) vì làm tăng sự phụ thuộc; thông thường nên để client gọi lại đúng node.",
+            "Liên hệ: availability (sd-availability) và SPOF (điểm lỗi đơn, sd-single-point-of-failure) nói về cách loại bỏ một điểm lỗi đơn lẻ; bài này tập trung vào việc giữ hệ thống hoạt động khi một phần đã hỏng.",
           ],
         },
         {
@@ -574,7 +578,7 @@ export const sdDistributedSystemsModule: CourseModule = {
             { id: "service-dep-b", from: "service", to: "dep-b", label: "gọi" },
           ],
           caption:
-            "Khi Dependency A ngắt mạch, service không chờ timeout mà chuyển sang fallback (cache), đồng thời các bulkhead giữ Dependency B hoạt động độc lập.",
+            "Khi circuit breaker ngắt Dependency A, service không chờ timeout mà chuyển sang fallback (cache); đồng thời, các bulkhead giúp Dependency B tiếp tục hoạt động độc lập.",
         },
       ],
     },

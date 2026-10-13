@@ -44,10 +44,22 @@ export type ComplexityVisualizer = "big-o-growth";
 export type SystemDesignVisualizer =
   | "load-balancer-round-robin"
   | "token-bucket"
-  | "http-https";
+  | "http-https"
+  | "cache-aside"
+  | "cache-stampede";
 
 /** Sequence-diagram visualizers (lifelines + numbered message steps). */
 export type SequenceVisualizer = "rest-request-flow";
+
+/**
+ * Custom step-through System Design visuals drawn as hand-rolled SVG with a
+ * pure frame builder per id (no registry spec). Dispatched explicitly by
+ * `lesson-visualizer.tsx`.
+ */
+export type SystemDesignMotionVisualizer =
+  | "consistent-hashing-ring"
+  | "rate-limit-window"
+  | "request-flow";
 
 export type DataStructureVisualizer =
   | "linked-list"
@@ -65,6 +77,7 @@ export type Visualizer =
   | ComplexityVisualizer
   | SystemDesignVisualizer
   | SequenceVisualizer
+  | SystemDesignMotionVisualizer
   | DataStructureVisualizer;
 
 export type Lesson = {
@@ -77,6 +90,10 @@ export type Lesson = {
   quiz?: Quiz;
   icon?: string;
   parentSlug?: string;
+  /** Subheading inside a module; consecutive lessons sharing it are grouped. */
+  group?: string;
+  /** Show a "NEW" badge in the sidebar. */
+  isNew?: boolean;
   blocks: LessonBlock[];
 };
 

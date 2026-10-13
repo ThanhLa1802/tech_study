@@ -263,6 +263,7 @@ export const sdCoreConceptsModule: CourseModule = {
       summary:
         "Phân phối key lên các node bằng vòng băm, giảm số key phải di chuyển khi thêm hoặc bớt node.",
       duration: "7 phút",
+      visualizer: "consistent-hashing-ring",
       blocks: [
         {
           type: "p",

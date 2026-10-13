@@ -27,6 +27,8 @@ export type IconName =
   | "server"
   | "database"
   | "shield"
+  | "router"
+  | "globe"
   | "concepts";
 
 const PATHS: Record<IconName, string> = {
@@ -70,6 +72,10 @@ const PATHS: Record<IconName, string> = {
     "M12 3.75 5.25 6.15v5.6c0 4 2.7 6.9 6.75 8.25 4.05-1.35 6.75-4.25 6.75-8.25v-5.6L12 3.75Z",
   concepts:
     "M12 3.25a6 6 0 0 0-3.5 10.85V17h7v-2.9A6 6 0 0 0 12 3.25ZM9.5 19.5h5M10.5 21.75h3",
+  router:
+    "M3.5 14.5h17V19h-17zM7.75 11.5 6 8.5M12 11.5V7M16.25 11.5 18 8.5",
+  globe:
+    "M12 3.75a8.25 8.25 0 1 0 0 16.5 8.25 8.25 0 0 0 0-16.5ZM3.75 12h16.5M12 3.75c2.3 2.4 2.3 14.1 0 16.5M12 3.75c-2.3 2.4-2.3 14.1 0 16.5",
 };
 
 export function Icon({
@@ -115,7 +121,8 @@ export const MODULE_ICONS: Record<string, IconName> = {
   "dynamic-programming": "dp",
   "sd-foundations": "welcome",
   "sd-core-concepts": "concepts",
-  "sd-building-blocks": "server",
+  "sd-load-balancing": "router",
+  "sd-caching": "layers",
   "sd-data": "database",
   "sd-reliability": "shield",
 };

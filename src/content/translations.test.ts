@@ -186,7 +186,7 @@ describe("English lesson translations", () => {
     ).toBe("What is System Design?");
   });
 
-  it("publishes the translated Introduction and Core Concepts lessons in order", () => {
+  it("publishes the translated System Design lessons in order", () => {
     const course = getCourseForLocale("system-design", "en");
     const slugs = course?.modules.flatMap((courseModule) =>
       courseModule.lessons.map((lesson) => lesson.slug),
@@ -205,13 +205,36 @@ describe("English lesson translations", () => {
       "sd-http-proxy-latency",
       "sd-rest-graphql",
       "sd-realtime-communication",
-      "sd-load-balancing",
-      "sd-caching",
+      "sd-what-are-load-balancers",
+      "sd-load-balancing-algorithms",
+      "sd-dns-load-balancing",
+      "sd-anycast-routing",
+      "sd-load-balancing-exercises",
+      "sd-what-is-caching",
+      "sd-caching-strategies",
+      "sd-cache-eviction-policies",
+      "sd-cache-invalidation",
       "sd-cdn",
+      "sd-distributed-cache-architecture",
+      "sd-data-models",
+      "sd-transactions-acid",
+      "sd-indexes-queries",
       "sd-sharding",
       "sd-replication",
+      "sd-consistency-models",
+      "sd-timeouts-retries-idempotency",
+      "sd-failure-detection",
+      "sd-cascading-failures",
       "sd-message-queues",
       "sd-rate-limiting",
+      "sd-monolith-modular-microservices",
+      "sd-sync-async-event-driven",
+      "sd-saga-outbox",
+      "sd-design-process",
+      "sd-back-of-envelope-estimation",
+      "sd-case-url-shortener",
+      "sd-case-news-feed",
+      "sd-case-chat",
     ]);
 
     expect(
@@ -291,16 +314,18 @@ describe("English lesson translations", () => {
         "en",
       ).prev?.slug,
     ).toBe("sd-rest-graphql");
-    // Building Blocks is translated next, so the last Networking & APIs lesson hands off.
+    // Load Balancing is translated next, so the last Networking & APIs
+    // lesson hands off to the first Load Balancing lesson.
     expect(
       getAdjacentLessonsForLocale(
         "system-design",
         "sd-realtime-communication",
         "en",
       ).next?.slug,
-    ).toBe("sd-load-balancing");
+    ).toBe("sd-what-are-load-balancers");
 
-    // The Networking & APIs chain sits between Foundations and Building Blocks.
+    // The Networking & APIs chain sits between Core Concepts and Load
+    // Balancing.
     const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
       (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
     );
@@ -310,7 +335,59 @@ describe("English lesson translations", () => {
       "sd-http-proxy-latency",
       "sd-rest-graphql",
       "sd-realtime-communication",
-      "sd-load-balancing",
+      "sd-what-are-load-balancers",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Databases lessons in order", () => {
+    // Distributed Caching hands off to the first Databases lesson.
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-distributed-cache-architecture",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-data-models");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-data-models", "en").prev
+        ?.slug,
+    ).toBe("sd-distributed-cache-architecture");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-data-models", "en").next
+        ?.slug,
+    ).toBe("sd-transactions-acid");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-transactions-acid", "en").prev
+        ?.slug,
+    ).toBe("sd-data-models");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-transactions-acid", "en").next
+        ?.slug,
+    ).toBe("sd-indexes-queries");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-indexes-queries", "en").prev
+        ?.slug,
+    ).toBe("sd-transactions-acid");
+    // Database Scaling Techniques is translated next, so the last Databases
+    // lesson hands off.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-indexes-queries", "en").next
+        ?.slug,
+    ).toBe("sd-sharding");
+
+    // The Databases chain sits between Caching and Database Scaling
+    // Techniques.
+    const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sd-distributed-cache-architecture",
+      "sd-data-models",
+      "sd-transactions-acid",
+      "sd-indexes-queries",
+      "sd-sharding",
     ];
     const start = published.indexOf(chain[0]);
     expect(published.slice(start, start + chain.length)).toEqual(chain);
@@ -393,58 +470,166 @@ describe("English lesson translations", () => {
     }
   });
 
-  it("navigates through the translated Building Blocks lessons in order", () => {
+  it("navigates through the translated Load Balancing and Caching lessons in order", () => {
+    // Networking & APIs hands off to the first Load Balancing lesson.
     expect(
       getAdjacentLessonsForLocale(
         "system-design",
         "sd-realtime-communication",
         "en",
       ).next?.slug,
-    ).toBe("sd-load-balancing");
+    ).toBe("sd-what-are-load-balancers");
     expect(
-      getAdjacentLessonsForLocale("system-design", "sd-load-balancing", "en").prev
-        ?.slug,
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-what-are-load-balancers",
+        "en",
+      ).prev?.slug,
     ).toBe("sd-realtime-communication");
     expect(
-      getAdjacentLessonsForLocale("system-design", "sd-load-balancing", "en").next
-        ?.slug,
-    ).toBe("sd-caching");
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-what-are-load-balancers",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-load-balancing-algorithms");
     expect(
-      getAdjacentLessonsForLocale("system-design", "sd-caching", "en").prev?.slug,
-    ).toBe("sd-load-balancing");
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-load-balancing-algorithms",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-what-are-load-balancers");
     expect(
-      getAdjacentLessonsForLocale("system-design", "sd-caching", "en").next?.slug,
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-load-balancing-algorithms",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-dns-load-balancing");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-dns-load-balancing",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-load-balancing-algorithms");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-dns-load-balancing", "en")
+        .next?.slug,
+    ).toBe("sd-anycast-routing");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-anycast-routing", "en")
+        .prev?.slug,
+    ).toBe("sd-dns-load-balancing");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-anycast-routing", "en")
+        .next?.slug,
+    ).toBe("sd-load-balancing-exercises");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-load-balancing-exercises",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-anycast-routing");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-load-balancing-exercises",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-what-is-caching");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-what-is-caching", "en")
+        .prev?.slug,
+    ).toBe("sd-load-balancing-exercises");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-what-is-caching", "en")
+        .next?.slug,
+    ).toBe("sd-caching-strategies");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-caching-strategies", "en")
+        .prev?.slug,
+    ).toBe("sd-what-is-caching");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-caching-strategies", "en")
+        .next?.slug,
+    ).toBe("sd-cache-eviction-policies");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-cache-eviction-policies",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-caching-strategies");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-cache-eviction-policies",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-cache-invalidation");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-cache-invalidation", "en")
+        .prev?.slug,
+    ).toBe("sd-cache-eviction-policies");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-cache-invalidation", "en")
+        .next?.slug,
     ).toBe("sd-cdn");
     expect(
       getAdjacentLessonsForLocale("system-design", "sd-cdn", "en").prev?.slug,
-    ).toBe("sd-caching");
-    // Data is translated next, so the last Building Blocks lesson hands off.
+    ).toBe("sd-cache-invalidation");
     expect(
       getAdjacentLessonsForLocale("system-design", "sd-cdn", "en").next?.slug,
-    ).toBe("sd-sharding");
+    ).toBe("sd-distributed-cache-architecture");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-distributed-cache-architecture",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-cdn");
+    // Databases is translated next, so the last Caching lesson hands off.
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-distributed-cache-architecture",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-data-models");
 
     const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
       (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
     );
     const chain = [
       "sd-realtime-communication",
-      "sd-load-balancing",
-      "sd-caching",
+      "sd-what-are-load-balancers",
+      "sd-load-balancing-algorithms",
+      "sd-dns-load-balancing",
+      "sd-anycast-routing",
+      "sd-load-balancing-exercises",
+      "sd-what-is-caching",
+      "sd-caching-strategies",
+      "sd-cache-eviction-policies",
+      "sd-cache-invalidation",
       "sd-cdn",
-      "sd-sharding",
-      "sd-replication",
+      "sd-distributed-cache-architecture",
+      "sd-data-models",
     ];
     const start = published.indexOf(chain[0]);
     expect(published.slice(start, start + chain.length)).toEqual(chain);
   });
 
-  it("navigates through the translated Data lessons in order", () => {
+  it("navigates through the translated Database Scaling Techniques lessons in order", () => {
     expect(
-      getAdjacentLessonsForLocale("system-design", "sd-cdn", "en").next?.slug,
+      getAdjacentLessonsForLocale("system-design", "sd-indexes-queries", "en").next
+        ?.slug,
     ).toBe("sd-sharding");
     expect(
       getAdjacentLessonsForLocale("system-design", "sd-sharding", "en").prev?.slug,
-    ).toBe("sd-cdn");
+    ).toBe("sd-indexes-queries");
     expect(
       getAdjacentLessonsForLocale("system-design", "sd-sharding", "en").next?.slug,
     ).toBe("sd-replication");
@@ -452,43 +637,98 @@ describe("English lesson translations", () => {
       getAdjacentLessonsForLocale("system-design", "sd-replication", "en").prev
         ?.slug,
     ).toBe("sd-sharding");
+    // Distributed Systems is translated next, so the last Database Scaling
+    // Techniques lesson hands off.
     expect(
       getAdjacentLessonsForLocale("system-design", "sd-replication", "en").next
         ?.slug,
-    ).toBe("sd-message-queues");
+    ).toBe("sd-consistency-models");
+
+    const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sd-indexes-queries",
+      "sd-sharding",
+      "sd-replication",
+      "sd-consistency-models",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Distributed Systems lessons in order", () => {
+    // Database Scaling Techniques hands off to the first Distributed Systems lesson.
     expect(
-      getAdjacentLessonsForLocale("system-design", "sd-message-queues", "en").prev
+      getAdjacentLessonsForLocale("system-design", "sd-replication", "en").next
         ?.slug,
+    ).toBe("sd-consistency-models");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-consistency-models", "en")
+        .prev?.slug,
     ).toBe("sd-replication");
-    // Reliability is translated next, so the last Data lesson hands off.
     expect(
-      getAdjacentLessonsForLocale("system-design", "sd-replication", "en").next
-        ?.slug,
+      getAdjacentLessonsForLocale("system-design", "sd-consistency-models", "en")
+        .next?.slug,
+    ).toBe("sd-timeouts-retries-idempotency");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-timeouts-retries-idempotency",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-consistency-models");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-timeouts-retries-idempotency",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-failure-detection");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-failure-detection", "en")
+        .prev?.slug,
+    ).toBe("sd-timeouts-retries-idempotency");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-failure-detection", "en")
+        .next?.slug,
+    ).toBe("sd-cascading-failures");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-cascading-failures", "en")
+        .prev?.slug,
+    ).toBe("sd-failure-detection");
+    // Reliability is translated next, so the last Distributed Systems lesson
+    // hands off to it.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-cascading-failures", "en")
+        .next?.slug,
     ).toBe("sd-message-queues");
 
     const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
       (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
     );
     const chain = [
-      "sd-cdn",
-      "sd-sharding",
       "sd-replication",
+      "sd-consistency-models",
+      "sd-timeouts-retries-idempotency",
+      "sd-failure-detection",
+      "sd-cascading-failures",
       "sd-message-queues",
-      "sd-rate-limiting",
     ];
     const start = published.indexOf(chain[0]);
     expect(published.slice(start, start + chain.length)).toEqual(chain);
   });
 
   it("navigates through the translated Reliability lessons in order", () => {
+    // Distributed Systems hands off to the first Reliability lesson.
     expect(
-      getAdjacentLessonsForLocale("system-design", "sd-replication", "en").next
-        ?.slug,
+      getAdjacentLessonsForLocale("system-design", "sd-cascading-failures", "en")
+        .next?.slug,
     ).toBe("sd-message-queues");
     expect(
       getAdjacentLessonsForLocale("system-design", "sd-message-queues", "en").prev
         ?.slug,
-    ).toBe("sd-replication");
+    ).toBe("sd-cascading-failures");
     expect(
       getAdjacentLessonsForLocale("system-design", "sd-message-queues", "en").next
         ?.slug,
@@ -497,22 +737,171 @@ describe("English lesson translations", () => {
       getAdjacentLessonsForLocale("system-design", "sd-rate-limiting", "en").prev
         ?.slug,
     ).toBe("sd-message-queues");
-    // Reliability is the final System Design module, so the last lesson has no next.
+    // Architecture Patterns is translated next, so the last lesson hands off.
     expect(
-      getAdjacentLessonsForLocale("system-design", "sd-rate-limiting", "en").next,
+      getAdjacentLessonsForLocale("system-design", "sd-rate-limiting", "en").next
+        ?.slug,
+    ).toBe("sd-monolith-modular-microservices");
+
+    const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sd-cascading-failures",
+      "sd-message-queues",
+      "sd-rate-limiting",
+      "sd-monolith-modular-microservices",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Architecture Patterns lessons in order", () => {
+    // Reliability hands off to the first Architecture Patterns lesson.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-rate-limiting", "en").next
+        ?.slug,
+    ).toBe("sd-monolith-modular-microservices");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-monolith-modular-microservices",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-rate-limiting");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-monolith-modular-microservices",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-sync-async-event-driven");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-sync-async-event-driven",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-monolith-modular-microservices");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-sync-async-event-driven",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-saga-outbox");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-saga-outbox", "en").prev
+        ?.slug,
+    ).toBe("sd-sync-async-event-driven");
+    // Design Process is translated next, so the last lesson hands off.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-saga-outbox", "en").next
+        ?.slug,
+    ).toBe("sd-design-process");
+
+    const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sd-rate-limiting",
+      "sd-monolith-modular-microservices",
+      "sd-sync-async-event-driven",
+      "sd-saga-outbox",
+      "sd-design-process",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Design Process lessons in order", () => {
+    // Architecture Patterns hands off to the first Design Process lesson.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-saga-outbox", "en").next
+        ?.slug,
+    ).toBe("sd-design-process");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-design-process", "en").prev
+        ?.slug,
+    ).toBe("sd-saga-outbox");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-design-process", "en").next
+        ?.slug,
+    ).toBe("sd-back-of-envelope-estimation");
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-back-of-envelope-estimation",
+        "en",
+      ).prev?.slug,
+    ).toBe("sd-design-process");
+    // Case Studies is translated next, so the last lesson hands off.
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-back-of-envelope-estimation",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-case-url-shortener");
+
+    const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
+      (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
+    );
+    const chain = [
+      "sd-saga-outbox",
+      "sd-design-process",
+      "sd-back-of-envelope-estimation",
+      "sd-case-url-shortener",
+    ];
+    const start = published.indexOf(chain[0]);
+    expect(published.slice(start, start + chain.length)).toEqual(chain);
+  });
+
+  it("navigates through the translated Case Studies lessons in order", () => {
+    // Design Process hands off to the first Case Study.
+    expect(
+      getAdjacentLessonsForLocale(
+        "system-design",
+        "sd-back-of-envelope-estimation",
+        "en",
+      ).next?.slug,
+    ).toBe("sd-case-url-shortener");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-case-url-shortener", "en")
+        .prev?.slug,
+    ).toBe("sd-back-of-envelope-estimation");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-case-url-shortener", "en")
+        .next?.slug,
+    ).toBe("sd-case-news-feed");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-case-news-feed", "en").prev
+        ?.slug,
+    ).toBe("sd-case-url-shortener");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-case-news-feed", "en").next
+        ?.slug,
+    ).toBe("sd-case-chat");
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-case-chat", "en").prev?.slug,
+    ).toBe("sd-case-news-feed");
+    // Case Studies is the final System Design module, so the last lesson has no next.
+    expect(
+      getAdjacentLessonsForLocale("system-design", "sd-case-chat", "en").next,
     ).toBeUndefined();
 
     const published = getCourseForLocale("system-design", "en")!.modules.flatMap(
       (courseModule) => courseModule.lessons.map((lesson) => lesson.slug),
     );
     const chain = [
-      "sd-replication",
-      "sd-message-queues",
-      "sd-rate-limiting",
+      "sd-back-of-envelope-estimation",
+      "sd-case-url-shortener",
+      "sd-case-news-feed",
+      "sd-case-chat",
     ];
     const start = published.indexOf(chain[0]);
     expect(published.slice(start, start + chain.length)).toEqual(chain);
-    expect(published.at(-1)).toBe("sd-rate-limiting");
+    expect(published.at(-1)).toBe("sd-case-chat");
   });
 
   it("translates the sd-what-is-system-design diagram and natural-language code", () => {
@@ -530,6 +919,30 @@ describe("English lesson translations", () => {
     expect(
       diagram.edges.find((edge) => edge.id === "cdn-client")?.label,
     ).toBe("photo");
+
+    // Both locales show the client uploading bytes directly to object storage,
+    // and neither implies the bytes flow through the app server.
+    const source = findLesson("system-design", "sd-what-is-system-design");
+    const sourceDiagram = source?.blocks[26];
+    expect(sourceDiagram?.type).toBe("diagram");
+    if (sourceDiagram?.type !== "diagram") return;
+    const directUpload = (edges: typeof diagram.edges) =>
+      edges.find((edge) => edge.id === "client-obj");
+    const noAppByteFlow = (edges: typeof diagram.edges) =>
+      edges.some((edge) => edge.from === "app" && edge.to === "obj");
+
+    expect(directUpload(sourceDiagram.edges)).toMatchObject({
+      from: "client",
+      to: "obj",
+      label: "upload ảnh trực tiếp",
+    });
+    expect(noAppByteFlow(sourceDiagram.edges)).toBe(false);
+    expect(directUpload(diagram.edges)).toMatchObject({
+      from: "client",
+      to: "obj",
+      label: "direct photo upload",
+    });
+    expect(noAppByteFlow(diagram.edges)).toBe(false);
 
     const code = lesson?.blocks[15];
     expect(code?.type).toBe("code");
@@ -558,12 +971,12 @@ describe("English lesson translations", () => {
     expect(idempotency.snippets[0].code).not.toContain("không trừ tiền");
   });
 
-  it("translates the sd-caching and sd-cdn diagrams while preserving topology", () => {
+  it("translates the sd-caching-strategies and sd-cdn diagrams while preserving topology", () => {
     const vietnamese = /[\u00C0-\u01B0\u1EA0-\u1EF9]/;
     const cases = [
       {
-        slug: "sd-caching",
-        blockIndex: 8,
+        slug: "sd-caching-strategies",
+        blockIndex: 3,
         caption:
           "On a cache hit, return the data immediately. On a miss, query the database, write the result to the cache, then return it to the client.",
       },
@@ -833,6 +1246,57 @@ describe("English lesson translations", () => {
     expect(source?.blocks[17]?.type).toBe("p");
     expect(source?.blocks[19]?.type).toBe("p");
     expect(translated?.blocks[19]?.type).toBe("p");
+  });
+
+  it("exposes the new System Design motion visuals in both locales", () => {
+    // The photo-app request flow is an inline h3 visualizer; the English lesson
+    // keeps the same block index and the visualizer wiring.
+    const source = findLesson("system-design", "sd-what-is-system-design");
+    const translated = findLessonForLocale(
+      "system-design",
+      "sd-what-is-system-design",
+      "en",
+    );
+    const flowIndex =
+      source?.blocks.findIndex(
+        (block) => block.type === "h3" && block.visualizer === "request-flow",
+      ) ?? -1;
+    expect(flowIndex).toBeGreaterThan(-1);
+    expect(translated?.blocks[flowIndex]).toMatchObject({
+      type: "h3",
+      visualizer: "request-flow",
+    });
+    expect(
+      translated?.blocks[flowIndex]?.type === "h3"
+        ? translated.blocks[flowIndex].text
+        : "",
+    ).toBe("Visualizing the upload and feed flows");
+
+    // Rate limiting keeps its lesson-level Token Bucket and adds the fixed vs
+    // sliding comparison inline in both locales.
+    for (const locale of ["vi", "en"] as const) {
+      const lesson =
+        locale === "vi"
+          ? findLesson("system-design", "sd-rate-limiting")
+          : findLessonForLocale("system-design", "sd-rate-limiting", "en");
+      expect(lesson?.visualizer, locale).toBe("token-bucket");
+      expect(
+        lesson?.blocks.some(
+          (block) =>
+            block.type === "h3" && block.visualizer === "rate-limit-window",
+        ),
+        locale,
+      ).toBe(true);
+    }
+
+    // Consistent hashing attaches the ring visualizer as a lesson-level visual.
+    expect(
+      findLesson("system-design", "sd-consistent-hashing")?.visualizer,
+    ).toBe("consistent-hashing-ring");
+    expect(
+      findLessonForLocale("system-design", "sd-consistent-hashing", "en")
+        ?.visualizer,
+    ).toBe("consistent-hashing-ring");
   });
 
   it("localizes the Round Robin visualizer without leaking Vietnamese", () => {

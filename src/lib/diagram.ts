@@ -1,3 +1,4 @@
+import type { IconName } from "@/components/course-icons";
 import type { Locale } from "./locale";
 
 export type StatTone = "amber" | "rose" | "indigo" | "emerald" | "slate";
@@ -27,6 +28,8 @@ export type DiagramNode = {
   shape?: DiagramShape;
   capacity?: number;
   tone?: NodeTone;
+  /** Optional icon drawn above the label (reuses `Icon`/`course-icons`). */
+  icon?: IconName;
 };
 
 export type DiagramEdge = {
@@ -155,6 +158,16 @@ export function edgeGeometry(from: DiagramNode, to: DiagramNode) {
   const start = borderPoint(from, ux, uy);
   const end = borderPoint(to, -ux, -uy);
   return { start, end, ux, uy };
+}
+
+/**
+ * Baseline anchor for an edge's label: the midpoint of the drawn segment,
+ * lifted slightly above the line. Kept as a pure helper so label placement can
+ * be unit-tested without rendering.
+ */
+export function edgeLabelAnchor(from: DiagramNode, to: DiagramNode): Point {
+  const { start, end } = edgeGeometry(from, to);
+  return { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 - 8 };
 }
 
 export function arrowPoints(tip: Point, ux: number, uy: number, size = 9) {
